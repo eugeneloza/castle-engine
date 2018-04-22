@@ -638,9 +638,9 @@ end;
 
 function TOctreeNode.SubnodeWithPoint(const P: TVector3): TOctreeSubnodeIndex;
 begin
-  result[0] := P[0] >= MiddlePoint[0];
-  result[1] := P[1] >= MiddlePoint[1];
-  result[2] := P[2] >= MiddlePoint[2];
+  Result[0] := P[0] >= MiddlePoint[0];
+  Result[1] := P[1] >= MiddlePoint[1];
+  Result[2] := P[2] >= MiddlePoint[2];
 end;
 
 procedure TOctreeNode.SubnodesWithBox(const ABox: TBox3D;
@@ -684,8 +684,8 @@ procedure TOctreeNode.EnumerateCollidingOctreeItems(
   procedure EnumerateAllItems(CollidesForSure: boolean);
   var i: Integer;
   begin
-   for i := 0 to ItemsIndices.Count - 1 do
-    EnumerateOctreeItemsFunc(ItemsIndices[i], CollidesForSure);
+    for i := 0 to ItemsIndices.Count - 1 do
+     EnumerateOctreeItemsFunc(ItemsIndices[i], CollidesForSure);
   end;
 
 begin
@@ -974,17 +974,17 @@ end;
 
 function OctreeSubnodeIndexToNiceStr(const SI: TOctreeSubnodeIndex): string;
 begin
- result :=
-   BoolToStr(SI[0], true) +'-'+
-   BoolToStr(SI[1], true) +'-'+
-   BoolToStr(SI[2], true);
+  Result :=
+    BoolToStr(SI[0], true) +'-'+
+    BoolToStr(SI[1], true) +'-'+
+    BoolToStr(SI[2], true);
 end;
 
 function OctreeSubnodeIndexesEqual(const SI1, SI2: TOctreeSubnodeIndex): boolean;
 begin
- result := (SI1[0] = SI2[0]) and
-           (SI1[1] = SI2[1]) and
-           (SI1[2] = SI2[2]);
+  Result := (SI1[0] = SI2[0]) and
+            (SI1[1] = SI2[1]) and
+            (SI1[2] = SI2[2]);
 end;
 
 end.

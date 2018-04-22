@@ -129,9 +129,9 @@ begin
   SinCos(PhiTheta[0], SinPhi, CosPhi);
   SinCos(PhiTheta[1], SinTheta, CosTheta);
 
-  result[0] := SphereRadius * CosPhi * SinTheta;
-  result[1] := SphereRadius * SinPhi * SinTheta;
-  result[2] := SphereRadius * CosTheta;
+  Result[0] := SphereRadius * CosPhi * SinTheta;
+  Result[1] := SphereRadius * SinPhi * SinTheta;
+  Result[2] := SphereRadius * CosTheta;
 end;
 
 function XYZToPhiTheta(const XYZ: TVector3): TVector2;
@@ -145,7 +145,7 @@ var
   NewX, NewY: TVector3;
   SphereRadius, NewXLen, NewYLen: Single;
 begin
-  result := PhiThetaToXYZ(PhiTheta, 1);
+  Result := PhiThetaToXYZ(PhiTheta, 1);
 
   { make NewX anything orthogonal (but not zero) to SphereTheta0. }
   if IsZero(SphereTheta0[0]) and IsZero(SphereTheta0[1]) then
@@ -169,8 +169,8 @@ begin
   NewXLen := NewX.Length;
   NewYLen := NewXLen * SphereRadius;
 
-  NewX := NewX * SphereRadius/NewXLen;
-  NewY := NewY * SphereRadius/NewYLen;
+  NewX := NewX * SphereRadius / NewXLen;
+  NewY := NewY * SphereRadius / NewYLen;
 
   { TODO: create TMatrix4.MultPointVar to speed this a little bit? }
   Result := TransformToCoordsMatrix(TVector3.Zero,
@@ -181,23 +181,23 @@ end;
 
 function RandomHemispherePointConst: TVector2;
 begin
-  result[0] := 2*Pi*Random;
-  result[1] := ArcCos(Random);
+  Result[0] := 2 * Pi * Random;
+  Result[1] := ArcCos(Random);
 end;
 
 function RandomHemispherePointConstXYZ: TVector3;
 var
-  r1, r2, sqroot: Single;
-  cosinus, sinus: Float;
+  r1, r2, Sqroot: Single;
+  Cosinus, Sinus: Float;
 begin
   r1 := Random;
   r2 := Random;
-  SinCos(2*Pi*r1, sinus, cosinus);
-  sqroot := Sqrt(1-Sqr(r2));
+  SinCos(2 * Pi * r1, Sinus, Cosinus);
+  Sqroot := Sqrt(1 - Sqr(r2));
 
-  result[0] := cosinus * sqroot;
-  result[1] := sinus * sqroot;
-  result[2] := r2;
+  Result[0] := Cosinus * Sqroot;
+  Result[1] := Sinus * Sqroot;
+  Result[2] := r2;
 end;
 
 function RandomHemispherePointCosTheta(
@@ -207,8 +207,8 @@ var
 begin
   SqrtR2 := Sqrt(Random);
 
-  result[0] := 2*Pi*Random;
-  result[1] := ArcCos(SqrtR2);
+  Result[0] := 2*Pi*Random;
+  Result[1] := ArcCos(SqrtR2);
   PdfValue := SqrtR2 / Pi;
 end;
 
@@ -223,10 +223,10 @@ begin
   SinCos(2*Pi*r1, SinR1, CosR1);
   SqRoot := Sqrt(1-r2);
 
-  result[0] := CosR1 * SqRoot;
-  result[1] := SinR1 * SqRoot;
-  result[2] := Sqrt(r2);
-  PdfValue := result[2];
+  Result[0] := CosR1 * SqRoot;
+  Result[1] := SinR1 * SqRoot;
+  Result[2] := Sqrt(r2);
+  PdfValue := Result[2];
 end;
 
 function RandomHemispherePointCosThetaExp(const n: Single;
@@ -236,9 +236,9 @@ var
 begin
   r2 := Random;
 
-  result[0] := 2*Pi*Random;
-  result[1] := ArcCos(Power(r2, 1/(n+1)));
-  PdfValue := (n+1) * Power(r2, n/(n+1)) / 2*Pi;
+  Result[0] := 2 * Pi * Random;
+  Result[1] := ArcCos(Power(r2, 1 / (n + 1)));
+  PdfValue := (n + 1) * Power(r2, n / (n + 1)) / 2 * Pi;
 end;
 
 function RandomHemispherePointCosThetaExpXYZ(const n: Single;
@@ -249,14 +249,14 @@ var
 begin
   r1 := Random;
   r2 := Random;
-  SinCos(2*Pi*r1, SinR1, CosR1);
-  r2Power := Power(r2, 1/(n+1));
-  r2Root := Sqrt(1-Sqr(r2Power));
+  SinCos(2 * Pi * r1, SinR1, CosR1);
+  r2Power := Power(r2, 1 /(n + 1));
+  r2Root := Sqrt(1 - Sqr(r2Power));
 
-  result[0] := CosR1 * r2Root;
-  result[1] := SinR1 * r2Root;
-  result[2] := r2Power;
-  PdfValue := (n+1) * Power(r2, n/(n+1)) / 2*Pi;
+  Result[0] := CosR1 * r2Root;
+  Result[1] := SinR1 * r2Root;
+  Result[2] := r2Power;
+  PdfValue := (n + 1) * Power(r2, n / (n+1)) / 2 * Pi;
 end;
 
 end.

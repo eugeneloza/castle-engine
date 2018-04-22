@@ -629,7 +629,7 @@ function TriangleBoundingBox(const T: TTriangle3): TBox3D;
   and a plane.
 
   Note that you can't express empty box3d here: all BoxHalfSize items
-  must be >= 0. The case when size = 0 is considered like infintely small
+  must be >= 0. The case when Size = 0 is considered like infintely small
   box in some dimension (e.g. if all three sizes are = 0 then the box
   becomes a point).  }
 function IsCenteredBox3DPlaneCollision(
@@ -814,9 +814,9 @@ begin
 
   { Another version is below (but this is slower without any benefit...)
 
-    var sizes: TVector3;
-      sizes := Box3DSizes(box);
-      result := sizes[MaxVectorCoord(sizes)];
+    var Sizes: TVector3;
+      Sizes := Box3DSizes(box);
+      Result := Sizes[MaxVectorCoord(Sizes)];
   }
 end;
 
@@ -1310,9 +1310,9 @@ begin
   begin
     Entrance := RayOrigin;
     EntranceDistance := 0;
-    result := true;
+    Result := true;
   end else
-    result := TryRayClosestIntersection(Entrance, EntranceDistance, RayOrigin, RayDirection);
+    Result := TryRayClosestIntersection(Entrance, EntranceDistance, RayOrigin, RayDirection);
 end;
 
 function TBox3D.TryRayEntrance(
@@ -1322,9 +1322,9 @@ begin
   if Contains(RayOrigin) then
   begin
     Entrance := RayOrigin;
-    result := true;
+    Result := true;
   end else
-    result := TryRayClosestIntersection(Entrance, RayOrigin, RayDirection);
+    Result := TryRayClosestIntersection(Entrance, RayOrigin, RayDirection);
 end;
 
 function TBox3D.IsSegmentCollision(
@@ -1649,18 +1649,18 @@ begin
 
   { test in X-direction }
   MinMax(TriangleMoved[0].Data[0], TriangleMoved[1].Data[0], TriangleMoved[2].Data[0], TriMin, TriMax);
-  if (TriMin >  boxhalfsize.Data[0] + Epsilon) or
-     (TriMax < -boxhalfsize.Data[0] - Epsilon) then Exit(false);
+  if (TriMin >  BoxhalfSize.Data[0] + Epsilon) or
+     (TriMax < -BoxhalfSize.Data[0] - Epsilon) then Exit(false);
 
   { test in Y-direction }
   MinMax(TriangleMoved[0].Data[1], TriangleMoved[1].Data[1], TriangleMoved[2].Data[1], TriMin, TriMax);
-  if (TriMin >  boxhalfsize.Data[1] + Epsilon) or
-     (TriMax < -boxhalfsize.Data[1] - Epsilon) then Exit(false);
+  if (TriMin >  BoxhalfSize.Data[1] + Epsilon) or
+     (TriMax < -BoxhalfSize.Data[1] - Epsilon) then Exit(false);
 
   { test in Z-direction }
   MinMax(TriangleMoved[0].Data[2], TriangleMoved[1].Data[2], TriangleMoved[2].Data[2], TriMin, TriMax);
-  if (TriMin >  boxhalfsize.Data[2] + Epsilon) or
-     (TriMax < -boxhalfsize.Data[2] - Epsilon) then Exit(false);
+  if (TriMin >  BoxhalfSize.Data[2] + Epsilon) or
+     (TriMax < -BoxhalfSize.Data[2] - Epsilon) then Exit(false);
 
   { tests 2)
     test if the box intersects the plane of the triangle
@@ -2248,8 +2248,8 @@ end;
 
 function Box3D(const p0, p1: TVector3): TBox3D;
 begin
-  result.Data[0] := p0;
-  result.Data[1] := p1;
+  Result.Data[0] := p0;
+  Result.Data[1] := p1;
 end;
 
 function Box3DAroundPoint(const Pt: TVector3; Size: Single): TBox3D;
@@ -2320,12 +2320,12 @@ type
 
   function TBBox_Calculator.GetVertexNotTransform(index: integer): TVector3;
   begin
-   result := PVector3(PointerAdd(Verts, VertsStride*Cardinal(index)))^;
+    Result := PVector3(PointerAdd(Verts, VertsStride*Cardinal(index)))^;
   end;
 
   function TBBox_Calculator.GetVertexTransform(index: integer): TVector3;
   begin
-   result := PMatrix^.MultPoint(PVector3(PointerAdd(Verts, VertsStride*Cardinal(index)))^);
+    Result := PMatrix^.MultPoint(PVector3(PointerAdd(Verts, VertsStride*Cardinal(index)))^);
   end;
 
 function CalculateBoundingBox(
@@ -2338,7 +2338,7 @@ begin
   try
     Calculator.VertsStride := VertsStride;
     Calculator.Verts := Verts;
-    result := CalculateBoundingBox(
+    Result := CalculateBoundingBox(
       {$ifdef CASTLE_OBJFPC} @ {$endif} Calculator.GetVertexNotTransform, VertsCount);
   finally Calculator.Free end;
 end;
@@ -2355,7 +2355,7 @@ begin
     Calculator.VertsStride := VertsStride;
     Calculator.Verts := Verts;
     Calculator.PMatrix := @Transform;
-    result := CalculateBoundingBox(
+    Result := CalculateBoundingBox(
       {$ifdef CASTLE_OBJFPC} @ {$endif} Calculator.GetVertexTransform, VertsCount);
   finally Calculator.Free end;
 end;
@@ -2385,14 +2385,14 @@ var
   ThisVertex: TVector3;
 begin
   {seek for firstIndex}
-  firstIndexNum := 0;
-  while (firstIndexNum < VertsIndicesCount) and (GetVertIndex(firstIndexNum) < 0) do
-    Inc(firstIndexNum);
+  FirstIndexNum := 0;
+  while (FirstIndexNum < VertsIndicesCount) and (GetVertIndex(FirstIndexNum) < 0) do
+    Inc(FirstIndexNum);
 
-  if firstIndexNum = VertsIndicesCount then {firstIndex not found ?}
+  if firstIndexNum = VertsIndicesCount then {FirstIndex not found ?}
   begin
-    result := TBox3D.Empty;
-    exit;
+    Result := TBox3D.Empty;
+    Exit;
   end;
 
   { Note that I do only one pass, getting all vertexes.
@@ -2434,7 +2434,7 @@ type
   end;
   function TVertTransform_Calculator.GetTransformed(index: integer): TVector3;
   begin
-    result := PTransform^.MultPoint(GetNotTransformed(index));
+    Result := PTransform^.MultPoint(GetNotTransformed(index));
   end;
 
 function CalculateBoundingBoxFromIndices(
@@ -2449,7 +2449,7 @@ begin
   try
     Calculator.PTransform := @Transform;
     Calculator.GetNotTransformed := GetVertex;
-    result := CalculateBoundingBoxFromIndices(
+    Result := CalculateBoundingBoxFromIndices(
       GetVertIndex,
       VertsIndicesCount,
       {$ifdef CASTLE_OBJFPC} @ {$endif} Calculator.GetTransformed);

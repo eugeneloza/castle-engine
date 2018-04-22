@@ -2989,7 +2989,7 @@ end;
 
 function TWalkCamera.RotationMatrix: TMatrix4;
 begin
- result := FastLookDirMatrix(Direction, Up);
+  Result := FastLookDirMatrix(Direction, Up);
 end;
 
 function TWalkCamera.DoMoveAllowed(const ProposedNewPos: TVector3;

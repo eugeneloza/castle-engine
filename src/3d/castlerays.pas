@@ -304,7 +304,9 @@ begin
     Projection);
   try
     RaysWindow.PrimaryRay(x, y, ScreenWidth, ScreenHeight, RayOrigin, RayDirection);
-  finally RaysWindow.Free end;
+  finally
+    RaysWindow.Free
+  end;
 end;
 
 end.
