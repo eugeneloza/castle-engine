@@ -199,8 +199,8 @@ uses Math,
 const
   { AngleTurn[Angle, Orient] = (definicja)
       if Orient then
-       result := ChangeIntCycle(Angle, 1, 3) else
-       result := ChangeIntCycle(Angle, -1, 3);
+       Result := ChangeIntCycle(Angle, 1, 3) else
+       Result := ChangeIntCycle(Angle, -1, 3);
     Uzywanie tablicy juz przeliczonych wartosci da nam tutaj maly zysk czasowy. }
   AngleTurn: array[TSFCAngle, boolean]of TSFCAngle =
   (
@@ -219,7 +219,8 @@ procedure PeanoCurve(InitialOrient: boolean; Angle: TSFCAngle; InitialLevel: Car
 
   procedure Peano(Orient: boolean; Level: Cardinal);
   begin
-   if Level = 0 then Exit;
+   if Level = 0 then
+     Exit;
    Dec(Level);
 
    Peano(Orient, Level);
@@ -246,7 +247,7 @@ procedure PeanoCurve(InitialOrient: boolean; Angle: TSFCAngle; InitialLevel: Car
   end;
 
 begin
- Peano(InitialOrient, InitialLevel);
+  Peano(InitialOrient, InitialLevel);
 end;
 
 procedure HilbertCurve(InitialOrient: boolean; Angle: TSFCAngle; InitialLevel: Cardinal;
@@ -255,80 +256,81 @@ procedure HilbertCurve(InitialOrient: boolean; Angle: TSFCAngle; InitialLevel: C
 
   procedure Hilbert(Orient: boolean; Level: Cardinal);
   begin
-   if Level = 0 then Exit;
-   Dec(Level);
+    if Level = 0 then
+      Exit;
+    Dec(Level);
 
-   Angle := AngleTurn[Angle, Orient];
-   Hilbert(not Orient, Level);
-   Step(Angle, StepData);
-   Angle := AngleTurn[Angle, not Orient];
-   Hilbert(Orient, Level);
-   Step(Angle, StepData);
-   Hilbert(Orient, Level);
-   Angle := AngleTurn[Angle, not Orient];
-   Step(Angle, StepData);
-   Hilbert(not Orient, Level);
-   Angle := AngleTurn[Angle, Orient];
+    Angle := AngleTurn[Angle, Orient];
+    Hilbert(not Orient, Level);
+    Step(Angle, StepData);
+    Angle := AngleTurn[Angle, not Orient];
+    Hilbert(Orient, Level);
+    Step(Angle, StepData);
+    Hilbert(Orient, Level);
+    Angle := AngleTurn[Angle, not Orient];
+    Step(Angle, StepData);
+    Hilbert(not Orient, Level);
+    Angle := AngleTurn[Angle, Orient];
   end;
 
 begin
- Hilbert(InitialOrient, InitialLevel);
+  Hilbert(InitialOrient, InitialLevel);
 end;
 
 { TSpaceFillingCurve ------------------------------------------------------------ }
 
 constructor TSpaceFillingCurve.Create(ASizeX, ASizeY: Cardinal);
 begin
- inherited Create;
- FSizeX := ASizeX;
- FSizeY := ASizeY;
- FPixelsCount := SizeX*SizeY;
+  inherited Create;
+  FSizeX := ASizeX;
+  FSizeY := ASizeY;
+  FPixelsCount := SizeX*SizeY;
 end;
 
 { TPrecalcCurve ------------------------------------------------------------ }
 
 constructor TPrecalcCurve.Create(ASizeX, ASizeY: Cardinal);
 begin
- inherited;
- if PixelsCount <> 0 then
- begin
-  Pixels := GetMem(SizeOf(TVector2Cardinal) * PixelsCount);
-  GeneratePixels(Pixels);
- end;
- Reset;
+  inherited;
+  if PixelsCount <> 0 then
+  begin
+    Pixels := GetMem(SizeOf(TVector2Cardinal) * PixelsCount);
+    GeneratePixels(Pixels);
+  end;
+  Reset;
 end;
 
 destructor TPrecalcCurve.Destroy;
 begin
- FreeMemNiling(Pixels);
+  FreeMemNiling(Pixels);
 end;
 
 function TPrecalcCurve.EndOfPixels: boolean;
 begin
- result := NextPixelNum >= PixelsCount;
+  Result := NextPixelNum >= PixelsCount;
 end;
 
 function TPrecalcCurve.NextPixel: TVector2Cardinal;
 begin
  Assert(not EndOfPixels);
- result := Pixels^[NextPixelNum];
+ Result := Pixels^[NextPixelNum];
  Inc(NextPixelNum);
 end;
 
 procedure TPrecalcCurve.SkipPixels(SkipCount: Cardinal);
 begin
- Assert(SkipCount <= PixelsCount-PixelsDone);
- NextPixelNum += SkipCount;
+  Assert(SkipCount <= PixelsCount-PixelsDone);
+  NextPixelNum += SkipCount;
 end;
 
 procedure TPrecalcCurve.Reset;
 begin
- NextPixelNum := 0;
+  NextPixelNum := 0;
 end;
 
 function TPrecalcCurve.PixelsDone: Cardinal;
 begin
- result := NextPixelNum;
+  Result := NextPixelNum;
 end;
 
 { TSwapScanCurve ------------------------------------------------------------ }
@@ -352,15 +354,17 @@ begin
   for y := 0 to SizeY-1 do
   begin
     if Odd(y) then
-      for x := SizeX-1 downto 0 do AppendPixel(x, y)
+      for x := SizeX-1 downto 0 do
+        AppendPixel(x, y)
     else
-      for x := 0 to SizeX-1 do AppendPixel(x, y);
+      for x := 0 to SizeX-1 do
+        AppendPixel(x, y);
   end;
 end;
 
 class function TSwapScanCurve.SFCName: string;
 begin
- result := 'swapscan';
+  Result := 'swapscan';
 end;
 
 { pomoce do THilbertCurve i TPeanoCurve ---------------------------------------- }
@@ -375,17 +379,17 @@ type
 procedure InitStepData(out StepData: TStepData; Pixels: PVector2CardinalArray;
   const SizeX, SizeY: Cardinal);
 begin
- FillChar(Pixels^[0], SizeOf(Pixels^[0]), 0);
- StepData.Pixels := Pixels;
- StepData.NextPixelToWriteNum := 1;
- StepData.LastX := 0;
- StepData.LastY := 0;
- StepData.SizeX := SizeX;
- StepData.SizeY := SizeY;
+  FillChar(Pixels^[0], SizeOf(Pixels^[0]), 0);
+  StepData.Pixels := Pixels;
+  StepData.NextPixelToWriteNum := 1;
+  StepData.LastX := 0;
+  StepData.LastY := 0;
+  StepData.SizeX := SizeX;
+  StepData.SizeY := SizeY;
 end;
 
 procedure HilbertPeanoStep(Angle: TSFCAngle; RawData: Pointer);
-{ callback dla TSFCStepFunction dla Hilbert lub PeanoCurve.
+{ callback for TSFCStepFunction for Hilbert or PeanoCurve.
   Zapisze Pixels^[NextPixelToWriteNum], uaktualniajac tez
   LastX, LastY, NextPixelToWriteNum. Bedzie obcinal zapisywane do Pixels
   elementy do 0..SizeX-1, 0..SizeY-1. }
@@ -394,17 +398,17 @@ begin
  with Data^ do
  begin
   case Angle of
-   0: Inc(LastX);
-   1: Inc(LastY);
-   2: Dec(LastX);
-   3: Dec(LastY);
+    0: Inc(LastX);
+    1: Inc(LastY);
+    2: Dec(LastX);
+    3: Dec(LastY);
   end;
 
   if Between(LastX, 0, SizeX-1) and Between(LastY, 0, SizeY-1) then
   begin
-   Pixels^[NextPixelToWriteNum].Data[0] := LastX;
-   Pixels^[NextPixelToWriteNum].Data[1] := LastY;
-   Inc(NextPixelToWriteNum);
+    Pixels^[NextPixelToWriteNum].Data[0] := LastX;
+    Pixels^[NextPixelToWriteNum].Data[1] := LastY;
+    Inc(NextPixelToWriteNum);
   end;
  end;
 end;
@@ -415,17 +419,17 @@ procedure THilbertCurve.GeneratePixels(APixels: PVector2CardinalArray);
 var StepData: TStepData;
     Level: Cardinal;
 begin
- Level := Smallest2Exponent(Max(SizeX, SizeY));
- Assert((Level = 0) or (NatNatPower(2, Level-1) < Max(SizeX, SizeY)));
+  Level := Smallest2Exponent(Max(SizeX, SizeY));
+  Assert((Level = 0) or (NatNatPower(2, Level-1) < Max(SizeX, SizeY)));
 
- InitStepData(StepData, APixels, SizeX, SizeY);
- HilbertCurve(true, 0, Level,
-   {$ifdef CASTLE_OBJFPC} @ {$endif} HilbertPeanoStep, @StepData);
+  InitStepData(StepData, APixels, SizeX, SizeY);
+  HilbertCurve(true, 0, Level,
+    {$ifdef CASTLE_OBJFPC} @ {$endif} HilbertPeanoStep, @StepData);
 end;
 
 class function THilbertCurve.SFCName: string;
 begin
- result := 'hilbert';
+  Result := 'hilbert';
 end;
 
 { TPeanoCurve ------------------------------------------------------------ }
@@ -434,41 +438,46 @@ procedure TPeanoCurve.GeneratePixels(APixels: PVector2CardinalArray);
 var StepData: TStepData;
     MaxSize, Power3Level, Level: Cardinal;
 begin
- { calculate Level, pomagajac sobie MaxSize i Power3Level }
- MaxSize := Max(SizeX, SizeY);
- Level := 0;
- Power3Level := 1; { = zawsze 3^Level }
- while Power3Level < MaxSize do begin Inc(Level); Power3Level *= 3 end;
- Assert((Level = 0) or (NatNatPower(3, Level-1) < Max(SizeX, SizeY)));
+  { calculate Level, pomagajac sobie MaxSize and Power3Level }
+  MaxSize := Max(SizeX, SizeY);
+  Level := 0;
+  Power3Level := 1; { = always 3^Level }
+  while Power3Level < MaxSize do
+  begin
+    Inc(Level);
+    Power3Level *= 3
+  end;
+  Assert((Level = 0) or (NatNatPower(3, Level-1) < Max(SizeX, SizeY)));
 
- InitStepData(StepData, APixels, SizeX, SizeY);
- PeanoCurve(false, 0, Level,
-   {$ifdef CASTLE_OBJFPC} @ {$endif} HilbertPeanoStep, @StepData);
+  InitStepData(StepData, APixels, SizeX, SizeY);
+  PeanoCurve(false, 0, Level,
+    {$ifdef CASTLE_OBJFPC} @ {$endif} HilbertPeanoStep, @StepData);
 end;
 
 class function TPeanoCurve.SFCName: string;
 begin
- result := 'peano';
+  Result := 'peano';
 end;
 
 { operacje na SFCName -------------------------------------------------------- }
 
-function StrToSFCurveClass(const s: string): TSpaceFillingCurveClass;
-var i: Integer;
+function StrToSFCurveClass(const S: string): TSpaceFillingCurveClass;
+var
+  i: Integer;
 begin
- for i := 0 to High(AvailableSFCurveClasses) do
-  if AnsiSameText(s, AvailableSFCurveClasses[i].SFCName) then
-   Exit(AvailableSFCurveClasses[i]);
- raise EInvalidSFCurveClassName.Create('Invalid space filling curve name : "'+
-   s+'", allowed names are '+AllSFCurveClassesNames+'.');
+  for i := 0 to High(AvailableSFCurveClasses) do
+   if AnsiSameText(S, AvailableSFCurveClasses[i].SFCName) then
+    Exit(AvailableSFCurveClasses[i]);
+  raise EInvalidSFCurveClassName.Create('Invalid space filling curve name : "' +
+    S + '", allowed names are ' + AllSFCurveClassesNames + '.');
 end;
 
 function AllSFCurveClassesNames: string;
 var i: Integer;
 begin
- result := '"'+AvailableSFCurveClasses[0].SFCName+'"';
- for i := 1 to High(AvailableSFCurveClasses) do
-  result += ', "'+AvailableSFCurveClasses[i].SFCName+'"';
+  Result := '"' + AvailableSFCurveClasses[0].SFCName + '"';
+  for i := 1 to High(AvailableSFCurveClasses) do
+    Result += ', "' + AvailableSFCurveClasses[i].SFCName + '"';
 end;
 
 end.

@@ -54,7 +54,7 @@ function ActualTessellation(const Tessellation: Integer;
   )
 
   Weight will be used only if it has the same length as PointsCount.
-  Otherwise, weight = 1.0 (that is, defining non-rational curve) will be used
+  Otherwise, Weight = 1.0 (that is, defining non-rational curve) will be used
   (this follows X3D spec).
 
   Tangent, if non-nil, will be set to the direction at given point of the
@@ -86,10 +86,10 @@ function NurbsCurvePoint(const Points: TVector3List;
   )
 
   Weight will be used only if it has the same length as PointsCount.
-  Otherwise, weight = 1.0 (that is, defining non-rational curve) will be used
+  Otherwise, Weight = 1.0 (that is, defining non-rational curve) will be used
   (this follows X3D spec).
 
-  Normal, if non-nil, will be set to the normal at given point of the
+  Normal, if non-nil, will be set to the Normal at given point of the
   surface. It will be normalized. You can use this to pass these normals
   to rendering. Or to generate normals for X3D NurbsSurfaceInterpolator node. }
 function NurbsSurfacePoint(const Points: TVector3List;
@@ -123,8 +123,8 @@ type
     nkEndpointUniform,
 
     { NURBS curve will effectively become a piecewise Bezier curve.
-      The order of NURBS curve will determine the order of Bezier curve,
-      for example NURBS curve with order = 4 results in a cubic Bezier curve. }
+      The Order of NURBS curve will determine the Order of Bezier curve,
+      for example NURBS curve with Order = 4 results in a cubic Bezier curve. }
     nkPiecewiseBezier);
 
 { Calculate a default knot, if Knot doesn't already have required number of items.
@@ -193,7 +193,7 @@ end;
 
 {$else CASTLE_ENGINE_LGPL}
 
-{ findSpan and basisFuns is rewritten from white dune's C source code
+{ findSpan and BasisFuns is rewritten from white dune's C source code
   (almost identical methods of NodeNurbsCurve and NodeNurbsSurface).
   Also NurbsCurvePoint is based on NodeNurbsCurve::curvePoint.
   Also NurbsSurfacePoint is based on NodeNurbsSurface::surfacePoint.
@@ -203,91 +203,91 @@ end;
   - http://wdune.ourproject.org/
   - J. "MUFTI" Scheurich, Stephen F. White
   - GPL >= 2, so we're free to copy
-  - findSpan and basisFuns were methods in NodeNurbsCurve
+  - findSpan and BasisFuns were methods in NodeNurbsCurve
     (src/NodeNurbsCurve.cpp) and NodeNurbsSurface.
     *Almost* exactly identical, the only difference: NodeNurbsSurface
     had these two additional lines (safety check, included in my version):
-      if ((right[r+1] + left[j-r]) == 0)
+      if ((Right[r+1] + Left[j-r]) == 0)
           return;
 }
-function findSpan(const dimension, order: LongInt;
+function FindSpan(const Dimension, Order: LongInt;
   const u: Single; Knot: TDoubleList): LongInt;
 var
-  low, mid, high, oldLow, oldMid, oldHigh, n: LongInt;
+  NewLow, NewMid, NewHigh, OldLow, OldMid, OldHigh, n: LongInt;
 begin
-  n := dimension + order - 1;
+  n := Dimension + Order - 1;
 
   if u >= Knot[n] then
   begin
-    Result := n - order;
+    Result := n - Order;
     Exit;
   end;
 
-  low := order - 1;
-  high := n - order + 1;
+  NewLow := Order - 1;
+  NewHigh := n - Order + 1;
 
-  mid := (low + high) div 2;
+  NewMid := (NewLow + NewHigh) div 2;
 
-  oldLow := low;
-  oldHigh := high;
-  oldMid := mid;
-  while (u < Knot[mid]) or (u >= Knot[mid+1]) do
+  OldLow := NewLow;
+  OldHigh := NewHigh;
+  OldMid := NewMid;
+  while (u < Knot[NewMid]) or (u >= Knot[NewMid+1]) do
   begin
-    if u < Knot[mid] then
-      high := mid else
-      low := mid;
+    if u < Knot[NewMid] then
+      NewHigh := NewMid else
+      NewLow := NewMid;
 
-    mid := (low+high) div 2;
+    NewMid := (NewLow + NewHigh) div 2;
 
     // emergency abort of loop, otherwise a endless loop can occure
-    if (low = oldLow) and (high = oldHigh) and (mid = oldMid) then
-      break;
+    if (NewLow = OldLow) and (NewHigh = OldHigh) and (NewMid = OldMid) then
+      Break;
 
-    oldLow := low;
-    oldHigh := high;
-    oldMid := mid;
+    OldLow := NewLow;
+    OldHigh := NewHigh;
+    OldMid := NewMid;
   end;
-  Result := mid;
+  Result := NewMid;
 end;
 
-procedure basisFuns(const span: LongInt; const u: Single; const order: LongInt;
-  Knot, basis, deriv: TDoubleList);
+procedure BasisFuns(const Span: LongInt; const u: Single; const Order: LongInt;
+  Knot, Basis, Deriv: TDoubleList);
 var
-  left, right: TDoubleList;
+  Left, Right: TDoubleList;
   j, r: LongInt;
-  saved, dsaved, temp: Single;
+  Saved, dSaved, Temp: Single;
 begin
-  left  := TDoubleList.Create; left .Count := order;
-  right := TDoubleList.Create; right.Count := order;
+  Left  := TDoubleList.Create; Left .Count := Order;
+  Right := TDoubleList.Create; Right.Count := Order;
 
-  basis[0] := 1.0;
-  for j := 1 to  order - 1 do
+  Basis[0] := 1.0;
+  for j := 1 to  Order - 1 do
   begin
-    left[j] := u - Knot[span+1-j];
-    right[j] := Knot[span+j]-u;
-    saved := 0.0;
-    dsaved := 0.0;
+    Left[j] := u - Knot[Span+1-j];
+    Right[j] := Knot[Span+j]-u;
+    Saved := 0.0;
+    dSaved := 0.0;
     for r := 0 to j - 1 do
     begin
-      if (right[r+1] + left[j-r]) = 0 then
+      if (Right[r+1] + Left[j-r]) = 0 then
       begin
         { Or we could use try..finally, at a (very very small) speed penalty. }
-        FreeAndNil(left);
-        FreeAndNil(right);
+        FreeAndNil(Left);
+        FreeAndNil(Right);
         Exit;
       end;
-      temp := basis[r] / (right[r+1] + left[j-r]);
-      basis[r] := saved + right[r+1] * temp;
-      deriv[r] := dsaved - j * temp;
-      saved := left[j-r] * temp;
-      dsaved := j * temp;
+      Temp := Basis[r] / (Right[r+1] + Left[j-r]);
+      Basis[r] := Saved + Right[r+1] * Temp;
+      Deriv[r] := dSaved - j * Temp;
+      Saved := Left[j-r] * Temp;
+      dSaved := j * Temp;
     end;
-    basis[j] := saved;
-    deriv[j] := dsaved;
+    Basis[j] := Saved;
+    Deriv[j] := dSaved;
   end;
 
-  FreeAndNil(left);
-  FreeAndNil(right);
+  FreeAndNil(Left);
+  FreeAndNil(Right);
 end;
 
 function NurbsCurvePoint(const Points: PVector3Array;
@@ -298,20 +298,20 @@ function NurbsCurvePoint(const Points: PVector3Array;
 var
   i: Integer;
   w, duw: Single;
-  span: LongInt;
-  basis, deriv: TDoubleList;
+  Span: LongInt;
+  Basis, Deriv: TDoubleList;
   UseWeight: boolean;
   du: TVector3;
-  index: Cardinal;
+  Index: Cardinal;
 begin
   UseWeight := Cardinal(Weight.Count) = PointsCount;
 
-  basis := TDoubleList.Create; basis.Count := order;
-  deriv := TDoubleList.Create; deriv.Count := order;
+  Basis := TDoubleList.Create; Basis.Count := Order;
+  Deriv := TDoubleList.Create; Deriv.Count := Order;
 
-  span := findSpan(PointsCount, order, u, Knot);
+  Span := FindSpan(PointsCount, Order, u, Knot);
 
-  basisFuns(span, u, order, Knot, basis, deriv);
+  BasisFuns(Span, u, Order, Knot, Basis, Deriv);
 
   Result := TVector3.Zero;
   du := TVector3.Zero;
@@ -319,19 +319,19 @@ begin
   w := 0.0;
   duw := 0.0;
 
-  for i := 0 to order-1 do
+  for i := 0 to Order-1 do
   begin
-    index := span - order + 1 + i;
-    Result := Result + (Points^[index] * basis[i]);
-    du := du + (Points^[index] * deriv[i]);
+    Index := Span - Order + 1 + i;
+    Result := Result + (Points^[Index] * Basis[i]);
+    du := du + (Points^[Index] * Deriv[i]);
     if UseWeight then
     begin
-      w := w + (weight[index] * basis[i]);
-      duw := duw + (weight[index] * deriv[i]);
+      w := w + (Weight[Index] * Basis[i]);
+      duw := duw + (Weight[Index] * Deriv[i]);
     end else
     begin
-      w := w + basis[i];
-      duw := duw + deriv[i];
+      w := w + Basis[i];
+      duw := duw + Deriv[i];
     end;
   end;
 
@@ -343,8 +343,8 @@ begin
     Tangent^.NormalizeMe;
   end;
 
-  FreeAndNil(basis);
-  FreeAndNil(deriv);
+  FreeAndNil(Basis);
+  FreeAndNil(Deriv);
 end;
 
 function NurbsSurfacePoint(const Points: TVector3List;
@@ -357,10 +357,10 @@ var
   uBasis, vBasis, uDeriv, vDeriv: TDoubleList;
   uSpan, vSpan: LongInt;
   I, J: LongInt;
-  uBase, vBase, index: Cardinal;
+  uBase, vBase, Index: Cardinal;
   du, dv, un, vn: TVector3;
   w, duw, dvw: Single;
-  gain, dugain, dvgain: Single;
+  Gain, duGain, dvGain: Single;
   P: TVector3;
   UseWeight: boolean;
 begin
@@ -374,13 +374,13 @@ begin
   uSpan := findSpan(uDimension, uOrder, u, uKnot);
   vSpan := findSpan(vDimension, vOrder, v, vKnot);
 
-  basisFuns(uSpan, u, uOrder, uKnot, uBasis, uDeriv);
-  basisFuns(vSpan, v, vOrder, vKnot, vBasis, vDeriv);
+  BasisFuns(uSpan, u, uOrder, uKnot, uBasis, uDeriv);
+  BasisFuns(vSpan, v, vOrder, vKnot, vBasis, vDeriv);
 
-  uBase := uSpan-uOrder+1;
-  vBase := vSpan-vOrder+1;
+  uBase := uSpan - uOrder + 1;
+  vBase := vSpan - vOrder + 1;
 
-  index := vBase*uDimension + uBase;
+  Index := vBase * uDimension + uBase;
   Result := TVector3.Zero;
   du := TVector3.Zero;
   dv := TVector3.Zero;
@@ -393,30 +393,30 @@ begin
   begin
     for i := 0 to uOrder - 1 do
     begin
-      gain := uBasis[i] * vBasis[j];
-      dugain := uDeriv[i] * vBasis[j];
-      dvgain := uBasis[i] * vDeriv[j];
+      Gain := uBasis[i] * vBasis[j];
+      duGain := uDeriv[i] * vBasis[j];
+      dvGain := uBasis[i] * vDeriv[j];
 
-      P := Points.List^[index];
+      P := Points.List^[Index];
 
-      Result := Result + (P * gain);
+      Result := Result + (P * Gain);
 
-      du := du + (P * dugain);
-      dv := dv + (P * dvgain);
+      du := du + (P * duGain);
+      dv := dv + (P * dvGain);
       if UseWeight then
       begin
-        w := w + (weight[index] * gain);
-        duw := duw + (weight[index] * dugain);
-        dvw := dvw + (weight[index] * dvgain);
+        w := w + (Weight[Index] * Gain);
+        duw := duw + (Weight[Index] * duGain);
+        dvw := dvw + (Weight[Index] * dvGain);
       end else
       begin
-        w := w + gain;
-        duw := duw + dugain;
-        dvw := dvw + dvgain;
+        w := w + Gain;
+        duw := duw + duGain;
+        dvw := dvw + dvGain;
       end;
-      Inc(index);
+      Inc(Index);
     end;
-    index := index + (uDimension - uOrder);
+    Index := Index + (uDimension - uOrder);
   end;
 
   Result := Result / w;
@@ -425,8 +425,8 @@ begin
   begin
     un := (du - Result * duw) / w;
     vn := (dv - Result * dvw) / w;
-    normal^ := TVector3.CrossProduct(un, vn);
-    normal^.NormalizeMe;
+    Normal^ := TVector3.CrossProduct(un, vn);
+    Normal^.NormalizeMe;
   end;
 
   FreeAndNil(uBasis);
@@ -484,7 +484,7 @@ begin
 
           Segments := (Dimension - 1) div (Order - 1);
           if (Dimension - 1) mod (Order - 1) <> 0 then
-            raise EInvalidPiecewiseBezierCount.CreateFmt('Invalid NURBS curve control points count (%d) for a piecewise Bezier curve with order %d',
+            raise EInvalidPiecewiseBezierCount.CreateFmt('Invalid NURBS curve control points count (%d) for a piecewise Bezier curve with Order %d',
               [Dimension, Order]);
 
           for I := 0 to Order - 1 do
@@ -539,7 +539,7 @@ begin
       end;
     end;
   end else
-  { Otherwise, all the weights are assumed 1.0 }
+  { Otherwise, all the Weights are assumed 1.0 }
     Result := CalculateBoundingBox(Point);
 end;
 
@@ -591,7 +591,7 @@ begin
       end;
     end;
   end else
-  { Otherwise, all the weights are assumed 1.0 }
+  { Otherwise, all the Weights are assumed 1.0 }
     Result := CalculateBoundingBox(Point, Transform);
 end;
 
@@ -605,7 +605,9 @@ begin
   WeightDouble := Weight.ToDouble;
   try
     Result := NurbsBoundingBox(Point, WeightDouble, Transform);
-  finally FreeAndNil(WeightDouble) end;
+  finally
+    FreeAndNil(WeightDouble)
+  end;
 end;
 
 end.

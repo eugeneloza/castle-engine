@@ -303,7 +303,9 @@ begin
   SectorsVisited := TSectorList.Create(false);
   try
     Result := FindWayToSectorEnd(SectorBegin, 0);
-  finally SectorsVisited.Free end;
+  finally
+    SectorsVisited.Free
+  end;
 end;
 
 end.

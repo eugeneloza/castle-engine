@@ -534,7 +534,7 @@ end;
 
 function TOctreeNode.ItemsCount: integer;
 begin
- Result := ItemsIndices.Count;
+  Result := ItemsIndices.Count;
 end;
 
 procedure TOctreeNode.AddItem(ItemIndex: integer);
@@ -567,7 +567,8 @@ begin
     Check(AsLeaf, 'TOctreeNode.Create error: attempt to create non-leaf'
       +' node with empty bounding box');
     AMiddlePoint := Vector3(0, 0, 0);
-  end else
+  end
+  else
     AMiddlePoint := ABox.Center;
 
   CreateBase(ABox, AParentTree, AParentNode, ADepth, AsLeaf, AMiddlePoint);
@@ -653,7 +654,8 @@ begin
     SubnodeLow[i] := false;
     SubnodeHigh[i] := true;
     if ABox.Data[0].Data[i] >= MiddlePoint[i] then
-      SubnodeLow[i] := true else
+      SubnodeLow[i] := true
+    else
     if ABox.Data[1].Data[i] < MiddlePoint[i] then
       SubnodeHigh[i] := false;
   end;
@@ -889,7 +891,7 @@ function TOctree.Statistics: string;
     const LeafNodesCount, ItemsInLeafsCount, NonLeafNodesCount: Cardinal);
   begin
     Result := Result + Format(
-      '  %-12s%4d leaves (%6d items in leaves), %4d non-leaf nodes.' +nl,
+      '  %-12s%4d leaves (%6d items in leaves), %4d non-leaf nodes.' + nl,
       [Header, LeafNodesCount, ItemsInLeafsCount, NonLeafNodesCount]);
   end;
 
@@ -935,14 +937,14 @@ begin
     Result := 'Octree statistics :' + NL;
     for I := 0 to MaxDepth do
     begin
-      WritelnStatLine('Depth '+Format('%3d',[I])+' :',
+      WritelnStatLine('Depth ' + Format('%3d',[I]) + ' :',
         LeafNodes[I], ItemsInLeafs[I], NonLeafNodes[I]);
 
       if (NonLeafNodes[I] = 0) then
       begin
         if i < MaxDepth then
          Result := Result + Format(
-           '  No nodes on lower depths (%d ... %d).' + NL, [I+1, MaxDepth]);
+           '  No nodes on lower depths (%d ... %d).' + NL, [I + 1, MaxDepth]);
         break;
       end;
     end;
@@ -975,8 +977,8 @@ end;
 function OctreeSubnodeIndexToNiceStr(const SI: TOctreeSubnodeIndex): string;
 begin
   Result :=
-    BoolToStr(SI[0], true) +'-'+
-    BoolToStr(SI[1], true) +'-'+
+    BoolToStr(SI[0], true) + '-' +
+    BoolToStr(SI[1], true) + '-' +
     BoolToStr(SI[2], true);
 end;
 
