@@ -207,7 +207,7 @@ end;
     (src/NodeNurbsCurve.cpp) and NodeNurbsSurface.
     *Almost* exactly identical, the only difference: NodeNurbsSurface
     had these two additional lines (safety check, included in my version):
-      if ((Right[r+1] + Left[j-r]) == 0)
+      if ((Right[r + 1] + Left[j - r]) == 0)
           return;
 }
 function FindSpan(const Dimension, Order: LongInt;
@@ -263,23 +263,23 @@ begin
   Basis[0] := 1.0;
   for j := 1 to  Order - 1 do
   begin
-    Left[j] := u - Knot[Span+1-j];
-    Right[j] := Knot[Span+j]-u;
+    Left[j] := u - Knot[Span + 1 - j];
+    Right[j] := Knot[Span + j] - u;
     Saved := 0.0;
     dSaved := 0.0;
     for r := 0 to j - 1 do
     begin
-      if (Right[r+1] + Left[j-r]) = 0 then
+      if (Right[r + 1] + Left[j - r]) = 0 then
       begin
         { Or we could use try..finally, at a (very very small) speed penalty. }
         FreeAndNil(Left);
         FreeAndNil(Right);
         Exit;
       end;
-      Temp := Basis[r] / (Right[r+1] + Left[j-r]);
-      Basis[r] := Saved + Right[r+1] * Temp;
+      Temp := Basis[r] / (Right[r + 1] + Left[j - r]);
+      Basis[r] := Saved + Right[r + 1] * Temp;
       Deriv[r] := dSaved - j * Temp;
-      Saved := Left[j-r] * Temp;
+      Saved := Left[j - r] * Temp;
       dSaved := j * Temp;
     end;
     Basis[j] := Saved;
