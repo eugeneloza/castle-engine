@@ -231,7 +231,7 @@
 
     { Key shortcut for this menu item.
 
-      When user presses indicated Key (if it's not K_None)
+      When user presses indicated Key (if it's not keyNone)
       or CharKey (if it's not #0) then DoClick will be called
       (which results in TCastleWindowCustom.EventMenuClick,
       and TCastleWindowCustom.OnMenuClick,
@@ -249,7 +249,7 @@
 
       You should use at most one of these properties, not both.
       So either use Key or CharKey, and leave the other one at default
-      value (Key = K_None, CharKey = #0).
+      value (Key = keyNone, CharKey = #0).
 
       The CharKey values within range CtrlA..CtrlZ mean
       that user must press the given letter with Ctrl modfier. This rule
@@ -262,7 +262,7 @@
       The CharKey values above do @bold(not) mean the backspace or tab or enter
       keys, they mean the combination of Ctrl key + respective letter.
       If you want to have backspace/tab/enter keys to activate the menu item,
-      use Key = K_BackSpace, Key = K_Tab or Key =  K_Enter.
+      use Key = keyBackSpace, Key = keyTab or Key =  keyEnter.
 
       TODO: for now, this must be assigned before adding this menu item
       to parent (actually, before the parent menu is added to window MainMenu)
@@ -271,7 +271,7 @@
 
       @groupBegin }
     property CharKey: char read FCharKey write FCharKey default #0;
-    property Key: TKey read FKey write FKey default K_None;
+    property Key: TKey read FKey write FKey default keyNone;
     { @groupEnd }
 
     { Modifiers (shift, ctrl and such) required to activate this menu item.
@@ -289,7 +289,7 @@
 
     { Returns as S the string that describes key shortcut
       (@link(CharKey), @link(Key), @link(Modifiers)) and then returns true.
-      If both CharKey = #0 and Key = K_None then returns false and
+      If both CharKey = #0 and Key = keyNone then returns false and
       S is undefined. }
     function KeyString(out S: string): boolean;
 
@@ -727,17 +727,17 @@ begin
     Exit(false);
 
   { For CtrlH (= CharBackspace), *do not* match backspace key. }
-  if (Key = K_None) and (CharKey = CharBackSpace) then
-    Result := (ACharKey = CharBackSpace) and not (AKey = K_BackSpace) else
+  if (Key = keyNone) and (CharKey = CharBackSpace) then
+    Result := (ACharKey = CharBackSpace) and not (AKey = keyBackSpace) else
 
-  if (Key = K_None) and (CharKey = CharEnter) then
-    Result := (ACharKey = CharEnter) and not (AKey = K_Enter) else
+  if (Key = keyNone) and (CharKey = CharEnter) then
+    Result := (ACharKey = CharEnter) and not (AKey = keyEnter) else
 
-  if (Key = K_None) and (CharKey = CharTab) then
-    Result := (ACharKey = CharTab) and not (AKey = K_Tab) else
+  if (Key = keyNone) and (CharKey = CharTab) then
+    Result := (ACharKey = CharTab) and not (AKey = keyTab) else
 
     Result :=
-      ( (AKey <> K_None) and (Key = AKey) ) or
+      ( (AKey <> keyNone) and (Key = AKey) ) or
       ( (ACharKey <> #0) and (CharKey = ACharKey) );
 end;
 
@@ -1079,7 +1079,7 @@ end;
 
 constructor TMenuItemToggleFullScreen.Create(const InitialFullScreen: boolean);
 begin
-  inherited Create('_Full Screen', 0, K_F11, InitialFullScreen, true);
+  inherited Create('_Full Screen', 0, keyF11, InitialFullScreen, true);
   {$ifdef DARWIN} Modifiers := [mkCtrl]; {$endif}
 end;
 

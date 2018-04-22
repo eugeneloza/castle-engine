@@ -204,7 +204,7 @@ type
         @item(TCastleWindowCustom.RenderStyle is reset to rs2D.)
         @item(TCastleWindowCustom.MainMenu.Enabled will be reset to @false (only if MainMenu <> nil).)
 
-        @item(TCastleWindowDemo.SwapFullScreen_Key will be reset to K_None.)
+        @item(TCastleWindowDemo.SwapFullScreen_Key will be reset to keyNone.)
         @item(TCastleWindowDemo.Close_charkey will be reset to #0.)
 
         @item(All TCastleWindowCustom.Controls are temporarily removed.)
@@ -404,7 +404,7 @@ begin
     Window.MainMenu.Enabled := false;
   {Window.MainMenu := leave current value}
   Window.InternalCursor := mcDefault;
-  Window.SwapFullScreen_Key := K_None;
+  Window.SwapFullScreen_Key := keyNone;
   Window.Close_charkey := #0;
   if Window is TCastleWindowTouch then
     TCastleWindowTouch(Window).AutomaticTouchInterface := false;
@@ -431,7 +431,7 @@ constructor TGLMode.Create(AWindow: TCastleWindowCustom);
         Window.Container.EventRelease(InputKey(Window.MousePosition, Key, '', ModifiersDown(Window.Container.Pressed)));
     for C := Low(C) to High(C) do
       if Window.Pressed.Characters[C] then
-        Window.Container.EventRelease(InputKey(Window.MousePosition, K_None, C, ModifiersDown(Window.Container.Pressed)));
+        Window.Container.EventRelease(InputKey(Window.MousePosition, keyNone, C, ModifiersDown(Window.Container.Pressed)));
   end;
 
 begin

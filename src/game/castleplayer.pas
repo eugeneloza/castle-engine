@@ -1430,25 +1430,25 @@ initialization
     of menu entries in "Configure controls". }
 
   PlayerInput_Forward := TInputShortcut.Create(nil, 'Move forward', 'move_forward', igBasic);
-  PlayerInput_Forward.Assign(K_W, K_Up);
+  PlayerInput_Forward.Assign(keyW, keyUp);
   PlayerInput_Backward := TInputShortcut.Create(nil, 'Move backward', 'move_backward', igBasic);
-  PlayerInput_Backward.Assign(K_S, K_Down);
+  PlayerInput_Backward.Assign(keyS, keyDown);
   PlayerInput_LeftRot := TInputShortcut.Create(nil, 'Turn left', 'turn_left', igBasic);
-  PlayerInput_LeftRot.Assign(K_Left);
+  PlayerInput_LeftRot.Assign(keyLeft);
   PlayerInput_RightRot := TInputShortcut.Create(nil, 'Turn right', 'turn_right', igBasic);
-  PlayerInput_RightRot.Assign(K_Right);
+  PlayerInput_RightRot.Assign(keyRight);
   PlayerInput_LeftStrafe := TInputShortcut.Create(nil, 'Move left', 'move_left', igBasic);
-  PlayerInput_LeftStrafe.Assign(K_A);
+  PlayerInput_LeftStrafe.Assign(keyA);
   PlayerInput_RightStrafe := TInputShortcut.Create(nil, 'Move right', 'move_right', igBasic);
-  PlayerInput_RightStrafe.Assign(K_D);
+  PlayerInput_RightStrafe.Assign(keyD);
   PlayerInput_UpRotate := TInputShortcut.Create(nil, 'Look up', 'look_up', igBasic);
-  PlayerInput_UpRotate.Assign(K_None);
+  PlayerInput_UpRotate.Assign(keyNone);
   PlayerInput_DownRotate := TInputShortcut.Create(nil, 'Look down', 'look_down', igBasic);
-  PlayerInput_DownRotate.Assign(K_None);
+  PlayerInput_DownRotate.Assign(keyNone);
   PlayerInput_GravityUp := TInputShortcut.Create(nil, 'Look straight', 'look_straight', igBasic);
-  PlayerInput_GravityUp.Assign(K_None);
+  PlayerInput_GravityUp.Assign(keyNone);
   PlayerInput_Jump := TInputShortcut.Create(nil, 'Jump (or fly/swim up)', 'move_up', igBasic);
-  PlayerInput_Jump.Assign(K_Space);
+  PlayerInput_Jump.Assign(keySpace);
   PlayerInput_Crouch := TInputShortcut.Create(nil, 'Crouch (or fly/swim down)', 'move_down', igBasic);
-  PlayerInput_Crouch.Assign(K_C);
+  PlayerInput_Crouch.Assign(keyC);
 end.

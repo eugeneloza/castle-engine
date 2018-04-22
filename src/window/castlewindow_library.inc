@@ -488,7 +488,7 @@ procedure CGEApp_KeyDown(eKey: CInt32); cdecl;
 begin
   try
     CheckMainWindow;
-    if TKey(eKey)<>K_None then
+    if TKey(eKey) <> keyNone then
       // TODO: calculate sensible char
       Application.MainWindow.DoKeyDown(TKey(eKey), #0);
   except
@@ -500,7 +500,7 @@ procedure CGEApp_KeyUp(eKey: CInt32); cdecl;
 begin
   try
     CheckMainWindow;
-    if TKey(eKey)<>K_None then
+    if TKey(eKey) <> keyNone then
       Application.MainWindow.DoKeyUp(TKey(eKey));
   except
     on E: TObject do WritelnWarning('CGEApp_KeyUp', ExceptMessage(E));

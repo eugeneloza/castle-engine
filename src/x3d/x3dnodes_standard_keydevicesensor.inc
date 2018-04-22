@@ -24,7 +24,7 @@
       This is used by TCastleSceneCore to communicate with this key sensor.
 
       Semantics follow TInputPressRelease behavior for EventType = itKey.
-      This means that Key may be K_None (if not
+      This means that Key may be keyNone (if not
       representable as TKey) and C may be #0 (if not representable as char),
       but not both --- at least one of Key or C must contains something useful.
       Also, key presses are affected
@@ -135,15 +135,15 @@ function KeyToActionKey(Key: TKey; out ActionKey: Integer): boolean;
 begin
   Result := true;
   case Key of
-    K_F1 .. K_F12 : ActionKey := Ord(Key) - Ord(K_F1) + 1;
-    K_Home     : ActionKey := 13;
-    K_End      : ActionKey := 14;
-    K_PageUp   : ActionKey := 15;
-    K_PageDown : ActionKey := 16;
-    K_Up       : ActionKey := 17;
-    K_Down     : ActionKey := 18;
-    K_Left     : ActionKey := 19;
-    K_Right    : ActionKey := 20;
+    keyF1 .. keyF12 : ActionKey := Ord(Key) - Ord(keyF1) + 1;
+    keyHome         : ActionKey := 13;
+    keyEnd          : ActionKey := 14;
+    keyPageUp       : ActionKey := 15;
+    keyPageDown     : ActionKey := 16;
+    keyUp           : ActionKey := 17;
+    keyDown         : ActionKey := 18;
+    keyLeft         : ActionKey := 19;
+    keyRight        : ActionKey := 20;
     else Result := false;
   end;
 end;
@@ -225,9 +225,9 @@ begin
       EventIsActive.Send(true, Time);
     end;
     case Key of
-      K_Alt  : HandleSpecial(AltKey, EventAltKey);
-      K_Ctrl : HandleSpecial(ControlKey, EventControlKey);
-      K_Shift: HandleSpecial(ShiftKey, EventShiftKey);
+      keyAlt  : HandleSpecial(AltKey, EventAltKey);
+      keyCtrl : HandleSpecial(ControlKey, EventControlKey);
+      keyShift: HandleSpecial(ShiftKey, EventShiftKey);
     end;
   end;
 end;
@@ -260,9 +260,9 @@ begin
       EventIsActive.Send(false, Time);
     end;
     case Key of
-      K_Alt  : HandleSpecial(AltKey, EventAltKey);
-      K_Ctrl : HandleSpecial(ControlKey, EventControlKey);
-      K_Shift: HandleSpecial(ShiftKey, EventShiftKey);
+      keyAlt  : HandleSpecial(AltKey, EventAltKey);
+      keyCtrl : HandleSpecial(ControlKey, EventControlKey);
+      keyShift: HandleSpecial(ShiftKey, EventShiftKey);
     end;
   end;
   inherited;
@@ -299,7 +299,7 @@ procedure TStringSensorNode.KeyDown(Key: TKey; C: char; const Time: TX3DTime);
 begin
   inherited;
 
-  if FdEnabled.Value and ( (C <> #0) or (Key in [K_BackSpace, K_Enter]) ) then
+  if FdEnabled.Value and ( (C <> #0) or (Key in [keyBackSpace, keyEnter]) ) then
   begin
     if not Active then
     begin
@@ -307,12 +307,12 @@ begin
       EventIsActive.Send(Active, Time);
     end;
 
-    { Catch both CharBackspace and K_BackSpace.
+    { Catch both CharBackspace and keyBackSpace.
       Catching CharBackspace is not enough, because it's also equal to Ctrl+H.
       Same for CharEnter: it's also equal to Ctrl+M.
       And Ctrl+... may be often used by some menu items, see e.g. view3dscene. }
 
-    if (C = CharBackspace) or (Key = K_BackSpace) then
+    if (C = CharBackspace) or (Key = keyBackSpace) then
     begin
       if FdDeletionAllowed.Value and (EnteredText <> '') then
       begin
@@ -320,7 +320,7 @@ begin
         EventEnteredText.Send(EnteredText, Time);
       end;
     end else
-    if (C = CharEnter) or (Key = K_Enter) then
+    if (C = CharEnter) or (Key = keyEnter) then
     begin
       EventFinalText.Send(EnteredText, Time);
       { X3D spec says explicitly that in this case, enteredText event

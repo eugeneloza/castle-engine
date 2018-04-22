@@ -640,7 +640,7 @@ var
   MyCharKey: char;
 begin
   KeyLCLToCastle(Key, Shift, MyKey, MyCharKey);
-  if (MyKey <> K_None) or (MyCharKey <> #0) then
+  if (MyKey <> keyNone) or (MyCharKey <> #0) then
     DoKeyDown(MyKey, MyCharKey);
 end;
 
@@ -651,7 +651,7 @@ var
   MyCharKey: char;
 begin
   KeyLCLToCastle(Key, Shift, MyKey, MyCharKey);
-  if MyKey <> K_None then
+  if MyKey <> keyNone then
     DoKeyUp(MyKey);
 end;
 

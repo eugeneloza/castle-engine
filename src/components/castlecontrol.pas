@@ -950,9 +950,9 @@ end;
 
 procedure TCastleControlCustom.UpdateShiftState(const Shift: TShiftState);
 begin
-  Pressed.Keys[K_Shift] := ssShift in Shift;
-  Pressed.Keys[K_Alt  ] := ssAlt   in Shift;
-  Pressed.Keys[K_Ctrl ] := ssCtrl  in Shift;
+  Pressed.Keys[keyShift] := ssShift in Shift;
+  Pressed.Keys[keyAlt  ] := ssAlt   in Shift;
+  Pressed.Keys[keyCtrl ] := ssCtrl  in Shift;
 end;
 
 procedure TCastleControlCustom.KeyDown(var Key: Word; Shift: TShiftState);
@@ -972,7 +972,7 @@ begin
     // Ch already pressed
     ((Ch = #0) or Pressed.Characters[Ch]);
 
-  if (MyKey <> K_None) or (Ch <> #0) then
+  if (MyKey <> keyNone) or (Ch <> #0) then
     Pressed.KeyDown(MyKey, Ch);
 
   UpdateShiftState(Shift); { do this after Pressed update above, and before EventPress }
@@ -991,7 +991,7 @@ begin
 
   inherited KeyDown(Key, Shift); { LCL OnKeyDown before our callbacks }
 
-  if (MyKey <> K_None) or (Ch <> #0) then
+  if (MyKey <> keyNone) or (Ch <> #0) then
   begin
     Event := InputKey(MousePosition, MyKey, Ch);
     Event.KeyRepeated := KeyRepeated;
@@ -1006,7 +1006,7 @@ var
   Ch: char;
 begin
   KeyLCLToCastle(Key, Shift, MyKey, Ch);
-  if MyKey <> K_None then
+  if MyKey <> keyNone then
     Pressed.KeyUp(MyKey, Ch);
 
   UpdateShiftState(Shift); { do this after Pressed update above, and before EventRelease }
@@ -1021,7 +1021,7 @@ begin
 
   inherited KeyUp(Key, Shift); { LCL OnKeyUp before our callbacks }
 
-  if (MyKey <> K_None) or (Ch <> #0) then
+  if (MyKey <> keyNone) or (Ch <> #0) then
     if Container.EventRelease(InputKey(MousePosition, MyKey, Ch)) then
       Key := 0; // handled
 end;

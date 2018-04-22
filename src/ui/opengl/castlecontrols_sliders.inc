@@ -276,7 +276,7 @@ begin
   inherited;
   { left / right arrow keys pressed are already handled by slider }
   if HandleInput and ExclusiveEvents and
-     (Container.Pressed[K_Right] or Container.Pressed[K_Left]) then
+     (Container.Pressed[keyRight] or Container.Pressed[keyLeft]) then
     HandleInput := false;
 end;
 
@@ -332,7 +332,7 @@ begin
   Result := inherited;
   if Result then Exit;
 
-  if Event.IsKey(K_Right) then
+  if Event.IsKey(keyRight) then
   begin
     if MultipleOf <> 0 then
       Value := Math.Min(Max, Value + MultipleOf) else
@@ -340,7 +340,7 @@ begin
     DoChange;
     Result := ExclusiveEvents;
   end else
-  if Event.IsKey(K_Left) then
+  if Event.IsKey(keyLeft) then
   begin
     if MultipleOf <> 0 then
       Value := Math.Max(Min, Value - MultipleOf) else
@@ -483,13 +483,13 @@ begin
   Result := inherited;
   if Result then Exit;
 
-  if Event.IsKey(K_Right) then
+  if Event.IsKey(keyRight) then
   begin
     Value := Math.Min(Max, Value + ValueChange);
     DoChange;
     Result := ExclusiveEvents;
   end else
-  if Event.IsKey(K_Left) then
+  if Event.IsKey(keyLeft) then
   begin
     Value := Math.Max(Min, Value - ValueChange);
     DoChange;

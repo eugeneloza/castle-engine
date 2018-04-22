@@ -1315,19 +1315,19 @@ begin
   {$ifdef MSWINDOWS}
   { It seems that GTK 1.3 for Windows cannot translate GDK_KEY_Escape and
     GDK_KEY_Return to standard chars (#13 and #27). So I'm fixing it here. }
-  if Key = K_Escape then
+  if Key = keyEscape then
     Result := CharEscape
   else
-  if Key = K_Enter then
+  if Key = keyEnter then
     Result := CharEnter
   else
   {$endif}
   { It seems that GTK 2 doesn't translate backspace and tab to
     appropriate chars. So I'm fixing it here. }
-  if Key = K_Tab then
+  if Key = keyTab then
     Result := CharTab
   else
-  if Key = K_BackSpace then
+  if Key = keyBackSpace then
     Result := CharBackSpace
   else
 

@@ -263,82 +263,82 @@ function gdk_screen_get_primary_monitor(Screen: PGdkScreen): GInt;
   cdecl; external gdklib name 'gdk_screen_get_primary_monitor';
 
 { Converts GDK keysym (from gdkkeysyms.pp, or gdk/gdkkeysym.h) to
-  K_Xxx constant (from Keys unit). Returns K_None if no conversion is possible
+  keyXxx constant (from Keys unit). Returns keyNone if no conversion is possible
   (gdk keysym has no corresponding TKey value). }
 function GdkKeysymToKey(GdkKeysym: guint): TKey;
 begin
  case GdkKeysym of
-  GDK_KEY_BackSpace: Result := K_BackSpace;
-  GDK_KEY_Tab: Result := K_Tab;
-  GDK_KEY_Return: Result := K_Enter;
+  GDK_KEY_BackSpace: Result := keyBackSpace;
+  GDK_KEY_Tab: Result := keyTab;
+  GDK_KEY_Return: Result := keyEnter;
 
-  GDK_KEY_Escape: Result := K_Escape;
-  GDK_KEY_Space: Result := K_Space;
-  GDK_KEY_Page_Up:  Result := K_PageUp;
-  GDK_KEY_Page_Down: Result := K_PageDown;
-  GDK_KEY_End: Result := K_End;
-  GDK_KEY_Home: Result := K_Home;
-  GDK_KEY_Left: Result := K_Left;
-  GDK_KEY_Up: Result := K_Up;
-  GDK_KEY_Right: Result := K_Right;
-  GDK_KEY_Down: Result := K_Down;
-  GDK_KEY_Insert: Result := K_Insert;
-  GDK_KEY_Delete: Result := K_Delete;
-  GDK_KEY_BracketLeft: Result := K_LeftBracket;
-  GDK_KEY_BracketRight: Result := K_RightBracket;
+  GDK_KEY_Escape: Result := keyEscape;
+  GDK_KEY_Space: Result := keySpace;
+  GDK_KEY_Page_Up:  Result := keyPageUp;
+  GDK_KEY_Page_Down: Result := keyPageDown;
+  GDK_KEY_End: Result := keyEnd;
+  GDK_KEY_Home: Result := keyHome;
+  GDK_KEY_Left: Result := keyLeft;
+  GDK_KEY_Up: Result := keyUp;
+  GDK_KEY_Right: Result := keyRight;
+  GDK_KEY_Down: Result := keyDown;
+  GDK_KEY_Insert: Result := keyInsert;
+  GDK_KEY_Delete: Result := keyDelete;
+  GDK_KEY_BracketLeft: Result := keyLeftBracket;
+  GDK_KEY_BracketRight: Result := keyRightBracket;
 
-  GDK_KEY_KP_Add: Result := K_Numpad_Plus;
-  GDK_KEY_KP_Subtract: Result := K_Numpad_Minus;
+  GDK_KEY_KP_Add: Result := keyNumpad_Plus;
+  GDK_KEY_KP_Subtract: Result := keyNumpad_Minus;
 
-  GDK_KEY_0..GDK_KEY_9: Result := TKey(Ord(K_0) + GdkKeysym - GDK_KEY_0);
+  GDK_KEY_0..GDK_KEY_9: Result := TKey(Ord(key0) + GdkKeysym - GDK_KEY_0);
 
-  GDK_KEY_Capital_A..GDK_KEY_Capital_Z: Result := TKey(Ord(K_A) + GdkKeysym - GDK_KEY_Capital_A);
-  GDK_KEY_A        ..GDK_KEY_Z        : Result := TKey(Ord(K_A) + GdkKeysym - GDK_KEY_A);
+  GDK_KEY_Capital_A..GDK_KEY_Capital_Z: Result := TKey(Ord(keyA) + GdkKeysym - GDK_KEY_Capital_A);
+  GDK_KEY_A        ..GDK_KEY_Z        : Result := TKey(Ord(keyA) + GdkKeysym - GDK_KEY_A);
 
-  GDK_KEY_F1..GDK_KEY_F12: Result := TKey(Ord(K_F1) + GdkKeysym - GDK_KEY_F1);
+  GDK_KEY_F1..GDK_KEY_F12: Result := TKey(Ord(keyF1) + GdkKeysym - GDK_KEY_F1);
 
-  GDK_KEY_Comma: Result := K_Comma;
-  GDK_KEY_Period: Result := K_Period;
-  GDK_KEY_Print: Result := K_PrintScreen;
-  GDK_KEY_Caps_Lock: Result := K_CapsLock;
-  GDK_KEY_Scroll_Lock: Result := K_ScrollLock;
-  GDK_KEY_Num_Lock: Result := K_NumLock;
-  GDK_KEY_Pause: Result := K_Pause;
+  GDK_KEY_Comma: Result := keyComma;
+  GDK_KEY_Period: Result := keyPeriod;
+  GDK_KEY_Print: Result := keyPrintScreen;
+  GDK_KEY_Caps_Lock: Result := keyCapsLock;
+  GDK_KEY_Scroll_Lock: Result := keyScrollLock;
+  GDK_KEY_Num_Lock: Result := keyNumLock;
+  GDK_KEY_Pause: Result := keyPause;
 
-  GDK_KEY_KP_0: Result := K_Numpad_0;
-  GDK_KEY_KP_1: Result := K_Numpad_1;
-  GDK_KEY_KP_2: Result := K_Numpad_2;
-  GDK_KEY_KP_3: Result := K_Numpad_3;
-  GDK_KEY_KP_4: Result := K_Numpad_4;
-  GDK_KEY_KP_5: Result := K_Numpad_5;
-  GDK_KEY_KP_6: Result := K_Numpad_6;
-  GDK_KEY_KP_7: Result := K_Numpad_7;
-  GDK_KEY_KP_8: Result := K_Numpad_8;
-  GDK_KEY_KP_9: Result := K_Numpad_9;
-  GDK_KEY_KP_End: Result := K_Numpad_End;
-  GDK_KEY_KP_Down: Result := K_Numpad_Down;
-  GDK_KEY_KP_Next: Result := K_Numpad_PageDown;
-  GDK_KEY_KP_Left: Result := K_Numpad_Left;
-  GDK_KEY_KP_Begin: Result := K_Numpad_Begin;
-  GDK_KEY_KP_Right: Result := K_Numpad_Right;
-  GDK_KEY_KP_Home: Result := K_Numpad_Home;
-  GDK_KEY_KP_Up: Result := K_Numpad_Up;
-  GDK_KEY_KP_Prior: Result := K_Numpad_PageUp;
-  GDK_KEY_KP_Insert: Result := K_Numpad_Insert;
-  GDK_KEY_KP_Delete: Result := K_Numpad_Delete;
-  GDK_KEY_KP_Enter: Result := K_Numpad_Enter;
-  GDK_KEY_KP_Multiply: Result := K_Numpad_Multiply;
-  GDK_KEY_KP_Divide: Result := K_Numpad_Divide;
-  GDK_KEY_Apostrophe: Result := K_Apostrophe;
-  GDK_KEY_Semicolon: Result := K_Semicolon;
-  GDK_KEY_Slash: Result := K_Slash;
-  GDK_KEY_Grave: Result := K_BackQuote;
-  GDK_KEY_Minus: Result := K_Minus;
-  GDK_KEY_Plus: Result := K_Plus;
-  GDK_KEY_Equal: Result := K_Equal;
-  GDK_KEY_BackSlash: Result := K_BackSlash;
+  GDK_KEY_KP_0: Result := keyNumpad_0;
+  GDK_KEY_KP_1: Result := keyNumpad_1;
+  GDK_KEY_KP_2: Result := keyNumpad_2;
+  GDK_KEY_KP_3: Result := keyNumpad_3;
+  GDK_KEY_KP_4: Result := keyNumpad_4;
+  GDK_KEY_KP_5: Result := keyNumpad_5;
+  GDK_KEY_KP_6: Result := keyNumpad_6;
+  GDK_KEY_KP_7: Result := keyNumpad_7;
+  GDK_KEY_KP_8: Result := keyNumpad_8;
+  GDK_KEY_KP_9: Result := keyNumpad_9;
+  GDK_KEY_KP_End: Result := keyNumpad_End;
+  GDK_KEY_KP_Down: Result := keyNumpad_Down;
+  GDK_KEY_KP_Next: Result := keyNumpad_PageDown;
+  GDK_KEY_KP_Left: Result := keyNumpad_Left;
+  GDK_KEY_KP_Begin: Result := keyNumpad_Begin;
+  GDK_KEY_KP_Right: Result := keyNumpad_Right;
+  GDK_KEY_KP_Home: Result := keyNumpad_Home;
+  GDK_KEY_KP_Up: Result := keyNumpad_Up;
+  GDK_KEY_KP_Prior: Result := keyNumpad_PageUp;
+  GDK_KEY_KP_Insert: Result := keyNumpad_Insert;
+  GDK_KEY_KP_Delete: Result := keyNumpad_Delete;
+  GDK_KEY_KP_Enter: Result := keyNumpad_Enter;
+  GDK_KEY_KP_Multiply: Result := keyNumpad_Multiply;
+  GDK_KEY_KP_Divide: Result := keyNumpad_Divide;
+  GDK_KEY_Apostrophe: Result := keyApostrophe;
+  GDK_KEY_Semicolon: Result := keySemicolon;
+  GDK_KEY_Slash: Result := keySlash;
+  GDK_KEY_Grave: Result := keyBackQuote;
+  GDK_KEY_Minus: Result := keyMinus;
+  GDK_KEY_Plus: Result := keyPlus;
+  GDK_KEY_Equal: Result := keyEqual;
+  GDK_KEY_BackSlash: Result := keyBackSlash;
 
-  else Result := K_None;
+  else Result := keyNone;
  end;
 end;
 
@@ -527,7 +527,7 @@ SIGNAL_WINDOW_BEGIN
    Key := GdkKeysymToKey(Event^.KeyVal);
    StringKey := Event^._string;
 
-   if (Key <> K_None) or (StringKey <> '') then DoKeyDown(Key, StringKey);
+   if (Key <> keyNone) or (StringKey <> '') then DoKeyDown(Key, StringKey);
   end;
  end;
 
@@ -559,7 +559,7 @@ SIGNAL_WINDOW_BEGIN
   GDK_KEY_Alt_R:     SetPrivateModifiersDown(mkAlt,   true,  false);
   else begin
    Key := GdkKeysymToKey(Event^.KeyVal);
-   if Key <> K_None then DoKeyUp(Key);
+   if Key <> keyNone then DoKeyUp(Key);
   end;
  end;
 

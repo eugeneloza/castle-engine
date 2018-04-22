@@ -192,12 +192,12 @@ procedure TCastleScrollView.Update(const SecondsPassed: Single;
   begin
     if ScrollBarVisible and HandleInput then
     begin
-      if Container.Pressed[K_Up  ] then
+      if Container.Pressed[keyUp] then
       begin
         Scroll := Scroll - KeyScrollSpeed * SecondsPassed;
         TimeSinceDraggingStopped := 0;
       end;
-      if Container.Pressed[K_Down] then
+      if Container.Pressed[keyDown] then
       begin
         Scroll := Scroll + KeyScrollSpeed * SecondsPassed;
         TimeSinceDraggingStopped := 0;
@@ -297,20 +297,20 @@ begin
 
     This way we allow TStateDialog (that uses TDialog that uses TCastleScrollView)
     descendants like TStateDialogKey to handle
-    K_PageDown, K_PageUp, K_Home and K_End keys and mouse wheel.
+    keyPageDown, keyPageUp, keyHome and keyEnd keys and mouse wheel.
     And this is very good for MessageKey,
     when it's used e.g. to allow user to choose any TKey.
     Otherwise MessageKey would not be able to return
-    K_PageDown, K_PageUp, etc. keys. }
+    keyPageDown, keyPageUp, etc. keys. }
 
   if ScrollBarVisible then
     case Event.EventType of
       itKey:
         case Event.Key of
-          K_PageUp:   begin Scroll := Scroll - Height; Result := ExclusiveEvents; end;
-          K_PageDown: begin Scroll := Scroll + Height; Result := ExclusiveEvents; end;
-          K_Home:     begin Scroll := ScrollMin; Result := ExclusiveEvents; end;
-          K_End:      begin Scroll := ScrollMax; Result := ExclusiveEvents; end;
+          keyPageUp:   begin Scroll := Scroll - Height; Result := ExclusiveEvents; end;
+          keyPageDown: begin Scroll := Scroll + Height; Result := ExclusiveEvents; end;
+          keyHome:     begin Scroll := ScrollMin; Result := ExclusiveEvents; end;
+          keyEnd:      begin Scroll := ScrollMax; Result := ExclusiveEvents; end;
         end;
       itMouseButton:
         begin

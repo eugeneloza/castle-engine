@@ -2039,9 +2039,9 @@ type
   T3BoolKeys = array [0..2, boolean] of TKey;
 const
   DefaultInputs_Move: T3BoolKeys =
-    ((K_Left, K_Right), (K_Down, K_Up), (K_None, K_None));
+    ((keyLeft, keyRight), (keyDown, keyUp), (keyNone, keyNone));
   DefaultInputs_Rotate: T3BoolKeys =
-    ((K_Up, K_Down), (K_Left, K_Right), (K_None, K_None));
+    ((keyUp, keyDown), (keyLeft, keyRight), (keyNone, keyNone));
   CoordToStr: array [0..2] of string = ('X', 'Y', 'Z');
   IncreaseToStr: array [boolean] of string = ('Dec', 'Inc');
 var
@@ -2081,22 +2081,22 @@ begin
   FInput_ScaleLarger  := TInputShortcut.Create(Self);
    Input_ScaleLarger.Name := 'Input_ScaleLarger';
    Input_ScaleLarger.SetSubComponent(true);
-   Input_ScaleLarger.Assign(K_Numpad_Plus, K_None, '+');
+   Input_ScaleLarger.Assign(keyNumpad_Plus, keyNone, '+');
 
   FInput_ScaleSmaller := TInputShortcut.Create(Self);
    Input_ScaleSmaller.Name := 'Input_ScaleSmaller';
    Input_ScaleSmaller.SetSubComponent(true);
-   Input_ScaleSmaller.Assign(K_Numpad_Minus, K_None, '-');
+   Input_ScaleSmaller.Assign(keyNumpad_Minus, keyNone, '-');
 
   FInput_Home := TInputShortcut.Create(Self);
    Input_Home.Name := 'Input_Home';
    Input_Home.SetSubComponent(true);
-   Input_Home.Assign(K_None);
+   Input_Home.Assign(keyNone);
 
   FInput_StopRotating := TInputShortcut.Create(Self);
    Input_StopRotating.Name := 'Input_StopRotating';
    Input_StopRotating.SetSubComponent(true);
-   Input_StopRotating.Assign(K_Space, K_None, #0, true, mbLeft);
+   Input_StopRotating.Assign(keySpace, keyNone, #0, true, mbLeft);
 end;
 
 destructor TExamineCamera.Destroy;
@@ -2916,24 +2916,24 @@ begin
   FInput_Crouch                  := TInputShortcut.Create(Self);
   FInput_Run                     := TInputShortcut.Create(Self);
 
-  Input_Forward                 .Assign(K_W, K_Up);
-  Input_Backward                .Assign(K_S, K_Down);
-  Input_LeftRot                 .Assign(K_Left);
-  Input_RightRot                .Assign(K_Right);
-  Input_LeftStrafe              .Assign(K_A);
-  Input_RightStrafe             .Assign(K_D);
-  Input_UpRotate                .Assign(K_None);
-  Input_DownRotate              .Assign(K_None);
-  Input_IncreasePreferredHeight .Assign(K_Insert);
-  Input_DecreasePreferredHeight .Assign(K_Delete);
-  Input_GravityUp               .Assign(K_None);
+  Input_Forward                 .Assign(keyW, keyUp);
+  Input_Backward                .Assign(keyS, keyDown);
+  Input_LeftRot                 .Assign(keyLeft);
+  Input_RightRot                .Assign(keyRight);
+  Input_LeftStrafe              .Assign(keyA);
+  Input_RightStrafe             .Assign(keyD);
+  Input_UpRotate                .Assign(keyNone);
+  Input_DownRotate              .Assign(keyNone);
+  Input_IncreasePreferredHeight .Assign(keyInsert);
+  Input_DecreasePreferredHeight .Assign(keyDelete);
+  Input_GravityUp               .Assign(keyNone);
   { For move speed we use also character codes +/-, as numpad
     may be hard to reach on some keyboards (e.g. on laptops). }
-  Input_MoveSpeedInc            .Assign(K_Numpad_Plus , K_None, '+');
-  Input_MoveSpeedDec            .Assign(K_Numpad_Minus, K_None, '-');
-  Input_Jump                    .Assign(K_Space);
-  Input_Crouch                  .Assign(K_C);
-  Input_Run                     .Assign(K_Shift);
+  Input_MoveSpeedInc            .Assign(keyNumpad_Plus , keyNone, '+');
+  Input_MoveSpeedDec            .Assign(keyNumpad_Minus, keyNone, '-');
+  Input_Jump                    .Assign(keySpace);
+  Input_Crouch                  .Assign(keyC);
+  Input_Run                     .Assign(keyShift);
 
   Input_Forward                .SetSubComponent(true);
   Input_Backward               .SetSubComponent(true);
