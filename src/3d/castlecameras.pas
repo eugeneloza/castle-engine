@@ -2081,12 +2081,12 @@ begin
   FInput_ScaleLarger  := TInputShortcut.Create(Self);
    Input_ScaleLarger.Name := 'Input_ScaleLarger';
    Input_ScaleLarger.SetSubComponent(true);
-   Input_ScaleLarger.Assign(keyNumpad_Plus, keyNone, '+');
+   Input_ScaleLarger.Assign(keyNumpadPlus, keyNone, '+');
 
   FInput_ScaleSmaller := TInputShortcut.Create(Self);
    Input_ScaleSmaller.Name := 'Input_ScaleSmaller';
    Input_ScaleSmaller.SetSubComponent(true);
-   Input_ScaleSmaller.Assign(keyNumpad_Minus, keyNone, '-');
+   Input_ScaleSmaller.Assign(keyNumpadMinus, keyNone, '-');
 
   FInput_Home := TInputShortcut.Create(Self);
    Input_Home.Name := 'Input_Home';
@@ -2929,8 +2929,8 @@ begin
   Input_GravityUp               .Assign(keyNone);
   { For move speed we use also character codes +/-, as numpad
     may be hard to reach on some keyboards (e.g. on laptops). }
-  Input_MoveSpeedInc            .Assign(keyNumpad_Plus , keyNone, '+');
-  Input_MoveSpeedDec            .Assign(keyNumpad_Minus, keyNone, '-');
+  Input_MoveSpeedInc            .Assign(keyNumpadPlus , keyNone, '+');
+  Input_MoveSpeedDec            .Assign(keyNumpadMinus, keyNone, '-');
   Input_Jump                    .Assign(keySpace);
   Input_Crouch                  .Assign(keyC);
   Input_Run                     .Assign(keyShift);

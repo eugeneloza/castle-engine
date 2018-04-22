@@ -200,8 +200,8 @@ begin
     VK_DOWN: Result := keyDown;
     VK_INSERT: Result := keyInsert;
     VK_DELETE: Result := keyDelete;
-    VK_ADD: Result := keyNumpad_Plus;
-    VK_SUBTRACT: Result := keyNumpad_Minus;
+    VK_ADD: Result := keyNumpadPlus;
+    VK_SUBTRACT: Result := keyNumpadMinus;
     VK_SNAPSHOT: Result := keyPrintScreen;
     VK_NUMLOCK: Result := keyNumLock;
     VK_SCROLL: Result := keyScrollLock;
@@ -209,19 +209,19 @@ begin
     VK_PAUSE: Result := keyPause;
     VK_OEM_COMMA: Result := keyComma;
     VK_OEM_PERIOD: Result := keyPeriod;
-    VK_NUMPAD0: Result := keyNumpad_0;
-    VK_NUMPAD1: Result := keyNumpad_1;
-    VK_NUMPAD2: Result := keyNumpad_2;
-    VK_NUMPAD3: Result := keyNumpad_3;
-    VK_NUMPAD4: Result := keyNumpad_4;
-    VK_NUMPAD5: Result := keyNumpad_5;
-    VK_NUMPAD6: Result := keyNumpad_6;
-    VK_NUMPAD7: Result := keyNumpad_7;
-    VK_NUMPAD8: Result := keyNumpad_8;
-    VK_NUMPAD9: Result := keyNumpad_9;
-    VK_CLEAR: Result := keyNumpad_Begin;
-    VK_MULTIPLY: Result := keyNumpad_Multiply;
-    VK_DIVIDE: Result := keyNumpad_Divide;
+    VK_NUMPAD0: Result := keyNumpad0;
+    VK_NUMPAD1: Result := keyNumpad1;
+    VK_NUMPAD2: Result := keyNumpad2;
+    VK_NUMPAD3: Result := keyNumpad3;
+    VK_NUMPAD4: Result := keyNumpad4;
+    VK_NUMPAD5: Result := keyNumpad5;
+    VK_NUMPAD6: Result := keyNumpad6;
+    VK_NUMPAD7: Result := keyNumpad7;
+    VK_NUMPAD8: Result := keyNumpad8;
+    VK_NUMPAD9: Result := keyNumpad9;
+    VK_CLEAR: Result := keyNumpadBegin;
+    VK_MULTIPLY: Result := keyNumpadMultiply;
+    VK_DIVIDE: Result := keyNumpadDivide;
     VK_OEM_MINUS: Result := keyMinus;
     VK_OEM_PLUS: Result := keyPlus;
 
@@ -240,17 +240,17 @@ begin
   end;
 
   { Note that CastleWindow WinAPI will never generate Press/Release with these keys:
-      keyNumpad_End;
-      keyNumpad_Down;
-      keyNumpad_PageDown;
-      keyNumpad_Left;
-      keyNumpad_Right;
-      keyNumpad_Home;
-      keyNumpad_Up;
-      keyNumpad_PageUp;
-      keyNumpad_Insert;
-      keyNumpad_Delete;
-      keyNumpad_Enter;
+      keyNumpadEnd;
+      keyNumpadDown;
+      keyNumpadPageDown;
+      keyNumpadLeft;
+      keyNumpadRight;
+      keyNumpadHome;
+      keyNumpadUp;
+      keyNumpadPageUp;
+      keyNumpadInsert;
+      keyNumpadDelete;
+      keyNumpadEnter;
     because (as far as I can see) they are undistinguishable from normal,
     non-numpad key codes under WinAPI.
 
