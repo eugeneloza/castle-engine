@@ -131,7 +131,6 @@ procedure check_header(s:gz_streamp); forward;
 ============================================================================}
 
 function gzopen(const Stream: TStream; const WriteMode:boolean) : gzFile;
-
 var
   err      : integer;
   level    : integer;        { compression level }
@@ -160,7 +159,8 @@ begin
   s^.gzStream := Stream;
   s^.WriteMode := WriteMode;
 
-  if WriteMode then begin
+  if WriteMode then
+  begin
 {$IFDEF NO_DEFLATE}
     err := Z_STREAM_ERROR;
 {$ELSE}
@@ -171,28 +171,32 @@ begin
     GetMem (s^.outbuf, Z_BUFSIZE);
     s^.stream.next_out := s^.outbuf;
 {$ENDIF}
-    if (err <> Z_OK) or (s^.outbuf = nil) then begin
-      destroy(s);
+    if (err <> Z_OK) or (s^.outbuf = nil) then
+    begin
+      Destroy(s);
       raise Exception.Create('Error when opening gz stream');
     end;
   end
 
-  else begin
+  else
+  begin
     GetMem (s^.inbuf, Z_BUFSIZE);
     s^.stream.next_in := s^.inbuf;
 
     err := inflateInit2_ (s^.stream, -MAX_WBITS, ZLIB_VERSION, sizeof(z_stream));
         { windowBits is passed < 0 to tell that there is no zlib header }
 
-    if (err <> Z_OK) or (s^.inbuf = nil) then begin
-      destroy(s);
+    if (err <> Z_OK) or (s^.inbuf = nil) then
+    begin
+      Destroy(s);
       raise Exception.Create('Error when opening gz stream');
     end;
   end;
 
   s^.stream.avail_out := Z_BUFSIZE;
 
-  if WriteMode then begin { Write a very simple .gz header }
+  if WriteMode then
+  begin { Write a very simple .gz header }
 {$IFNDEF NO_DEFLATE}
     gzheader [0] := gz_magic [0];
     gzheader [1] := gz_magic [1];
@@ -208,7 +212,8 @@ begin
     s^.startpos := longint(10);
 {$ENDIF}
   end
-  else begin
+  else
+  begin
     check_header(s); { skip the .gz header }
     s^.startpos := s^.gzStream.Position - s^.stream.avail_in;
   end;
@@ -223,27 +228,26 @@ end;
 
 ============================================================================}
 
-function gzsetparams (f:gzfile; level:integer; strategy:integer) : integer;
-
+function gzsetparams (f: gzfile; level: integer; strategy: integer): integer;
 var
-
-  s : gz_streamp;
+  s: gz_streamp;
   written: integer;
-
 begin
-
   s := gz_streamp(f);
 
-  if (s = nil) or not s^.WriteMode then begin
+  if (s = nil) or not s^.WriteMode then
+  begin
     gzsetparams := Z_STREAM_ERROR;
-    exit;
+    Exit;
   end;
 
   { Make room to allow flushing }
-  if (s^.stream.avail_out = 0) then begin
+  if (s^.stream.avail_out = 0) then
+  begin
     s^.stream.next_out := s^.outbuf;
     written := s^.gzStream.Write(s^.outbuf^, Z_BUFSIZE);
-    if (written <> Z_BUFSIZE) then s^.z_err := Z_ERRNO;
+    if (written <> Z_BUFSIZE) then
+      s^.z_err := Z_ERRNO;
     s^.stream.avail_out := Z_BUFSIZE;
   end;
 
@@ -259,20 +263,22 @@ end;
 
 ============================================================================}
 
-function get_byte (s:gz_streamp) : integer;
-
+function get_byte(s: gz_streamp): integer;
 begin
-  if s^.z_eof then begin
+  if s^.z_eof then
+  begin
     get_byte := Z_EOF;
-    exit;
+    Exit;
   end;
 
-  if s^.stream.avail_in=0 then begin
+  if s^.stream.avail_in=0 then
+  begin
     s^.stream.avail_in := s^.gzStream.Read(s^.inbuf^, Z_BUFSIZE);
-    if s^.stream.avail_in=0 then begin
+    if s^.stream.avail_in=0 then
+    begin
       s^.z_eof := true;
       get_byte := Z_EOF;
-      exit;
+      Exit;
     end;
     s^.stream.next_in := s^.inbuf;
   end;
@@ -289,18 +295,19 @@ end;
 
 ============================================================================}
 {
-function getLong (s:gz_streamp) : cardinal;
+function getLong(s: gz_streamp): cardinal;
 var
-  x  : array [0..3] of byte;
-  i  : byte;
-  c  : integer;
-  n1 : longint;
-  n2 : longint;
+  x : array [0..3] of byte;
+  i : byte;
+  c : integer;
+  n1: longint;
+  n2: longint;
 begin
-
-  for i:=0 to 3 do begin
+  for i:=0 to 3 do
+  begin
     c := get_byte(s);
-    if (c = Z_EOF) then s^.z_err := Z_DATA_ERROR;
+    if (c = Z_EOF) then
+      s^.z_err := Z_DATA_ERROR;
     x[i] := (c and $FF)
   end;
   n1 := (ush(x[3] shl 8)) or x[2];
@@ -308,10 +315,10 @@ begin
   getlong := (n1 shl 16) or n2;
 end;
 }
-function getLong(s : gz_streamp) : cardinal;
+function getLong(s: gz_streamp): cardinal;
 var
-  x : packed array [0..3] of byte;
-  c : integer;
+  x: packed array [0..3] of byte;
+  c: integer;
 begin
   { x := cardinal(get_byte(s));  - you can't do this with TP, no unsigned longint }
 {$ifdef ENDIAN_BIG}
@@ -346,65 +353,74 @@ end;
 
 ============================================================================}
 
-procedure check_header (s:gz_streamp);
-
+procedure check_header(s: gz_streamp);
 var
-
   method : integer;  { method byte }
   flags  : integer;  { flags byte }
   len    : cardinal;
   c      : integer;
-
 begin
-
   { Check the gzip magic header }
-  for len := 0 to 1 do begin
+  for len := 0 to 1 do
+  begin
     c := get_byte(s);
-    if (c <> gz_magic[len]) then begin
-      if (len <> 0) then begin
+    if (c <> gz_magic[len]) then
+    begin
+      if (len <> 0) then
+      begin
         Inc(s^.stream.avail_in);
         Dec(s^.stream.next_in);
       end;
-      if (c <> Z_EOF) then begin
+      if (c <> Z_EOF) then
+      begin
         Inc(s^.stream.avail_in);
         Dec(s^.stream.next_in);
 	s^.transparent := TRUE;
       end;
-      if (s^.stream.avail_in <> 0) then s^.z_err := Z_OK
-      else s^.z_err := Z_STREAM_END;
-      exit;
+      if (s^.stream.avail_in <> 0) then
+        s^.z_err := Z_OK
+      else
+        s^.z_err := Z_STREAM_END;
+      Exit;
     end;
   end;
 
   method := get_byte(s);
   flags := get_byte(s);
-  if (method <> Z_DEFLATED) or ((flags and RESERVED) <> 0) then begin
+  if (method <> Z_DEFLATED) or ((flags and RESERVED) <> 0) then
+  begin
     s^.z_err := Z_DATA_ERROR;
-    exit;
+    Exit;
   end;
 
-  for len := 0 to 5 do get_byte(s); { Discard time, xflags and OS code }
+  for len := 0 to 5 do
+    get_byte(s); { Discard time, xflags and OS code }
 
-  if ((flags and EXTRA_FIELD) <> 0) then begin { skip the extra field }
+  if ((flags and EXTRA_FIELD) <> 0) then
+  begin { skip the extra field }
     len := cardinal(get_byte(s));
     len := len + (cardinal(get_byte(s)) shl 8);
     { len is garbage if EOF but the loop below will quit anyway }
-    while (len <> 0) and (get_byte(s) <> Z_EOF) do Dec(len);
+    while (len <> 0) and (get_byte(s) <> Z_EOF) do
+      Dec(len);
   end;
 
-  if ((flags and ORIG_NAME) <> 0) then begin { skip the original file name }
+  if ((flags and ORIG_NAME) <> 0) then
+  begin { skip the original file name }
     repeat
       c := get_byte(s);
     until (c = 0) or (c = Z_EOF);
   end;
 
-  if ((flags and COMMENT) <> 0) then begin { skip the .gz file comment }
+  if ((flags and COMMENT) <> 0) then
+  begin { skip the .gz file comment }
     repeat
       c := get_byte(s);
     until (c = 0) or (c = Z_EOF);
   end;
 
-  if ((flags and HEAD_CRC) <> 0) then begin { skip the header crc }
+  if ((flags and HEAD_CRC) <> 0) then
+  begin { skip the header crc }
     get_byte(s);
     get_byte(s);
   end;
@@ -424,32 +440,34 @@ end;
 
 ============================================================================}
 
-function destroy (var s:gz_streamp) : integer;
-
+function Destroy(var s: gz_streamp): integer;
 begin
-
   destroy := Z_OK;
 
-  if not Assigned (s) then begin
-    destroy := Z_STREAM_ERROR;
-    exit;
+  if not Assigned (s) then
+  begin
+    Destroy := Z_STREAM_ERROR;
+    Exit;
   end;
 
-  if (s^.stream.state <> nil) then begin
+  if (s^.stream.state <> nil) then
+  begin
     if s^.WriteMode then
     begin
 {$IFDEF NO_DEFLATE}
-      destroy := Z_STREAM_ERROR;
+      Destroy := Z_STREAM_ERROR;
 {$ELSE}
-      destroy := deflateEnd(s^.stream);
+      Destroy := deflateEnd(s^.stream);
 {$ENDIF}
-    end else
+    end
+    else
     begin
-      destroy := inflateEnd(s^.stream);
+      Destroy := inflateEnd(s^.stream);
     end;
   end;
 
-  if (s^.z_err < 0) then destroy := s^.z_err;
+  if (s^.z_err < 0) then 
+    Destroy := s^.z_err;
 
   if Assigned (s^.inbuf) then
     FreeMem(s^.inbuf, Z_BUFSIZE);
@@ -471,10 +489,8 @@ end;
 
 ============================================================================}
 
-function gzread (f:gzFile; buf:pointer; len:cardinal) : integer;
-
+function gzread(f: gzFile; buf: pointer; len: cardinal): integer;
 var
-
   s         : gz_streamp;
   start     : Pbyte;
   n         : cardinal;
@@ -489,52 +505,61 @@ begin
   s := gz_streamp(f);
   start := Pbyte(buf); { starting point for crc computation }
 
-  if (s = nil) or s^.WriteMode then begin
+  if (s = nil) or s^.WriteMode then
+  begin
     gzread := Z_STREAM_ERROR;
-    exit;
+    Exit;
   end;
 
-  if (s^.z_err = Z_DATA_ERROR) or (s^.z_err = Z_ERRNO) then begin
+  if (s^.z_err = Z_DATA_ERROR) or (s^.z_err = Z_ERRNO) then
+  begin
     gzread := -1;
-    exit;
+    Exit;
   end;
 
-  if (s^.z_err = Z_STREAM_END) then begin
+  if (s^.z_err = Z_STREAM_END) then
+  begin
     gzread := 0;  { EOF }
-    exit;
+    Exit;
   end;
 
   s^.stream.next_out := Pbyte(buf);
   s^.stream.avail_out := len;
 
-  while (s^.stream.avail_out <> 0) do begin
+  while (s^.stream.avail_out <> 0) do
+  begin
 
-    if (s^.transparent = true) then begin
+    if (s^.transparent = true) then
+    begin
       { Copy first the lookahead bytes: }
       n := s^.stream.avail_in;
-      if (n > s^.stream.avail_out) then n := s^.stream.avail_out;
-      if (n > 0) then begin
+      if (n > s^.stream.avail_out) then
+        n := s^.stream.avail_out;
+      if (n > 0) then
+      begin
         move(s^.stream.next_in^,s^.stream.next_out^,n);
-        inc (s^.stream.next_out, n);
-        inc (s^.stream.next_in, n);
-        dec (s^.stream.avail_out, n);
-        dec (s^.stream.avail_in, n);
+        inc(s^.stream.next_out, n);
+        inc(s^.stream.next_in, n);
+        dec(s^.stream.avail_out, n);
+        dec(s^.stream.avail_in, n);
       end;
-      if (s^.stream.avail_out > 0) then begin
+      if (s^.stream.avail_out > 0) then
+      begin
         bytes := s^.gzStream.Read(s^.stream.next_out^, s^.stream.avail_out);
-        dec (s^.stream.avail_out, cardinal(bytes));
+        dec(s^.stream.avail_out, cardinal(bytes));
       end;
-      dec (len, s^.stream.avail_out);
-      inc (s^.stream.total_in, cardinal(len));
-      inc (s^.stream.total_out, cardinal(len));
+      dec(len, s^.stream.avail_out);
+      inc(s^.stream.total_in, cardinal(len));
+      inc(s^.stream.total_out, cardinal(len));
       gzread := integer(len);
-      exit;
+      Exit;
     end; { IF transparent }
 
     if (s^.stream.avail_in = 0) and (s^.z_eof = false) then
     begin
       s^.stream.avail_in := s^.gzStream.Read(s^.inbuf^, Z_BUFSIZE);
-      if (s^.stream.avail_in = 0) then begin
+      if (s^.stream.avail_in = 0) then
+      begin
         s^.z_eof := true;
       end;
       s^.stream.next_in := s^.inbuf;
@@ -542,7 +567,8 @@ begin
 
     s^.z_err := inflate(s^.stream, Z_NO_FLUSH);
 
-    if (s^.z_err = Z_STREAM_END) then begin
+    if (s^.z_err = Z_STREAM_END) then
+    begin
       crclen := 0;
       crclen:=s^.stream.next_out-start;
       { Check CRC and original size }
@@ -552,28 +578,31 @@ begin
       filecrc := getLong (s);
       filelen := getLong (s);
 
-      if (s^.crc <> filecrc) or (s^.stream.total_out <> filelen)
-        then s^.z_err := Z_DATA_ERROR
-	else begin
-	  { Check for concatenated .gz files: }
-	  check_header(s);
-	  if (s^.z_err = Z_OK) then begin
-            total_in := s^.stream.total_in;
-            total_out := s^.stream.total_out;
+      if (s^.crc <> filecrc) or (s^.stream.total_out <> filelen) then
+        s^.z_err := Z_DATA_ERROR
+      else
+      begin
+	{ Check for concatenated .gz files: }
+        check_header(s);
+        if (s^.z_err = Z_OK) then
+        begin
+          total_in := s^.stream.total_in;
+          total_out := s^.stream.total_out;
 
-	    inflateReset (s^.stream);
-	    s^.stream.total_in := total_in;
-	    s^.stream.total_out := total_out;
-	    s^.crc := crc32 (0, nil, 0);
-	  end;
+	  inflateReset (s^.stream);
+	  s^.stream.total_in := total_in;
+	  s^.stream.total_out := total_out;
+	  s^.crc := crc32 (0, nil, 0);
+	end;
       end; {IF-THEN-ELSE}
     end;
 
-    if (s^.z_err <> Z_OK) or (s^.z_eof = true) then break;
+    if (s^.z_err <> Z_OK) or (s^.z_eof = true) then
+      Break;
 
   end; {WHILE}
 
-  crclen:=s^.stream.next_out-start;
+  crclen := s^.stream.next_out-start;
   s^.crc := crc32 (s^.crc, start, crclen);
   gzread := integer(len - s^.stream.avail_out);
 
@@ -587,14 +616,14 @@ end;
 
 ============================================================================}
 
-function gzgetc (f:gzfile) : integer;
-
-var c:byte;
-
+function gzgetc(f: gzfile): integer;
+var
+  c: byte;
 begin
-
-  if (gzread (f,@c,1) = 1) then gzgetc := c else gzgetc := -1;
-
+  if (gzread (f, @c, 1) = 1) then
+    gzgetc := c
+  else
+    gzgetc := -1;
 end;
 
 
@@ -609,31 +638,31 @@ end;
 
 ============================================================================}
 
-function gzgets (f:gzfile; buf:Pchar; len:integer) : Pchar;
-
+function gzgets(f: gzfile; buf: Pchar; len: integer): Pchar;
 var
-
   b      : Pchar; { start of buffer }
   bytes  : integer;   { number of bytes read by gzread }
   gzchar : char;  { char read by gzread }
-
 begin
-
-    if (buf = nil) or (len <= 0) then begin
+    if (buf = nil) or (len <= 0) then
+    begin
       gzgets := nil;
-      exit;
+      Exit;
     end;
 
     b := buf;
     repeat
-      dec (len);
+      Dec(len);
       bytes := gzread (f, buf, 1);
       gzchar := buf^;
-      inc (buf);
+      Inc(buf);
     until (len = 0) or (bytes <> 1) or (gzchar = Chr(13));
 
     buf^ := #0;
-    if (b = buf) and (len > 0) then gzgets := nil else gzgets := b;
+    if (b = buf) and (len > 0) then
+      gzgets := nil
+    else
+      gzgets := b;
 
 end;
 
@@ -648,39 +677,40 @@ end;
 
 ============================================================================}
 
-function gzwrite (f:gzfile; buf:pointer; len:cardinal) : integer;
-
+function gzwrite(f: gzfile; buf: pointer; len: cardinal): integer;
 var
-
   s : gz_streamp;
   written : integer;
-
 begin
-
     s := gz_streamp(f);
 
-    if (s = nil) or not s^.WriteMode then begin
+    if (s = nil) or not s^.WriteMode then
+    begin
       gzwrite := Z_STREAM_ERROR;
-      exit;
+      Exit;
     end;
 
     s^.stream.next_in := Pbyte(buf);
     s^.stream.avail_in := len;
 
-    while (s^.stream.avail_in <> 0) do begin
+    while (s^.stream.avail_in <> 0) do
+    begin
 
-      if (s^.stream.avail_out = 0) then begin
+      if (s^.stream.avail_out = 0) then
+      begin
         s^.stream.next_out := s^.outbuf;
         written := s^.gzStream.Write(s^.outbuf^, Z_BUFSIZE);
-        if (written <> Z_BUFSIZE) then begin
+        if (written <> Z_BUFSIZE) then
+        begin
           s^.z_err := Z_ERRNO;
-          break;
+          Break;
         end;
         s^.stream.avail_out := Z_BUFSIZE;
       end;
 
       s^.z_err := deflate(s^.stream, Z_NO_FLUSH);
-      if (s^.z_err <> Z_OK) then break;
+      if (s^.z_err <> Z_OK) then
+        Break;
 
     end; {WHILE}
 
@@ -705,7 +735,7 @@ end;
 
 function gzputc (f:gzfile; c:char) : integer;
 begin
-  if (gzwrite (f,@c,1) = 1) then
+  if (gzwrite (f, @c, 1) = 1) then
   {$IFDEF FPC}
     gzputc := integer(ord(c))
   {$ELSE}
@@ -724,9 +754,9 @@ end;
 
 ============================================================================}
 
-function gzputs (f:gzfile; s:Pchar) : integer;
+function gzputs(f: gzfile; s: Pchar): integer;
 begin
-  gzputs := gzwrite (f, pointer(s), strlen(s));
+  gzputs := gzwrite(f, pointer(s), strlen(s));
 end;
 
 
@@ -737,7 +767,7 @@ end;
 
 ============================================================================}
 
-function do_flush (f:gzfile; flush:integer) : integer;
+function do_flush(f: gzfile; flush: integer): integer;
 var
   len     : cardinal;
   done    : boolean;
@@ -747,43 +777,53 @@ begin
   done := false;
   s := gz_streamp(f);
 
-  if (s = nil) or not s^.WriteMode then begin
+  if (s = nil) or not s^.WriteMode then
+  begin
     do_flush := Z_STREAM_ERROR;
-    exit;
+    Exit;
   end;
 
   s^.stream.avail_in := 0; { should be zero already anyway }
 
-  while true do begin
+  while true do
+  begin
 
     len := Z_BUFSIZE - s^.stream.avail_out;
 
-    if (len <> 0) then begin
+    if (len <> 0) then
+    begin
       written := s^.gzStream.Write(s^.outbuf^, len);
-      if (written <> len) then begin
+      if (written <> len) then
+      begin
         s^.z_err := Z_ERRNO;
         do_flush := Z_ERRNO;
-        exit;
+        Exit;
       end;
       s^.stream.next_out := s^.outbuf;
       s^.stream.avail_out := Z_BUFSIZE;
     end;
 
-    if (done = true) then break;
+    if (done = true) then
+      Break;
     s^.z_err := deflate(s^.stream, flush);
 
     { Ignore the second of two consecutive flushes: }
-    if (len = 0) and (s^.z_err = Z_BUF_ERROR) then s^.z_err := Z_OK;
+    if (len = 0) and (s^.z_err = Z_BUF_ERROR) then
+      s^.z_err := Z_OK;
 
     { deflate has finished flushing only when it hasn't used up
       all the available space in the output buffer: }
 
     done := (s^.stream.avail_out <> 0) or (s^.z_err = Z_STREAM_END);
-    if (s^.z_err <> Z_OK) and (s^.z_err <> Z_STREAM_END) then break;
+    if (s^.z_err <> Z_OK) and (s^.z_err <> Z_STREAM_END) then
+      Break;
 
   end; {WHILE}
 
-  if (s^.z_err = Z_STREAM_END) then do_flush:=Z_OK else do_flush:=s^.z_err;
+  if (s^.z_err = Z_STREAM_END) then
+    do_flush:=Z_OK
+  else
+    do_flush:=s^.z_err;
 end;
 
 { GZFLUSH ===================================================================
@@ -800,7 +840,7 @@ end;
 
 ============================================================================}
 
-function gzflush (f:gzfile; flush:integer) : integer;
+function gzflush(f: gzfile; flush: integer): integer;
 var
   err : integer;
   s   : gz_streamp;
@@ -808,12 +848,16 @@ begin
   s := gz_streamp(f);
   err := do_flush (f, flush);
 
-  if (err <> 0) then begin
+  if (err <> 0) then
+  begin
     gzflush := err;
-    exit;
+    Exit;
   end;
 
-  if (s^.z_err = Z_STREAM_END) then gzflush := Z_OK else gzflush := s^.z_err;
+  if (s^.z_err = Z_STREAM_END) then
+    gzflush := Z_OK
+  else
+    gzflush := s^.z_err;
 end;
 
 {$ENDIF} (* NO DEFLATE *)
@@ -825,15 +869,16 @@ end;
 
 ============================================================================}
 
-function gzrewind (f:gzFile) : integer;
+function gzrewind(f: gzFile): integer;
 var
-  s:gz_streamp;
+  s: gz_streamp;
 begin
   s := gz_streamp(f);
 
-  if (s = nil) or s^.WriteMode then begin
+  if (s = nil) or s^.WriteMode then
+  begin
     gzrewind := -1;
-    exit;
+    Exit;
   end;
 
   s^.z_err := Z_OK;
@@ -841,10 +886,11 @@ begin
   s^.stream.avail_in := 0;
   s^.stream.next_in := s^.inbuf;
 
-  if (s^.startpos = 0) then begin { not a compressed file }
+  if (s^.startpos = 0) then
+  begin { not a compressed file }
     s^.gzStream.Position := 0;
     gzrewind := 0;
-    exit;
+    Exit;
   end;
 
   inflateReset(s^.stream);
@@ -865,94 +911,110 @@ end;
 
 ============================================================================}
 
-function gzseek (f:gzfile; offset:z_off_t; whence:integer) : z_off_t;
+function gzseek(f: gzfile; offset: z_off_t; whence: integer): z_off_t;
 var
-  s : gz_streamp;
-  size : cardinal;
+  s: gz_streamp;
+  size: cardinal;
 begin
   s := gz_streamp(f);
 
   if (s = nil) or (whence = SEEK_END) or (s^.z_err = Z_ERRNO)
-  or (s^.z_err = Z_DATA_ERROR) then begin
+  or (s^.z_err = Z_DATA_ERROR) then
+  begin
     gzseek := z_off_t(-1);
-    exit;
+    Exit;
   end;
 
-  if s^.WriteMode then begin
+  if s^.WriteMode then
+  begin
 {$IFDEF NO_DEFLATE}
     gzseek := z_off_t(-1);
-    exit;
+    Exit;
 {$ELSE}
-    if (whence = SEEK_SET) then dec(offset, s^.stream.total_out);
-    if (offset < 0) then begin;
+    if (whence = SEEK_SET) then
+      Dec(offset, s^.stream.total_out);
+    if (offset < 0) then
+    begin;
       gzseek := z_off_t(-1);
-      exit;
+      Exit;
     end;
 
     { At this point, offset is the number of zero bytes to write. }
-    if s^.inbuf=nil then begin
+    if s^.inbuf=nil then
+    begin
       getmem(s^.inbuf,Z_BUFSIZE);
       fillchar(s^.inbuf^,Z_BUFSIZE,0);
     end;
 
-    while (offset > 0) do begin
+    while (offset > 0) do
+    begin
       size := Z_BUFSIZE;
-      if (offset < Z_BUFSIZE) then size := cardinal(offset);
+      if (offset < Z_BUFSIZE) then
+        size := cardinal(offset);
 
       size := gzwrite(f, s^.inbuf, size);
-      if (size = 0) then begin
+      if (size = 0) then
+      begin
         gzseek := z_off_t(-1);
-        exit;
+        Exit;
       end;
 
-      dec (offset,size);
+      Dec(offset,size);
     end;
 
     gzseek := z_off_t(s^.stream.total_in);
-    exit;
+    Exit;
 {$ENDIF}
   end;
   { Rest of function is for reading only }
 
   { compute absolute position }
-  if (whence = SEEK_CUR) then inc (offset, s^.stream.total_out);
-  if (offset < 0) then begin
+  if (whence = SEEK_CUR) then
+    Inc(offset, s^.stream.total_out);
+  if (offset < 0) then
+  begin
     gzseek := z_off_t(-1);
-    exit;
+    Exit;
   end;
 
-  if (s^.transparent = true) then begin
+  if (s^.transparent = true) then
+  begin
     s^.stream.avail_in := 0;
     s^.stream.next_in := s^.inbuf;
     s^.gzStream.Position := offset;
     s^.stream.total_in := cardinal(offset);
     s^.stream.total_out := cardinal(offset);
     gzseek := z_off_t(offset);
-    exit;
+    Exit;
   end;
 
   { For a negative seek, rewind and use positive seek }
-  if (cardinal(offset) >= s^.stream.total_out)
-    then dec (offset, s^.stream.total_out)
-    else if (gzrewind(f) <> 0) then begin
-      gzseek := z_off_t(-1);
-      exit;
+  if (cardinal(offset) >= s^.stream.total_out) then
+    Dec (offset, s^.stream.total_out)
+  else
+  if (gzrewind(f) <> 0) then
+  begin
+    gzseek := z_off_t(-1);
+    Exit;
   end;
   { offset is now the number of bytes to skip. }
 
-  if (offset <> 0) and (s^.outbuf = nil)
-  then GetMem (s^.outbuf, Z_BUFSIZE);
+  if (offset <> 0) and (s^.outbuf = nil) then
+    GetMem (s^.outbuf, Z_BUFSIZE);
 
-  while (offset > 0) do begin
+  while (offset > 0) do
+  begin
     size := Z_BUFSIZE;
-    if (offset < Z_BUFSIZE) then size := integer(offset);
+    if (offset < Z_BUFSIZE) then
+      size := integer(offset);
 
     size := gzread (f, s^.outbuf, size);
-    if (size <= 0) then begin
+    if (size <= 0) then
+    begin
       gzseek := z_off_t(-1);
-      exit;
+      Exit;
     end;
-    dec(offset, size);
+    Dec(offset, size);
   end;
 
   gzseek := z_off_t(s^.stream.total_out);
@@ -967,7 +1029,7 @@ end;
 
 ============================================================================}
 
-function gztell (f:gzfile) : z_off_t;
+function gztell(f: gzfile): z_off_t;
 begin
   gztell := gzseek (f, 0, SEEK_CUR);
 end;
@@ -980,13 +1042,13 @@ end;
 
 ============================================================================}
 
-function gzeof (f:gzfile) : boolean;
+function gzeof(f: gzfile): boolean;
 var
-  s:gz_streamp;
+  s: gz_streamp;
 begin
   s := gz_streamp(f);
 
-  if (s=nil) or s^.WriteMode then
+  if (s = nil) or s^.WriteMode then
     gzeof := false
   else
     gzeof := s^.z_eof;
@@ -999,12 +1061,13 @@ end;
 
 ============================================================================}
 
-procedure putLong (var f:TStream; x:cardinal);
+procedure putLong(var f: TStream; x: cardinal);
 var
   n : integer;
   c : byte;
 begin
-  for n:=0 to 3 do begin
+  for n := 0 to 3 do
+  begin
     c := x and $FF;
     f.WriteBuffer(c, 1);
     x := x shr 8;
@@ -1021,26 +1084,29 @@ end;
 
 ============================================================================}
 
-function gzclose (f:gzFile) : integer;
+function gzclose(f: gzFile): integer;
 var
   err : integer;
   s   : gz_streamp;
 begin
   s := gz_streamp(f);
-  if (s = nil) then begin
+  if (s = nil) then
+  begin
     gzclose := Z_STREAM_ERROR;
-    exit;
+    Exit;
   end;
 
-  if s^.WriteMode then begin
+  if s^.WriteMode then
+  begin
 {$IFDEF NO_DEFLATE}
     gzclose := Z_STREAM_ERROR;
-    exit;
+    Exit;
 {$ELSE}
     err := do_flush (f, Z_FINISH);
-    if (err <> Z_OK) then begin
+    if (err <> Z_OK) then
+    begin
       gzclose := destroy (gz_streamp(f));
-      exit;
+      Exit;
     end;
 
     putLong (s^.gzStream, s^.crc);
@@ -1048,7 +1114,7 @@ begin
 {$ENDIF}
   end;
 
-  gzclose := destroy (gz_streamp(f));
+  gzclose := Destroy(gz_streamp(f));
 end;
 
 
@@ -1062,27 +1128,31 @@ end;
 
 ============================================================================}
 
-function gzerror (f:gzfile) : string;
+function gzerror(f: gzfile): string;
 var
  errnum:smallint;
  m : string;
  s : gz_streamp;
 begin
   s := gz_streamp(f);
-  if (s = nil) then begin
+  if (s = nil) then
+  begin
     errnum := Z_STREAM_ERROR;
     gzerror := zError(Z_STREAM_ERROR);
-    end;
+  end;
 
   errnum := s^.z_err;
-  if (errnum = Z_OK) then begin
+  if (errnum = Z_OK) then
+  begin
     gzerror := zError(Z_OK);
-    exit;
+    Exit;
   end;
 
   m := s^.stream.msg;
-  if (errnum = Z_ERRNO) then m := '';
-  if (m = '') then m := zError(s^.z_err);
+  if (errnum = Z_ERRNO) then
+    m := '';
+  if (m = '') then
+    m := zError(s^.z_err);
 
   s^.msg := m;
   gzerror := s^.msg;

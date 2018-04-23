@@ -183,30 +183,30 @@ begin
 
     These weights are copied from libpng manual. }
 
-  Result := (0.212671 * V.Data[0]+
-             0.715160 * V.Data[1]+
+  Result := (0.212671 * V.Data[0] +
+             0.715160 * V.Data[1] +
              0.072169 * V.Data[2]);
 end;
 
 function GrayscaleValue(const v: TCastleColorRGB): Single;
 begin
-  Result := 0.212671 * V.Data[0]+
-            0.715160 * V.Data[1]+
+  Result := 0.212671 * V.Data[0] +
+            0.715160 * V.Data[1] +
             0.072169 * V.Data[2];
 end;
 
 function GrayscaleValue(const v: TVector3Byte): Byte;
 begin
   // force multiplication as Word
-  Result := (Word(54 ) * V.Data[0]+
-             Word(183) * V.Data[1]+
+  Result := (Word(54 ) * V.Data[0] +
+             Word(183) * V.Data[1] +
              Word(19 ) * V.Data[2]) shr 8; //div 256;
 end;
 
 function GrayscaleValue(const v: TVector4Byte): Byte;
 begin
-  Result := (Word(54 ) * V.Data[0]+
-             Word(183) * V.Data[1]+
+  Result := (Word(54 ) * V.Data[0] +
+             Word(183) * V.Data[1] +
              Word(19 ) * V.Data[2]) shr 8; //div 256;
 end;
 
@@ -300,7 +300,8 @@ begin
   begin
     Result.Data[0] := 0;
     Result.Data[1] := 0;
-  end else
+  end
+  else
   begin
     { calculate hue }
     if V = Value.Data[0] then
@@ -308,9 +309,11 @@ begin
       Result.Data[0] := (Value.Data[1] - Value.Data[2]) / Chroma;
       if Result.Data[0] < 0 then
         Result.Data[0] := Result.Data[0] + 6.0;
-    end else
+    end
+    else
     if V = Value.Data[1] then
-      Result.Data[0] := (Value.Data[2] - Value.Data[0]) / Chroma + 2.0 else
+      Result.Data[0] := (Value.Data[2] - Value.Data[0]) / Chroma + 2.0
+    else
       Result.Data[0] := (Value.Data[0] - Value.Data[1]) / Chroma + 4.0;
 
     { calculate saturation }
@@ -374,9 +377,11 @@ begin
     interpolation from something colorful (like blue) to black go through
     weird hue. }
   if H1.Data[1] = 0 then
-    HOut.Data[0] := H2.Data[0] else
+    HOut.Data[0] := H2.Data[0]
+  else
   if H2.Data[1] = 0 then
-    HOut.Data[0] := H1.Data[0] else
+    HOut.Data[0] := H1.Data[0]
+  else
   begin
     HueDiff := H2.Data[0] - H1.Data[0];
     if HueDiff > 3 then
@@ -384,15 +389,19 @@ begin
       { from hue 1 to hue 2 go down through 0.0 }
       H2.Data[0] := H2.Data[0] - 6;
       HOut.Data[0] := H1.Data[0] + A * (H2.Data[0] - H1.Data[0]);
-      if HOut.Data[0] < 0 then HOut.Data[0] := HOut.Data[0] + 6;
-    end else
+      if HOut.Data[0] < 0 then
+        HOut.Data[0] := HOut.Data[0] + 6;
+    end
+    else
     if HueDiff < -3 then
     begin
       { from hue 1 to hue 2 go up through 6.0 }
       H2.Data[0] := H2.Data[0] + 6;
       HOut.Data[0] := H1.Data[0] + A * (H2.Data[0] - H1.Data[0]);
-      if HOut.Data[0] > 6 then HOut.Data[0] := HOut.Data[0] - 6;
-    end else
+      if HOut.Data[0] > 6 then
+        HOut.Data[0] := HOut.Data[0] - 6;
+    end
+    else
       { normal lerp when HueDiff inside [-3, 3] }
       HOut.Data[0] := H1.Data[0] + A * (H2.Data[0] - H1.Data[0]);
   end;
@@ -430,13 +439,15 @@ begin
       StrHexToInt(Copy(S, 1, 2)) / 255,
       StrHexToInt(Copy(S, 3, 2)) / 255,
       StrHexToInt(Copy(S, 5, 2)) / 255,
-      StrHexToInt(Copy(S, 7, 2)) / 255) else
+      StrHexToInt(Copy(S, 7, 2)) / 255)
+  else
   if Length(S) = 6 then
     Result := Vector4(
       StrHexToInt(Copy(S, 1, 2)) / 255,
       StrHexToInt(Copy(S, 3, 2)) / 255,
       StrHexToInt(Copy(S, 5, 2)) / 255,
-      1.0) else
+      1.0)
+  else
     raise EConvertError.CreateFmt('Invalid color hex string: "%s"', [S]);
 end;
 
@@ -447,7 +458,8 @@ begin
     Result := Vector3(
       StrHexToInt(Copy(S, 1, 2)) / 255,
       StrHexToInt(Copy(S, 3, 2)) / 255,
-      StrHexToInt(Copy(S, 5, 2)) / 255) else
+      StrHexToInt(Copy(S, 5, 2)) / 255)
+  else
     raise EConvertError.CreateFmt('Invalid color hex string: "%s"', [S]);
 end;
 
@@ -472,13 +484,15 @@ begin
     { for FadeIntensity in 1...FullWhiteEnd (going down):
       screen color := Color * original screen color }
     if FadeIntensity > FullWhiteEnd then
-      Result := Color else
+      Result := Color
+    else
     { for FadeIntensity in FullWhiteEnd...FullBlack (going down):
       final screen color changes:
       - from screen color := Color * original screen color
       - to   screen color := Color * MinScale * original screen color }
     if FadeIntensity > FullBlack then
-      Result := Color * MapRange(FadeIntensity, FullWhiteEnd, FullBlack, 1, MinScale) else
+      Result := Color * MapRange(FadeIntensity, FullWhiteEnd, FullBlack, 1, MinScale)
+    else
     { for FadeIntensity in FullBlack...0 (going down):
       final screen color changes:
       - from screen color := MinScale * original screen color
@@ -486,7 +500,8 @@ begin
       Result := White * MapRange(FadeIntensity, FullBlack, 0, MinScale, 1);
 
     Result.Data[3] := 1.0; { alpha always 1.0 in this case }
-  end else
+  end
+  else
     Result := TVector4.Zero;
 end;
 
@@ -500,11 +515,13 @@ begin
   if FadeIntensity > 0 then
   begin
     if FadeIntensity < FullTime then
-      Intensity := MapRange(FadeIntensity, 0, FullTime, 0, 1) else
+      Intensity := MapRange(FadeIntensity, 0, FullTime, 0, 1)
+    else
       Intensity := MapRange(FadeIntensity, FullTime, 1, 1, 0);
     Result := Color;
     Result.Data[3] := Intensity;
-  end else
+  end
+  else
     Result := TVector4.Zero;
 end;
 

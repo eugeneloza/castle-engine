@@ -183,46 +183,50 @@ class function TDynLib.Load(const AName: string; RaiseExceptionOnError: boolean)
     (it seems GLU requires that someone else loads GL symbols for it ?
     I really don't know. TO BE FIXED.) }
   begin
-   result:=
-     {$ifdef UNIX} TDynLibHandle( dlopen(AName,
-       { RTLD_GLOBAL cannot be used if you want to successfully open
-         libopenal.so on Android (tested necessity on Nexus 5).
-         It seems that RTLD_NOW or RTLD_LAZY don't matter.
-         Found thanks to mentions in
-         http://grokbase.com/t/gg/android-ndk/133mh6mk8b/unable-to-dlopen-libtest-so-cannot-load-library-link-image-1995-failed-to-link-libtest-so }
-       {$ifdef ANDROID} RTLD_NOW {$else} RTLD_LAZY or RTLD_GLOBAL {$endif}) );
-     {$else} LoadLibrary(AName);
-     {$endif}
+    Result:=
+      {$ifdef UNIX} TDynLibHandle( dlopen(AName,
+        { RTLD_GLOBAL cannot be used if you want to successfully open
+          libopenal.so on Android (tested necessity on Nexus 5).
+          It seems that RTLD_NOW or RTLD_LAZY don't matter.
+          Found thanks to mentions in
+          http://grokbase.com/t/gg/android-ndk/133mh6mk8b/unable-to-dlopen-libtest-so-cannot-load-library-link-image-1995-failed-to-link-libtest-so }
+        {$ifdef ANDROID} RTLD_NOW {$else} RTLD_LAZY or RTLD_GLOBAL {$endif}) );
+      {$else} LoadLibrary(AName);
+      {$endif}
   end;
 
 var Handle: TDynLibHandle;
 begin
- Handle := LoadLibraryGlobally(PChar(AName));
- if Handle = InvalidDynLibHandle then
- begin
-  if RaiseExceptionOnError then
-   raise EDynLibError.Create('Can''t load library "' +AName+ '"'
-     {$ifdef UNIX} + ': ' + dlerror {$endif}) else
-   result := nil;
- end else
-  result := Self.Create(AName, Handle);
+  Handle := LoadLibraryGlobally(PChar(AName));
+  if Handle = InvalidDynLibHandle then
+  begin
+    if RaiseExceptionOnError then
+      raise EDynLibError.Create('Can''t load library "' + AName + '"'
+        {$ifdef UNIX} + ': ' + dlerror {$endif})
+    else
+      Result := nil;
+  end
+  else
+    Result := Self.Create(AName, Handle);
 end;
 
 function TDynLib.Symbol(SymbolName: PChar): Pointer;
 
   function ErrStr: string;
-  begin result := 'Symbol "'+SymbolName+'" not found in library "'+Name+'"' end;
+  begin
+    Result := 'Symbol "' + SymbolName + '" not found in library "' + Name + '"';
+  end;
 
 begin
- result:= {$ifdef FPC} GetProcedureAddress {$else} GetProcAddress {$endif}
-   (FHandle, SymbolName);
- if result = nil then
-  case SymbolErrorBehaviour of
-   seRaise: raise EDynLibError.Create(ErrStr);
-   seReturnNil: ;
-   seWarnAndReturnNil: WarningWrite(ErrStr);
-   else raise EInternalError.Create('SymbolErrorBehaviour=?');
-  end;
+  Result:= {$ifdef FPC} GetProcedureAddress {$else} GetProcAddress {$endif}
+    (FHandle, SymbolName);
+  if Result = nil then
+    case SymbolErrorBehaviour of
+      seRaise: raise EDynLibError.Create(ErrStr);
+      seReturnNil: ;
+      seWarnAndReturnNil: WarningWrite(ErrStr);
+      else raise EInternalError.Create('SymbolErrorBehaviour=?');
+    end;
 end;
 
 end.

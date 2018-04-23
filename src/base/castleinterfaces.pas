@@ -92,7 +92,8 @@ function TNonRefCountedInterfacedObject.QueryInterface(
   {$ifdef IINTERFACE_STDCALL} stdcall {$else} cdecl {$endif};
 begin
   if GetInterface(IID, Obj) then
-    Result := S_OK else
+    Result := S_OK
+  else
     Result := E_NOINTERFACE;
 end;
 
@@ -116,7 +117,8 @@ function TNonRefCountedInterfacedPersistent.QueryInterface(
   {$ifdef IINTERFACE_STDCALL} stdcall {$else} cdecl {$endif};
 begin
   if GetInterface(IID, Obj) then
-    Result := S_OK else
+    Result := S_OK
+  else
     Result := E_NOINTERFACE;
 end;
 
