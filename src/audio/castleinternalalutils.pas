@@ -223,12 +223,13 @@ begin
  inherited Create(AMessage);
 end;
 
-procedure CheckAL(const situation: string);
-var err: TALenum;
+procedure CheckAL(const Situation: string);
+var Err: TALenum;
 begin
- err := alGetError();
- if err <> AL_NO_ERROR then raise EALError.Create(err,
-   'OpenAL error AL_xxx at '+situation+' : '+alGetString(err));
+ Err := alGetError();
+ if Err <> AL_NO_ERROR then
+   raise EALError.Create(Err,
+   'OpenAL error AL_xxx at ' + Situation + ' : '+alGetString(Err));
 end;
 
 { EALCError ------------------------------------------------------------------ }
@@ -245,17 +246,17 @@ end;
 
 function alGetSource1i(SourceName: TALuint; Attribute: TALenum): TALint;
 begin
- alGetSourcei(SourceName, Attribute, @result);
+  alGetSourcei(SourceName, Attribute, @Result);
 end;
 
 function alGetSource1f(SourceName: TALuint; Attribute: TALenum): TALfloat;
 begin
- alGetSourcef(SourceName, Attribute, @result);
+  alGetSourcef(SourceName, Attribute, @Result);
 end;
 
 function alGetSource1bool(SourceName: TALuint; Attribute: TALenum): TALboolean;
 begin
- result := alGetSource1i(SourceName, Attribute) <> 0;
+  Result := alGetSource1i(SourceName, Attribute) <> 0;
 end;
 
 function alGetSource1ui(SourceName: TALuint; Attribute: TALenum): TALuint;
@@ -264,105 +265,105 @@ begin
     You should get signed TALint, and just ignore range checks
     (which is done below, since we just pass a pointer). }
   Assert(SizeOf(TALint) = SizeOf(TALuint));
-  alGetSourcei(SourceName, Attribute, @result);
+  alGetSourcei(SourceName, Attribute, @Result);
 end;
 
 function alGetSource3f(SourceName: TALuint; Attribute: TALenum): TALVector3f;
 begin
- alGetSourcefv(SourceName, Attribute, @result);
+  alGetSourcefv(SourceName, Attribute, @Result);
 end;
 
 { alGetBuffer* }
 
 function alGetBuffer1sizei(BufferName: TALuint; Attribute: TALenum): TALsizei;
 begin
- { nie ma mozliwosci zapytania GetBuffer o TALsizei. Wiec robimy podobnie jak
-   alGetSource1ui : jako PALint podajemy wskaznik na TALsizei. }
- Assert(SizeOf(TALsizei) = SizeOf(TALint));
- alGetBufferi(BufferName, Attribute, @result);
+  { nie ma mozliwosci zapytania GetBuffer o TALsizei. Wiec robimy podobnie jak
+    alGetSource1ui : jako PALint podajemy wskaznik na TALsizei. }
+  Assert(SizeOf(TALsizei) = SizeOf(TALint));
+  alGetBufferi(BufferName, Attribute, @Result);
 end;
 
 function alGetBuffer1i(BufferName: TALuint; Attribute: TALenum): TALint;
 begin
- alGetBufferi(BufferName, Attribute, @result);
+  alGetBufferi(BufferName, Attribute, @Result);
 end;
 
 function alGetBuffer1f(BufferName: TALuint; Attribute: TALenum): TALfloat;
 begin
- alGetBufferf(BufferName, Attribute, @result);
+  alGetBufferf(BufferName, Attribute, @Result);
 end;
 
 { alGetListener }
 
 function alGetListener1f(Attribute: TALenum): TALfloat;
 begin
- alGetListenerf(Attribute, @result);
+  alGetListenerf(Attribute, @Result);
 end;
 
 function alGetListener3f(Attribute: TALenum): TALVector3f;
 begin
- alGetListenerfv(Attribute, @result);
+  alGetListenerfv(Attribute, @Result);
 end;
 
 function alGetListenerOrientation: TALTwoVectors3f;
 begin
- alGetListenerfv(AL_ORIENTATION, @result);
+  alGetListenerfv(AL_ORIENTATION, @Result);
 end;
 
-function alcGetInterger1(deviceHandle:PALCdevice; token:TALenum): TALint;
+function alcGetInterger1(DeviceHandle:PALCdevice; Token:TALenum): TALint;
 begin
-  alcGetIntegerv(deviceHandle, token, 1, @Result);
+  alcGetIntegerv(DeviceHandle, Token, 1, @Result);
 end;
 
 { opakowania na funkcje OpenALa aby dac parametry typu TALVector ------------ }
 
 procedure alSourceVector3f(SourceName: TALuint; Param: TALenum; const Value: TALVector3f);
 begin
- alSourcefv(SourceName, Param, @Value);
+  alSourcefv(SourceName, Param, @Value);
 end;
 
 procedure alListenerVector3f(Param: TALenum; const Value: TALVector3f);
 begin
- alListenerfv(Param, @Value);
+  alListenerfv(Param, @Value);
 end;
 
 procedure alListenerOrientation(const Dir, Up: TALVector3f);
 var Orient: TALTwoVectors3f;
 begin
- Orient[0] := Dir;
- Orient[1] := Up;
- alListenerfv(AL_ORIENTATION, @Orient);
+  Orient[0] := Dir;
+  Orient[1] := Up;
+  alListenerfv(AL_ORIENTATION, @Orient);
 end;
 
 procedure alListenerOrientation(const Orient: TALTwoVectors3f);
 begin
- alListenerfv(AL_ORIENTATION, @Orient);
+  alListenerfv(AL_ORIENTATION, @Orient);
 end;
 
 { --------------------------------------------------------------------------
   state setting for compatibility between various OpenAL implementations }
 
-procedure alCreateSources(n: TALsizei; sources: PALuint);
+procedure alCreateSources(n: TALsizei; Sources: PALuint);
 {$ifdef MSWINDOWS}
 var i: Integer;
 {$endif}
 begin
- alGenSources(n, sources);
+  alGenSources(n, Sources);
 
- {$ifdef MSWINDOWS}
- for i := 1 to n do
- begin
-//TODO:  alSourcei(sources^, AL_MAX_DISTANCE, );
-  alSourceVector3f(sources^, AL_DIRECTION, TVector3.Zero);
-  alSourcef(sources^, AL_CONE_OUTER_GAIN, 0);
-  Inc(sources);
- end;
+  {$ifdef MSWINDOWS}
+  for i := 1 to n do
+  begin
+//TODO:  alSourcei(Sources^, AL_MAX_DISTANCE, );
+    alSourceVector3f(Sources^, AL_DIRECTION, TVector3.Zero);
+    alSourcef(Sources^, AL_CONE_OUTER_GAIN, 0);
+    Inc(Sources);
+  end;
  {$endif}
 end;
 
-procedure alCreateBuffers(n: TALsizei; buffers: PALuint);
+procedure alCreateBuffers(n: TALsizei; Buffers: PALuint);
 begin
- alGenBuffers(n, buffers);
+  alGenBuffers(n, Buffers);
 end;
 
 { Other utils ---------------------------------------------------------------- }

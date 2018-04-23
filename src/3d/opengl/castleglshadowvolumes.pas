@@ -252,7 +252,8 @@ begin
   begin
     FStencilOpIncrWrap := GL_INCR_WRAP_EXT;
     FStencilOpDecrWrap := GL_DECR_WRAP_EXT;
-  end else
+  end
+  else
   begin
     FStencilOpIncrWrap := GL_INCR;
     FStencilOpDecrWrap := GL_DECR;
@@ -473,7 +474,8 @@ procedure TGLShadowVolumeRenderer.InitCaster(const CasterBox: TBox3D);
             InsidePlane(TrianglePlane(FrustumNearPoints[2].XYZ, FrustumNearPoints[1].XYZ, LightPosition3^)) and
             InsidePlane(TrianglePlane(FrustumNearPoints[3].XYZ, FrustumNearPoints[2].XYZ, LightPosition3^)) and
             InsidePlane(TrianglePlane(FrustumNearPoints[0].XYZ, FrustumNearPoints[3].XYZ, LightPosition3^));
-        end else
+        end
+        else
         begin
           Result :=
             InsidePlane(NearPlane) and
@@ -482,7 +484,8 @@ procedure TGLShadowVolumeRenderer.InitCaster(const CasterBox: TBox3D);
             InsidePlane(TrianglePlane(FrustumNearPoints[2].XYZ, FrustumNearPoints[3].XYZ, LightPosition3^)) and
             InsidePlane(TrianglePlane(FrustumNearPoints[3].XYZ, FrustumNearPoints[0].XYZ, LightPosition3^));
         end;
-      end else
+      end
+      else
       begin
         { For directional light, this is somewhat similar to positional lights,
           except that you have 4 planes (each one from a segment of near rectangle,
@@ -509,7 +512,8 @@ procedure TGLShadowVolumeRenderer.InitCaster(const CasterBox: TBox3D);
             InsidePlane(TrianglePlane(FrustumNearPoints[1].XYZ, FrustumNearPoints[2].XYZ, (FrustumNearPoints[1].XYZ + LightPosition3^))) and
             InsidePlane(TrianglePlane(FrustumNearPoints[2].XYZ, FrustumNearPoints[3].XYZ, (FrustumNearPoints[2].XYZ + LightPosition3^))) and
             InsidePlane(TrianglePlane(FrustumNearPoints[3].XYZ, FrustumNearPoints[0].XYZ, (FrustumNearPoints[3].XYZ + LightPosition3^)));
-        end else
+        end
+        else
         begin
           Result :=
             InsidePlane(TrianglePlane(FrustumNearPoints[1].XYZ, FrustumNearPoints[0].XYZ, (FrustumNearPoints[1].XYZ + LightPosition3^))) and
@@ -552,7 +556,8 @@ procedure TGLShadowVolumeRenderer.InitCaster(const CasterBox: TBox3D);
         begin
           glStencilOpSeparate(GL_FRONT, GL_KEEP, StencilOpDecrWrap, GL_KEEP);
           glStencilOpSeparate(GL_BACK , GL_KEEP, StencilOpIncrWrap, GL_KEEP);
-        end else
+        end
+        else
         begin
           glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, StencilOpIncrWrap);
           glStencilOpSeparate(GL_BACK , GL_KEEP, GL_KEEP, StencilOpDecrWrap);
@@ -562,7 +567,8 @@ procedure TGLShadowVolumeRenderer.InitCaster(const CasterBox: TBox3D);
       procedure SetStencilOpForFront;
       begin
         if ZFail then
-          glStencilOp(GL_KEEP, StencilOpDecrWrap, GL_KEEP) else
+          glStencilOp(GL_KEEP, StencilOpDecrWrap, GL_KEEP)
+        else
           { For each fragment that passes depth-test, *increase* it's stencil value. }
           glStencilOp(GL_KEEP, GL_KEEP, StencilOpIncrWrap);
       end;
@@ -570,7 +576,8 @@ procedure TGLShadowVolumeRenderer.InitCaster(const CasterBox: TBox3D);
       procedure SetStencilOpForBack;
       begin
         if ZFail then
-          glStencilOp(GL_KEEP, StencilOpIncrWrap, GL_KEEP) else
+          glStencilOp(GL_KEEP, StencilOpIncrWrap, GL_KEEP)
+        else
           { For each fragment that passes depth-test, *decrease* it's stencil value. }
           glStencilOp(GL_KEEP, GL_KEEP, StencilOpDecrWrap);
       end;
@@ -619,11 +626,14 @@ begin
       if ZFail then
       begin
         if ZFailAndLightCap then
-          Inc(FCountZFailAndLightCap) else
+          Inc(FCountZFailAndLightCap)
+        else
           Inc(FCountZFailNoLightCap);
-      end else
+      end
+      else
         Inc(FCountZPass);
-    end else
+    end
+    else
       Inc(FCountShadowsNotVisible);
   end;
 end;
@@ -691,7 +701,8 @@ begin
         begin
           StencilSetupKind := ssFrontAndBack;
           RenderShadowVolumes;
-        end else
+        end
+        else
         begin
           glEnable(GL_CULL_FACE);
 

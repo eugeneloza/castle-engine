@@ -104,7 +104,8 @@ begin
   begin
     Seed := GetRandomSeed;
   end
-  else Seed := LongInt(RandomSeed);
+  else
+    Seed := LongInt(RandomSeed);
 end;
 
 //we're not using dev_urandom for now to support identical implementation for different OSes and devices
@@ -235,7 +236,8 @@ begin
 
     {and another 64-bit XorShift cycle to kill everything left off "now"}
     XorShift64;
-  end else
+  end
+  else
     c64 := Store64bitSeed; //else - just grab the last seed.
 
   {Now we cycle xorshift64 as we have a decent random c64 variable}
@@ -331,7 +333,8 @@ var c64: QWord;
 begin
   {we need to do it even if N=0..1 to cycle 32bit random seed twice as expected}
   c64 := qword(Random32bit) or (qword(Random32bit) shl 32);
-  if N > 1 then begin
+  if N > 1 then
+  begin
     {adding a XorShift64 cycle guarantees us that c64 is truly random
      in range 1..high(QWORD)
      but slows down execution by ~10%}
@@ -378,7 +381,8 @@ begin
   h := Seed xor i; //init the deterministic seed
 
   //cycle through all bytes of the string in 32 bit blocks
-  while (i >= 4) do begin
+  while (i >= 4) do
+  begin
     k := PLongWord(p)^;   //get next 4 bytes of data and process them
     CycleHash(k);
     k := k xor (k shr 24);
@@ -392,12 +396,15 @@ begin
   end;
 
   //upmix 0..3 final bytes of data to hash
-  if i  = 3 then h := h xor (PByte(p + 2)^ shl 16);
-  if i >= 2 then h := h xor (PByte(p + 1)^ shl 8);
-  if i >= 1 then begin
-                   h := h xor PByte(p)^;
-                   CycleHash(h);
-                 end;
+  if i  = 3 then
+    h := h xor (PByte(p + 2)^ shl 16);
+  if i >= 2 then
+    h := h xor (PByte(p + 1)^ shl 8);
+  if i >= 1 then
+  begin
+    h := h xor PByte(p)^;
+    CycleHash(h);
+  end;
 
   //and add a few final mixes
   h := h xor (h shr 13);
@@ -417,7 +424,8 @@ var GlobalRandom: TCastleRandom;
 
 function Rand: TCastleRandom;
 begin
-  if GlobalRandom = nil then GlobalRandom := TCastleRandom.Create;
+  if GlobalRandom = nil then
+    GlobalRandom := TCastleRandom.Create;
   Result := GlobalRandom;
 end;
 

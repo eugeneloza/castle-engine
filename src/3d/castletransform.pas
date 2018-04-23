@@ -2036,7 +2036,8 @@ end;
 function TRayCollision.IndexOfItem(const ItemClass: TCastleTransformClass): Integer;
 begin
   for Result := 0 to Count - 1 do
-    if List^[Result].Item is ItemClass then Exit;
+    if List^[Result].Item is ItemClass then
+      Exit;
   Result := -1;
 end;
 
@@ -2128,7 +2129,8 @@ begin
           if B.World <> Owner then
             B.RemoveFreeNotification(Owner);
         end;
-      else raise EInternalError.Create('TCastleTransformList.Notify action?');
+      else
+        raise EInternalError.Create('TCastleTransformList.Notify action?');
     end;
 
     if (Owner.World <> nil) and Assigned(Owner.World.OnCursorChange) then
@@ -2226,7 +2228,8 @@ end;
 function TCastleTransform.Sector: TSector;
 begin
   if (World <> nil) and (World.Sectors <> nil) then
-    Result := World.Sectors.SectorWithPoint(Middle) else
+    Result := World.Sectors.SectorWithPoint(Middle)
+  else
     Result := nil;
 end;
 
@@ -2256,7 +2259,8 @@ begin
     if FWorld <> nil then
       raise ECannotAddToAnotherWorld.Create('Cannot add object existing in one world to another. This means that your object is part of SceneManager1.Items, and you are adding it to SceneManager2.Items. You have to remove it from SceneManager1.Items first.');
     ChangeWorld(Value);
-  end else
+  end
+  else
     Inc(FWorldReferences);
 
   // list stuff
@@ -2373,7 +2377,9 @@ begin
   Disable;
   try
     Result := World.WorldHeight(MyPosition, AboveHeight, AboveGround);
-  finally Enable end;
+  finally
+    Enable;
+  end;
 end;
 
 function TCastleTransform.LineOfSight(const Pos1, Pos2: TVector3): boolean;
@@ -2381,7 +2387,9 @@ begin
   Disable;
   try
     Result := World.WorldLineOfSight(Pos1, Pos2);
-  finally Enable end;
+  finally
+    Enable;
+  end;
 end;
 
 function TCastleTransform.MoveAllowed(
@@ -2405,7 +2413,9 @@ begin
   try
     Result := World.WorldMoveAllowed(OldPos, ProposedNewPos, NewPos,
       Sp, SpRadius, OldBox, NewBox, BecauseOfGravity);
-  finally Enable end;
+  finally
+    Enable;
+  end;
 end;
 
 function TCastleTransform.MoveAllowed(
@@ -2428,7 +2438,9 @@ begin
   try
     Result := World.WorldMoveAllowed(OldPos, NewPos,
       Sp, SpRadius, OldBox, NewBox, BecauseOfGravity);
-  finally Enable end;
+  finally
+    Enable;
+  end;
 end;
 
 function TCastleTransform.Ray(
@@ -2437,7 +2449,9 @@ begin
   Disable;
   try
     Result := World.WorldRay(RayOrigin, RayDirection);
-  finally Enable end;
+  finally
+    Enable;
+  end;
 end;
 
 { list stuff ---------------------------------------------------------------- }
@@ -2578,10 +2592,12 @@ var
   I: Integer;
 begin
   Result := false;
-  if not GetExists then Exit;
+  if not GetExists then
+    Exit;
 
   for I := 0 to List.Count - 1 do
-    if List[I].Press(Event) then Exit(true);
+    if List[I].Press(Event) then
+      Exit(true);
 end;
 
 function TCastleTransform.Release(const Event: TInputPressRelease): boolean;
@@ -2589,10 +2605,12 @@ var
   I: Integer;
 begin
   Result := false;
-  if not GetExists then Exit;
+  if not GetExists then
+    Exit;
 
   for I := 0 to List.Count - 1 do
-    if List[I].Release(Event) then Exit(true);
+    if List[I].Release(Event) then
+      Exit(true);
 end;
 
 function TCastleTransform.PointingDeviceActivate(const Active: boolean;
@@ -2632,7 +2650,8 @@ begin
         List.Delete(I);
         if RemoveItem = rtRemoveAndFree then
           FreeAndNil(Item);
-      end else
+      end
+      else
         Inc(I);
     end;
 
@@ -2690,7 +2709,8 @@ begin
   for I := 0 to List.Count - 1 do
   begin
     Result := List[I].Dragging;
-    if Result then Exit;
+    if Result then
+      Exit;
   end;
 end;
 
@@ -2803,7 +2823,8 @@ begin
     begin
       WritelnLog('Watch out, UpdateWorldTransformAndInverse overflows the NextTransformId');
       NextTransformId := 1; // skip over 0
-    end else
+    end
+    else
       Inc(NextTransformId);
 
     FWorldTransformAndInverseId := NextTransformId;
@@ -2813,7 +2834,8 @@ begin
     begin
       FWorldTransform := Transform;
       FWorldInverseTransform := InverseTransform;
-    end else
+    end
+    else
     begin
       FWorldTransform := FLastParentWorldTransform * Transform;
       FWorldInverseTransform := InverseTransform * FLastParentWorldInverseTransform;
@@ -2929,7 +2951,9 @@ begin
   Params.Frustum := @Frustum;
   try
     Render(Params);
-  finally Params.Frustum := OldFrustum end;
+  finally
+    Params.Frustum := OldFrustum;
+  end;
 end;
 
 procedure TCastleTransform.Render(const Params: TRenderParams);
@@ -2967,7 +2991,8 @@ begin
     begin
       MultMatricesTranslation(NewParamsTransformValue, NewParamsInverseTransformValue, T);
       NewFrustumValue.MoveVar(-T);
-    end else
+    end
+    else
     begin
       InternalTransformMatricesMult(NewParamsTransformValue, NewParamsInverseTransformValue);
       if IsNan(NewParamsInverseTransformValue.Data[0, 0]) then
@@ -3012,7 +3037,8 @@ begin
     else
       LocalRenderShadowVolume(ShadowVolumeRenderer,
         false, TranslationMatrix(T) * ParentTransform);
-  end else
+  end
+  else
     LocalRenderShadowVolume(ShadowVolumeRenderer,
       false, Transform * ParentTransform);
 end;
@@ -3021,7 +3047,8 @@ function Bottom(const Gravity: boolean; const GravityCoordinate: Integer;
   const BoundingBox: TBox3D): Single;
 begin
   if Gravity then
-    Result := 0 else
+    Result := 0
+  else
     Result := BoundingBox.Data[0].Data[GravityCoordinate];
 end;
 
@@ -3032,7 +3059,8 @@ var
 begin
   GC := World.GravityCoordinate;
   if MiddleForceBox then
-    B := MiddleForceBoxValue else
+    B := MiddleForceBoxValue
+  else
     B := LocalBoundingBox;
 
   { More correct version would be to take B bottom point, add PreferredHeight,
@@ -3056,7 +3084,8 @@ var
 begin
   GC := World.GravityCoordinate;
   if MiddleForceBox then
-    B := MiddleForceBoxValue else
+    B := MiddleForceBoxValue
+  else
     B := LocalBoundingBox;
   Result := MiddleHeight * (B.Data[1].Data[GC] - Bottom(Gravity, GC, B));
 
@@ -3163,7 +3192,8 @@ procedure TCastleTransform.UpdateSimpleGravity(const SecondsPassed: Single);
 
       if not Move(GravityUp * -FallingDistance, true) then
         FFalling := false;
-    end else
+    end
+    else
     begin
       FFalling := false;
 
@@ -3210,7 +3240,8 @@ begin
   begin
     ProposedNewMiddle := OldMiddle + ATranslation;
     Result := MoveAllowed(OldMiddle, ProposedNewMiddle, NewMiddle, BecauseOfGravity);
-  end else
+  end
+  else
   begin
     NewMiddle := OldMiddle + ATranslation;
     Result := MoveAllowed(OldMiddle, NewMiddle, BecauseOfGravity);

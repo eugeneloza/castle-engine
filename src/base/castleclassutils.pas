@@ -54,7 +54,7 @@ uses Classes, SysUtils, Contnrs, Generics.Collections,
 procedure StringsAdd(Strs: TStrings; Count: integer; itemVal: string='dummy'); overload;
 
 { Add all strings from string array to TStrings instance. }
-procedure AddStrArrayToStrings(const StrArr: array of string; strlist: TStrings);
+procedure AddStrArrayToStrings(const StrArr: array of string; StrList: TStrings);
 
 type
   { TStringList that is case sensitive. }
@@ -130,13 +130,13 @@ function StreamReadZeroEndString(Stream: TStream): string;
 
   @raises EReadError If the stream will end before encountering one of EndingChars.
   @groupBegin }
-function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars;
-  backEndingChar: boolean; out endingChar: char): string; overload;
-function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars;
-  backEndingChar: boolean): string; overload;
-function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars;
-  out endingChar: char): string; overload;
-function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars): string; overload;
+function StreamReadUpto_NotEOS(Stream: TStream; const EndingChars: TSetOfChars;
+  BackEndingChar: boolean; out EndingChar: char): string; overload;
+function StreamReadUpto_NotEOS(Stream: TStream; const EndingChars: TSetOfChars;
+  BackEndingChar: boolean): string; overload;
+function StreamReadUpto_NotEOS(Stream: TStream; const EndingChars: TSetOfChars;
+  out EndingChar: char): string; overload;
+function StreamReadUpto_NotEOS(Stream: TStream; const EndingChars: TSetOfChars): string; overload;
 { @groupEnd }
 
 { Read stream, until you find some character in EndingChars, or end of stream.
@@ -148,13 +148,13 @@ function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars):
 
   Everything else works like with StreamReadUpto_NotEOS.
   @groupBegin }
-function StreamReadUpto_EOS(Stream: TStream; const endingChars: TSetOfChars;
-  backEndingChar: boolean; out endingChar: integer): string; overload;
-function StreamReadUpto_EOS(Stream: TStream; const endingChars: TSetOfChars;
-  backEndingChar: boolean): string; overload;
-function StreamReadUpto_EOS(Stream: TStream; const endingChars: TSetOfChars;
-  out endingChar: integer): string; overload;
-function StreamReadUpto_EOS(Stream: TStream; const endingChars: TSetOfChars): string; overload;
+function StreamReadUpto_EOS(Stream: TStream; const EndingChars: TSetOfChars;
+  BackEndingChar: boolean; out EndingChar: integer): string; overload;
+function StreamReadUpto_EOS(Stream: TStream; const EndingChars: TSetOfChars;
+  BackEndingChar: boolean): string; overload;
+function StreamReadUpto_EOS(Stream: TStream; const EndingChars: TSetOfChars;
+  out EndingChar: integer): string; overload;
+function StreamReadUpto_EOS(Stream: TStream; const EndingChars: TSetOfChars): string; overload;
 { @groupEnd }
 
 { Read a growing stream, and append it to another destination stream.
@@ -395,7 +395,9 @@ var
       try
         while not StdInReader.Eof do
           DoSomethingWithInputLine(StdInReader.Readln);
-      finally FreeAndNil(StdinReader) end;
+      finally
+        FreeAndNil(StdinReader);
+      end;
     end;
     #)
 
@@ -578,14 +580,16 @@ procedure StringsAdd(Strs: TStrings; Count: integer; itemVal: string);
 var
   i: integer;
 begin
-  for i := 1 to Count do Strs.Add(itemVal);
+  for i := 1 to Count do
+    Strs.Add(itemVal);
 end;
 
-procedure AddStrArrayToStrings(const StrArr: array of string; strlist: TStrings);
+procedure AddStrArrayToStrings(const StrArr: array of string; StrList: TStrings);
 var
   i: integer;
 begin
-  for i := 0 to High(StrArr) do strlist.Append(StrArr[i]);
+  for i := 0 to High(StrArr) do
+    StrList.Append(StrArr[i]);
 end;
 
 constructor TStringListCaseSens.Create;
@@ -615,13 +619,14 @@ procedure Strings_AddCastleEngineProgramHelpSuffix(
   const Version: string; WrapLines: boolean);
 begin
   Strings_AddSplittedString(Strings,
-    SCastleEngineProgramHelpSuffix(DisplayApplicationName, Version, WrapLines), nl);
+    SCastleEngineProgramHelpSuffix(DisplayApplicationName, Version, WrapLines), NL);
 end;
 
 procedure Strings_SetText(SList: TStrings; const S: string);
 begin
   if Length(S) = 1 then
-    SList.Text := S + LineEnding else
+    SList.Text := S + LineEnding
+  else
     SList.Text := S;
 end;
 
@@ -676,110 +681,115 @@ end;
 
 function StreamReadChar(Stream: TStream): char;
 begin
-  Stream.ReadBuffer(result, SizeOf(result));
+  Stream.ReadBuffer(Result, SizeOf(Result));
 end;
 
 function StreamReadZeroEndString(Stream: TStream): string;
 begin
-  result := StreamReadUpto_NotEOS(Stream, [#0], false);
+  Result := StreamReadUpto_NotEOS(Stream, [#0], false);
 end;
 
-function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars;
-  backEndingChar: boolean; out endingChar: char): string; overload;
+function StreamReadUpto_NotEOS(Stream: TStream; const EndingChars: TSetOfChars;
+  BackEndingChar: boolean; out EndingChar: char): string; overload;
 var
-  readLen: integer; { ile znakow odczytales }
-  ch: char;
+  ReadLen: integer; { How many symbols have been read }
+  Ch: char;
 begin
-  readLen := 0;
-  result := '';
+  ReadLen := 0;
+  Result := '';
   repeat
-    Stream.ReadBuffer(ch, 1);
-    if ch in endingChars then
+    Stream.ReadBuffer(Ch, 1);
+    if Ch in EndingChars then
     begin
-      endingChar := ch;
-      break;
+      EndingChar := Ch;
+      Break;
     end;
 
-    {zwiekszamy Length(result) o duze bloki zeby nie marnowac czasu
+    {zwiekszamy Length(Result) o duze bloki zeby nie marnowac czasu
      na wiele malych realokacji pamieci}
-    Inc(readLen);
-    if readLen > Length(result) then SetLength(result, readLen + 100);
-    result[readLen] := ch;
+    Inc(ReadLen);
+    if ReadLen > Length(Result) then
+      SetLength(Result, ReadLen + 100);
+    Result[ReadLen] := Ch;
   until false;
 
-  if backEndingChar then Stream.Seek(-1, soFromCurrent);
+  if BackEndingChar then
+    Stream.Seek(-1, soFromCurrent);
 
-  SetLength(result, readLen);
+  SetLength(Result, ReadLen);
 end;
 
-function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars;
-  backEndingChar: boolean): string; overload;
+function StreamReadUpto_NotEOS(Stream: TStream; const EndingChars: TSetOfChars;
+  BackEndingChar: boolean): string; overload;
 var
-  dummy: char;
+  Dummy: char;
 begin
-  result := StreamReadUpto_NotEOS(Stream, endingChars, backEndingChar, dummy);
+  Result := StreamReadUpto_NotEOS(Stream, EndingChars, BackEndingChar, Dummy);
 end;
 
-function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars;
-  out endingChar: char): string;
+function StreamReadUpto_NotEOS(Stream: TStream; const EndingChars: TSetOfChars;
+  out EndingChar: char): string;
 begin
-  result := StreamReadUpto_NotEOS(Stream, endingChars, false, endingChar);
+  Result := StreamReadUpto_NotEOS(Stream, EndingChars, false, EndingChar);
 end;
 
-function StreamReadUpto_NotEOS(Stream: TStream; const endingChars: TSetOfChars): string;
+function StreamReadUpto_NotEOS(Stream: TStream; const EndingChars: TSetOfChars): string;
 begin
-  result := StreamReadUpto_NotEOS(Stream, endingChars, false);
+  Result := StreamReadUpto_NotEOS(Stream, EndingChars, false);
 end;
 
-function StreamReadUpto_EOS(Stream: TStream; const endingChars: TSetOfChars;
-  backEndingChar: boolean; out endingChar: integer): string; overload;
-var readLen: integer; { ile znakow odczytales }
-    ch: char;
+function StreamReadUpto_EOS(Stream: TStream; const EndingChars: TSetOfChars;
+  BackEndingChar: boolean; out EndingChar: integer): string; overload;
+var ReadLen: integer; { ile znakow odczytales }
+    Ch: char;
 begin
-  readLen := 0;
-  result := '';
+  ReadLen := 0;
+  Result := '';
   repeat
-    if Stream.Read(ch, 1) = 0 then
+    if Stream.Read(Ch, 1) = 0 then
     begin
-      endingChar := -1;
-      break;
-    end else
-    if ch in endingChars then
+      EndingChar := -1;
+      Break;
+    end
+    else
+    if Ch in EndingChars then
     begin
-      endingChar := Ord(ch);
-      break;
+      EndingChar := Ord(Ch);
+      Break;
     end;
 
-    {zwiekszamy Length(result) o duze bloki zeby nie marnowac czasu
+    {zwiekszamy Length(Result) o duze bloki zeby nie marnowac czasu
      na wiele malych realokacji pamieci}
-    Inc(readLen);
-    if readLen > Length(result) then SetLength(result, readLen+100);
-    result[readLen] := ch;
+    Inc(ReadLen);
+    if ReadLen > Length(Result) then
+      SetLength(Result, ReadLen+100);
+    Result[ReadLen] := Ch;
   until false;
 
-  if backEndingChar then
-    if endingChar <> -1 then Stream.Seek(-1, soFromCurrent);
+  if BackEndingChar then
+    if EndingChar <> -1 then
+      Stream.Seek(-1, soFromCurrent);
 
-  SetLength(result, readLen);
+  SetLength(Result, ReadLen);
 end;
 
-function StreamReadUpto_EOS(Stream: TStream; const endingChars: TSetOfChars;
-  backEndingChar: boolean): string; overload;
+function StreamReadUpto_EOS(Stream: TStream; const EndingChars: TSetOfChars;
+  BackEndingChar: boolean): string; overload;
 var
-  dummy: integer;
+  Dummy: integer;
 begin
-  result := StreamReadUpto_EOS(Stream, endingChars, backEndingChar, dummy);
+  Result := StreamReadUpto_EOS(Stream, EndingChars, BackEndingChar, Dummy);
 end;
 
-function StreamReadUpto_EOS(Stream: TStream; const endingChars: TSetOfChars;
-  out endingChar: integer): string;
+function StreamReadUpto_EOS(Stream: TStream; const EndingChars: TSetOfChars;
+  out EndingChar: integer): string;
 begin
-  result := StreamReadUpto_EOS(Stream, endingChars, false, endingChar);
+  Result := StreamReadUpto_EOS(Stream, EndingChars, false, EndingChar);
 end;
 
-function StreamReadUpto_EOS(Stream: TStream; const endingChars: TSetOfChars): string;
+function StreamReadUpto_EOS(Stream: TStream; const EndingChars: TSetOfChars): string;
 begin
-  result := StreamReadUpto_EOS(Stream, endingChars, false);
+  Result := StreamReadUpto_EOS(Stream, EndingChars, false);
 end;
 
 procedure ReadGrowingStream(GrowingStream, DestStream: TStream;
@@ -790,10 +800,12 @@ var
 begin
   repeat
     ReadCount := GrowingStream.Read(Buffer, SizeOf(Buffer));
-    if ReadCount = 0 then Break;
+    if ReadCount = 0 then
+      Break;
     DestStream.WriteBuffer(Buffer, ReadCount);
   until false;
-  if ResetDestStreamPosition then DestStream.Position := 0;
+  if ResetDestStreamPosition then
+    DestStream.Position := 0;
 end;
 
 function ReadGrowingStreamToString(GrowingStream: TStream): string;
@@ -807,7 +819,8 @@ begin
   Result := '';
   repeat
     ReadCount := GrowingStream.Read(Buffer[1], Length(Buffer));
-    if ReadCount = 0 then Break;
+    if ReadCount = 0 then
+      Break;
     Result := Result + Copy(Buffer, 1, ReadCount);
   until false;
 end;
@@ -819,7 +832,8 @@ begin
   L := Length(s);
   Stream.WriteBuffer(L, SizeOf(L));
   { check L > 0 to avoid range check error on S[1] }
-  if L > 0 then Stream.WriteBuffer(S[1], L);
+  if L > 0 then
+    Stream.WriteBuffer(S[1], L);
 end;
 
 function StreamReadString(Stream: TStream): string;
@@ -829,7 +843,8 @@ begin
   Stream.ReadBuffer(L, SizeOf(L));
   SetLength(Result, L);
   { check L > 0 to avoid range check error on Result[1] }
-  if L > 0 then Stream.ReadBuffer(Result[1], L);
+  if L > 0 then
+    Stream.ReadBuffer(Result[1], L);
 end;
 
 function StreamToString(Stream: TStream): string;
@@ -846,7 +861,8 @@ begin
   if S <> '' then
   begin
     Stream.WriteBuffer(S[1], Length(S));
-    if Rewind then Stream.Position := 0;
+    if Rewind then
+      Stream.Position := 0;
   end;
 end;
 
@@ -855,7 +871,10 @@ begin
   Result := TMemoryStream.Create;
   try
     MemoryStreamLoadFromString(Result, S, Rewind);
-  except FreeAndNil(Result); raise end;
+  except
+    FreeAndNil(Result);
+    raise;
+  end;
 end;
 
 { TPeekCharStream -------------------------------------------------- }
@@ -872,7 +891,8 @@ end;
 
 destructor TPeekCharStream.Destroy;
 begin
-  if OwnsSourceStream then FreeAndNil(FSourceStream);
+  if OwnsSourceStream then
+    FreeAndNil(FSourceStream);
   inherited;
 end;
 
@@ -908,7 +928,8 @@ begin
     if C = #10 then
       Inc(FLine);
     FColumn  := 1;
-  end else
+  end
+  else
     Inc(FColumn);
 end;
 
@@ -956,7 +977,8 @@ function TSimplePeekCharStream.Read(var Buffer; Count: Longint): Longint;
 begin
   if (Count <= 0) or
      (IsPeekedChar and (PeekedChar = -1)) then
-    Result := 0 else
+    Result := 0
+  else
   if IsPeekedChar then
   begin
     PChar(@Buffer)[0] := Chr(PeekedChar);
@@ -964,7 +986,8 @@ begin
     { Note that if SourceStream.Read will raise an exception,
       we will still have IsPeekedChar = true. }
     IsPeekedChar := false;
-  end else
+  end
+  else
     Result := SourceStream.Read(Buffer, Count);
   FPosition := FPosition + Result;
 
@@ -997,10 +1020,12 @@ begin
     Result := PeekedChar;
     IsPeekedChar := false;
     Inc(FPosition);
-  end else
+  end
+  else
   begin
     if SourceStream.Read(C, 1) = 0 then
-      Result := -1 else
+      Result := -1
+    else
     begin
       Result := Ord(C);
       Inc(FPosition);
@@ -1046,14 +1071,16 @@ var
   CopyCount: LongWord;
 begin
   if Count < 0 then
-    Result := 0 else
+    Result := 0
+  else
   if LongWord(Count) <= BufferEnd - BufferPos then
   begin
     { In this case we can fill LocalBuffer using only data from Buffer }
     Move(Buffer^[BufferPos], LocalBuffer, Count);
     BufferPos := BufferPos + LongWord(Count);
     Result := Count;
-  end else
+  end
+  else
   begin
     Move(Buffer^[BufferPos], LocalBuffer, BufferEnd - BufferPos);
     Result := BufferEnd - BufferPos;
@@ -1072,7 +1099,8 @@ begin
       Move(Buffer^[0], PChar(@LocalBuffer)[Result], CopyCount);
       BufferPos := BufferPos + CopyCount;
       Result := Result + LongInt(CopyCount);
-    end else
+    end
+    else
     begin
       Result := Result + SourceStream.Read(PChar(@LocalBuffer)[Result], Count);
     end;
@@ -1085,11 +1113,13 @@ end;
 function TBufferedReadStream.PeekChar: Integer;
 begin
   if BufferPos < BufferEnd then
-    Result := Buffer^[BufferPos] else
+    Result := Buffer^[BufferPos]
+  else
   begin
     FillBuffer;
     if BufferPos < BufferEnd then
-      Result := Buffer^[BufferPos] else
+      Result := Buffer^[BufferPos]
+    else
       Result := -1;
   end;
 end;
@@ -1101,7 +1131,8 @@ begin
     Result := Buffer^[BufferPos];
     Inc(BufferPos);
     Inc(FPosition);
-  end else
+  end
+  else
   begin
     FillBuffer;
     if BufferPos < BufferEnd then
@@ -1109,7 +1140,8 @@ begin
       Result := Buffer^[BufferPos];
       Inc(BufferPos);
       Inc(FPosition);
-    end else
+    end
+    else
       Result := -1;
   end;
 
@@ -1141,7 +1173,7 @@ begin
           with private fields of TStreamPeekChar).
 
           But doing like I'm doing now works a little faster.
-          After PeekChar with result <> -1 I know that I have one place in the buffer.
+          After PeekChar with Result <> -1 I know that I have one place in the buffer.
           So I just explicitly increment BufferPos below. }
         Inc(BufferPos);
         Inc(FPosition);
@@ -1219,7 +1251,8 @@ procedure InitStdStreams;
       See [http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dllproc/base/getstdhandle.asp] }
     if (Handle <> INVALID_HANDLE_VALUE) and
        (Handle <> 0) then
-      Stream := THandleStream.Create(Handle) else
+      Stream := THandleStream.Create(Handle)
+    else
       Stream := nil;
   end;
   {$endif MSWINDOWS}
@@ -1383,7 +1416,11 @@ begin
   while I < Count do
   begin
     if Items[I] = Item then
-      begin Delete(I); Inc(Result) end else
+    begin
+      Delete(I);
+      Inc(Result);
+    end
+    else
       Inc(I);
   end;
 end;
@@ -1457,9 +1494,13 @@ begin
     Rewrite(TextFile);
     try
       Dump_Stack(TextFile, BaseFramePointer);
-    finally CloseFile(TextFile) end;
+    finally
+      CloseFile(TextFile);
+    end;
     Result := StringStream.DataString;
-  finally FreeAndNil(StringStream) end;
+  finally
+    FreeAndNil(StringStream);
+  end;
 end;
 
 function DumpExceptionBackTraceToString: string;
@@ -1473,9 +1514,13 @@ begin
     Rewrite(TextFile);
     try
       DumpExceptionBackTrace(TextFile);
-    finally CloseFile(TextFile) end;
+    finally
+      CloseFile(TextFile);
+    end;
     Result := StringStream.DataString;
-  finally FreeAndNil(StringStream) end;
+  finally
+    FreeAndNil(StringStream);
+  end;
 end;
 {$endif}
 

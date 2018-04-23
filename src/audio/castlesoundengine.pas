@@ -1103,7 +1103,8 @@ begin
   if ExceptionOnError then
   begin
     OpenCore;
-  end else
+  end
+  else
   try
     OpenCore;
   except
@@ -1151,7 +1152,8 @@ begin
 
   ErrorCode := alGetError();
   if ErrorCode = AL_INVALID_VALUE then
-    raise ENoMoreOpenALSources.Create('No more sound sources available') else
+    raise ENoMoreOpenALSources.Create('No more sound sources available')
+  else
   if ErrorCode <> AL_NO_ERROR then
     raise EALError.Create(ErrorCode,
       'OpenAL error AL_xxx at creation of sound : ' + alGetString(ErrorCode));
@@ -1244,7 +1246,8 @@ begin
     {$I norqcheckbegin.inc}
     alSourcei(ALSource, AL_BUFFER, Value.ALBuffer);
     {$I norqcheckend.inc}
-  end else
+  end
+  else
     alSourcei(ALSource, AL_BUFFER, 0);
 end;
 
@@ -1325,10 +1328,12 @@ function IsSmallerByImportance(constref AA, BB: TSound): Integer;
 begin
   if (AA.Used and (not BB.Used)) or
      (AA.Used and BB.Used and (AA.Importance > BB.Importance)) then
-    Result := -1 else
+    Result := -1
+  else
   if (BB.Used and (not AA.Used)) or
      (BB.Used and AA.Used and (BB.Importance > AA.Importance)) then
-    Result :=  1 else
+    Result :=  1
+  else
     Result :=  0;
 end;
 
@@ -1411,7 +1416,8 @@ begin
   Result := nil;
 
   { OpenAL context not initialized yet }
-  if FAllocatedSources = nil then Exit;
+  if FAllocatedSources = nil then
+    Exit;
 
   { Try: maybe we have already allocated unused sound ?
     If no unused sound will be found, it will calculate
@@ -1426,7 +1432,8 @@ begin
         list). But that's OK, because if Result <> nil here, then we will
         not need MinImportanceIndex later. }
       Break;
-    end else
+    end
+    else
     begin
       { Update MinImportanceIndex }
       if (MinImportanceIndex = -1) or
@@ -1671,7 +1678,9 @@ begin
   Inc(ValidSoundBufferFree);
   try
     FreeAndNil(LoadedBuffers);
-  finally Dec(ValidSoundBufferFree) end;
+  finally
+    Dec(ValidSoundBufferFree);
+  end;
 
   FreeAndNil(FDevices);
   FreeAndNil(FOnOpenClose);
@@ -1726,7 +1735,8 @@ function TSoundEngine.Devices: TSoundDeviceList;
         pDeviceList := StrEnd(pDeviceList);
         Inc(pDeviceList);
       end;
-    end else
+    end
+    else
     if ALLibraryAvailable and OpenALSampleImplementation then
     begin
       Add(SampleImpALCDeviceName('native'), 'Operating system native');
@@ -1780,14 +1790,14 @@ begin
   Result := FDevices;
 end;
 
-procedure TSoundEngine.CheckALC(const situation: string);
+procedure TSoundEngine.CheckALC(const Situation: string);
 var
-  err: TALenum;
+  Err: TALenum;
   alcErrDescription: PChar;
   alcErrDescriptionStr: string;
 begin
-  err := alcGetError(ALDevice);
-  if err <> ALC_NO_ERROR then
+  Err := alcGetError(ALDevice);
+  if Err <> ALC_NO_ERROR then
   begin
     { moznaby tu uproscic zapis eliminujac zmienne alcErrDescription i alcErrDescriptionStr
       i zamiast alcErrDescriptionStr uzyc po prostu alcGetString(ALDevice, err).
@@ -1795,19 +1805,20 @@ begin
       ze sytuacja ze alcGetError zwroci cos niespodziewanego (bledny kod bledu) niestety
       zdarza sie (implementacja Creative pod Windows nie jest doskonala...).
       W zwiazku z tym chcemy sie nia zajac. }
-    alcErrDescription := alcGetString(ALDevice, err);
+    alcErrDescription := alcGetString(ALDevice, Err);
     if alcErrDescription = nil then
-     alcErrDescriptionStr := Format('(alc does not recognize this error number : %d)', [err]) else
-     alcErrDescriptionStr := alcErrDescription;
+      alcErrDescriptionStr := Format('(alc does not recognize this error number : %d)', [Err])
+    else
+      alcErrDescriptionStr := alcErrDescription;
 
-    raise EALCError.Create(err,
-      'OpenAL error ALC_xxx at '+situation+' : '+alcErrDescriptionStr);
+    raise EALCError.Create(Err,
+      'OpenAL error ALC_xxx at ' + Situation + ' : ' + alcErrDescriptionStr);
   end;
 end;
 
 function TSoundEngine.GetContextString(Enum: TALCenum): string;
 begin
-  result := alcGetString(ALDevice, enum);
+  Result := alcGetString(ALDevice, Enum);
   try
     CheckALC('alcGetString');
     { Check also normal al error (alGetError instead
@@ -1819,8 +1830,8 @@ begin
       if you pass correct consts to this function. }
     CheckAL('alcGetString');
   except
-    on E: EALCError do result := '('+E.Message+')';
-    on E: EALError do result := '('+E.Message+')';
+    on E: EALCError do Result := '(' + E.Message + ')';
+    on E: EALError do Result := '(' + E.Message + ')';
   end;
 end;
 
@@ -1840,7 +1851,8 @@ procedure TSoundEngine.ALContextOpenCore;
       Major := StrToInt(Trim(Copy(Version, 1, DotP - 1)));
       SpaceP := PosEx(' ', Version, DotP + 1);
       if SpaceP <> 0 then
-        Minor := StrToInt(Trim(Copy(Version, DotP + 1, SpaceP - DotP))) else
+        Minor := StrToInt(Trim(Copy(Version, DotP + 1, SpaceP - DotP)))
+      else
         Minor := StrToInt(Trim(SEnding(Version, DotP + 1)));
     except
       on EConvertError do
@@ -1898,15 +1910,15 @@ procedure TSoundEngine.ALContextOpenCore;
     Assert(ALActive);
 
     Result := Format(
-      NL+
-      'Version : %s' +NL+
-      'Version Parsed : major: %d, minor: %d' +NL+
-      'Renderer : %s' +NL+
-      'Vendor : %s' +NL+
-      'Extensions : %s' +NL+
-      NL+
-      'Allocated OpenAL sources: min %d, max %d' +NL+
-      NL+
+      NL +
+      'Version : %s' + NL +
+      'Version Parsed : major: %d, minor: %d' + NL +
+      'Renderer : %s' + NL +
+      'Vendor : %s' + NL +
+      'Extensions : %s' + NL +
+      NL +
+      'Allocated OpenAL sources: min %d, max %d' + NL +
+      NL +
       'Library to decode OggVorbis available: %s',
       [ alGetString(AL_VERSION),
         FALMajorVersion, FALMinorVersion,
@@ -1931,7 +1943,8 @@ procedure TSoundEngine.ALContextOpenCore;
         { call ALContextOpen on all buffers }
         for Buffer in LoadedBuffers do
           Buffer.ALContextOpen(false);
-      end else
+      end
+      else
       begin
         { same as above, but with added Progress.Init / Step / Fini }
         Progress.Init(LoadedBuffers.Count, 'Loading sounds');
@@ -1941,7 +1954,9 @@ procedure TSoundEngine.ALContextOpenCore;
             Buffer.ALContextOpen(false);
             Progress.Step;
           end;
-        finally Progress.Fini end;
+        finally
+          Progress.Fini;
+        end;
       end;
     end;
   end;
@@ -1958,10 +1973,11 @@ begin
     BeginAL(ALActivationErrorMessage);
     if not ALActive then
       FInformation :=
-        'OpenAL initialization failed:' +NL+ ALActivationErrorMessage else
+        'OpenAL initialization failed:' + NL + ALActivationErrorMessage
+    else
     begin
       FInformation :=
-        'OpenAL initialized successfully' +NL+ ALInformation;
+        'OpenAL initialized successfully' + NL + ALInformation;
 
       try
         alListenerf(AL_GAIN, Volume);
@@ -2119,7 +2135,8 @@ begin
 
         Result.Relative := false;
         Result.Position := Parameters.Position;
-      end else
+      end
+      else
       begin
         { No attenuation by distance. }
         Result.RolloffFactor := 0;
@@ -2184,7 +2201,9 @@ begin
   try
     Parameters.Buffer := Buffer;
     Result := PlaySound(Parameters);
-  finally FreeAndNil(Parameters) end;
+  finally
+    FreeAndNil(Parameters);
+  end;
 end;
 
 function TSoundEngine.PlaySound(const Buffer: TSoundBuffer;
@@ -2207,7 +2226,9 @@ begin
     Parameters.Position   := Position;
     Parameters.Pitch      := Pitch;
     Result := PlaySound(Parameters);
-  finally FreeAndNil(Parameters) end;
+  finally
+    FreeAndNil(Parameters);
+  end;
 end;
 
 function TSoundEngine.PlaySound(const Buffer: TSoundBuffer;
@@ -2232,7 +2253,9 @@ begin
     Parameters.ReferenceDistance := ReferenceDistance;
     Parameters.MaxDistance       := MaxDistance;
     Result := PlaySound(Parameters);
-  finally FreeAndNil(Parameters) end;
+  finally
+    FreeAndNil(Parameters);
+  end;
 end;
 
 function TSoundEngine.LoadBuffer(const URL: string; out Duration: TFloatTime): TSoundBuffer;
@@ -2276,7 +2299,8 @@ procedure TSoundEngine.FreeBuffer(var Buffer: TSoundBuffer);
 var
   I: Integer;
 begin
-  if Buffer = nil then Exit;
+  if Buffer = nil then
+    Exit;
 
   I := LoadedBuffers.IndexOf(Buffer);
   if I <> -1 then
@@ -2288,10 +2312,13 @@ begin
       Inc(ValidSoundBufferFree);
       try
         LoadedBuffers.Delete(I);
-      finally Dec(ValidSoundBufferFree) end;
+      finally
+        Dec(ValidSoundBufferFree)
+      end;
     end;
     Buffer := nil;
-  end else
+  end
+  else
     raise ESoundBufferNotLoaded.CreateFmt('Sound buffer "%s" not loaded by this sound engine',
       [URIDisplay(Buffer.URL)]);
 end;
@@ -2325,9 +2352,11 @@ var
 begin
   Is11 := ALVersionAtLeast(1, 1);
   if (not Is11) and (DistanceModel in [dmLinearDistance, dmExponentDistance]) then
-    alDistanceModel(AL_INVERSE_DISTANCE) else
+    alDistanceModel(AL_INVERSE_DISTANCE)
+  else
   if (not Is11) and (DistanceModel in [dmLinearDistanceClamped, dmExponentDistanceClamped]) then
-    alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED) else
+    alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED)
+  else
     alDistanceModel(ALDistanceModelConsts[DistanceModel]);
 end;
 
@@ -2336,7 +2365,8 @@ begin
   if Value <> FDistanceModel then
   begin
     FDistanceModel := Value;
-    if ALActive then UpdateDistanceModel;
+    if ALActive then
+      UpdateDistanceModel;
   end;
 end;
 
@@ -2350,7 +2380,8 @@ begin
       OpenALRestart;
       FDevice := Value;
       ALContextOpen;
-    end else
+    end
+    else
       FDevice := Value;
     DeviceSaveToConfig := true; // caller will eventually change it to false
   end;
@@ -2365,7 +2396,8 @@ begin
       ALContextClose;
       FEnabled := Value;
       ALContextOpen;
-    end else
+    end
+    else
       FEnabled := Value;
     FEnableSaveToConfig := true; // caller will eventually change it to false
   end;
@@ -2408,16 +2440,18 @@ function TSoundEngine.ParseParametersHelp: string;
     I: Integer;
   begin
     if not ALLibraryAvailable then
-      Result := '                        Warning: OpenAL is not available, cannot print' +NL+
-                '                        available audio devices.' +NL else
+      Result := '                        Warning: OpenAL is not available, cannot print' + NL +
+                '                        available audio devices.' + NL
+    else
     if not EnumerationExtPresent then
-      Result := '                        Warning: OpenAL does not support getting the list'+NL+
-                '                        of available audio devices' +NL+
-                '                        (missing ALC_ENUMERATION_EXT), probably old OpenAL.' else
+      Result := '                        Warning: OpenAL does not support getting the list' + NL +
+                '                        of available audio devices' + NL +
+                '                        (missing ALC_ENUMERATION_EXT), probably old OpenAL.'
+    else
     begin
       DefaultDeviceName := alcGetString(nil, ALC_DEFAULT_DEVICE_SPECIFIER);
 
-      Result := Format('                        Available devices (%d):', [Devices.Count]) + nl;
+      Result := Format('                        Available devices (%d):', [Devices.Count]) + NL;
       for i := 0 to Devices.Count - 1 do
       begin
         Result := Result + '                          ' + Devices[i].Caption;
@@ -2425,15 +2459,15 @@ function TSoundEngine.ParseParametersHelp: string;
           Result := Result + ' (Real OpenAL name: "' + Devices[i].Name + '")';
         if Devices[i].Name = DefaultDeviceName then
           Result := Result + ' (Equivalent to default device)';
-        Result := Result + nl;
+        Result := Result + NL;
       end;
     end;
   end;
 
 begin
   Result :=
-    '  --audio-device DEVICE-NAME' +nl+
-    '                        Choose specific OpenAL audio device.' +nl+
+    '  --audio-device DEVICE-NAME' + NL +
+    '                        Choose specific OpenAL audio device.' + NL +
     DevicesHelp +
     '  --no-sound            Turn off sound.';
 end;
@@ -2507,7 +2541,8 @@ begin
     begin
       FResumeToInitialized := ALInitialized;
       ALContextClose;
-    end else
+    end
+    else
     begin
       if FResumeToInitialized then
         ALContextOpen;
@@ -2594,11 +2629,13 @@ begin
       sounds.xml with explicit url="", like this:
       <sound name="player_sudden_pain" url="" />
   }
-  if (SoundType.Index = 0) or (Sounds[SoundType.Index].URL = '') then Exit(nil);
+  if (SoundType.Index = 0) or (Sounds[SoundType.Index].URL = '') then
+    Exit(nil);
 
   ALContextOpen;
 
-  if Sounds[SoundType.Index].Buffer = nil then Exit(nil);
+  if Sounds[SoundType.Index].Buffer = nil then
+    Exit(nil);
 
   Result := PlaySound(
     Sounds[SoundType.Index].Buffer, false, Looping,
@@ -2615,11 +2652,13 @@ function TRepoSoundEngine.Sound3D(SoundType: TSoundType;
 begin
   { If there is no actual sound, exit early without initializing OpenAL.
     See Sound for duplicate of this "if" and more comments. }
-  if (SoundType.Index = 0) or (Sounds[SoundType.Index].URL = '') then Exit(nil);
+  if (SoundType.Index = 0) or (Sounds[SoundType.Index].URL = '') then
+    Exit(nil);
 
   ALContextOpen;
 
-  if Sounds[SoundType.Index].Buffer = nil then Exit(nil);
+  if Sounds[SoundType.Index].Buffer = nil then
+    Exit(nil);
 
   Result := PlaySound(
     Sounds[SoundType.Index].Buffer, true, Looping,
@@ -2640,7 +2679,8 @@ var
   S: TSoundInfo;
   Stream: TStream;
 begin
-  if FRepositoryURL = Value then Exit;
+  if FRepositoryURL = Value then
+    Exit;
   FRepositoryURL := Value;
 
   Sounds.Clear;
@@ -2648,7 +2688,8 @@ begin
   Sounds.Add(TSoundInfo.Create);
 
   { if no sounds XML file, then that's it --- no more sounds }
-  if RepositoryURL = '' then Exit;
+  if RepositoryURL = '' then
+    Exit;
 
   { This must be an absolute path, since Sounds[].URL should be
     absolute (to not depend on the current dir when loading sound files. }
@@ -2657,7 +2698,9 @@ begin
   Stream := Download(RepositoryURLAbsolute);
   try
     ReadXMLFile(SoundConfig, Stream, RepositoryURLAbsolute);
-  finally FreeAndNil(Stream) end;
+  finally
+    FreeAndNil(Stream);
+  end;
 
   try
     Check(SoundConfig.DocumentElement.TagName = 'sounds',
@@ -2713,7 +2756,8 @@ begin
         begin
           SoundImportanceIndex := SoundImportanceNames.IndexOf(ImportanceStr);
           if SoundImportanceIndex = -1 then
-            S.DefaultImportance := StrToInt(ImportanceStr) else
+            S.DefaultImportance := StrToInt(ImportanceStr)
+          else
             S.DefaultImportance :=
               PtrUInt(SoundImportanceNames.Objects[SoundImportanceIndex]);
         end;
@@ -2722,7 +2766,9 @@ begin
         if S.URL <> '' then
           S.FBuffer := LoadBuffer(S.URL, false);
       end;
-    finally FreeAndNil(I) end;
+    finally
+      FreeAndNil(I);
+    end;
   finally
     FreeAndNil(SoundConfig);
   end;

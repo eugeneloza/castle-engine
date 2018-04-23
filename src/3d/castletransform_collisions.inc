@@ -77,16 +77,19 @@ begin
     begin
       Result := List[0].MoveCollision(OldPos, ProposedNewPos, NewPos,
         IsRadius, Radius, OldBox, NewBox, TrianglesToIgnoreFunc);
-      if not Result then Exit;
+      if not Result then
+        Exit;
 
       for I := 1 to List.Count - 1 do
       begin
         Result := List[I].MoveCollision(OldPos, NewPos,
           IsRadius, Radius, OldBox, NewBox, TrianglesToIgnoreFunc);
-        if not Result then Exit;
+        if not Result then
+          Exit;
       end;
     end;
-  end else
+  end
+  else
   begin
     Result := true;
     NewPos := ProposedNewPos;
@@ -109,7 +112,8 @@ begin
     begin
       Result := List[I].MoveCollision(OldPos, NewPos,
         IsRadius, Radius, OldBox, NewBox, TrianglesToIgnoreFunc);
-      if not Result then Exit;
+      if not Result then
+        Exit;
     end;
   end;
 end;
@@ -127,7 +131,8 @@ begin
     for I := 0 to List.Count - 1 do
     begin
       Result := List[I].SegmentCollision(Pos1, Pos2, TrianglesToIgnoreFunc, ALineOfSight);
-      if Result then Exit;
+      if Result then
+        Exit;
     end;
   end;
 end;
@@ -144,7 +149,8 @@ begin
     for I := 0 to List.Count - 1 do
     begin
       Result := List[I].SphereCollision(Pos, Radius, TrianglesToIgnoreFunc);
-      if Result then Exit;
+      if Result then
+        Exit;
     end;
   end;
 end;
@@ -184,7 +190,8 @@ begin
     for I := 0 to List.Count - 1 do
     begin
       Result := List[I].PointCollision2D(Point, TrianglesToIgnoreFunc);
-      if Result then Exit;
+      if Result then
+        Exit;
     end;
   end;
 end;
@@ -201,7 +208,8 @@ begin
     for I := 0 to List.Count - 1 do
     begin
       Result := List[I].BoxCollision(Box, TrianglesToIgnoreFunc);
-      if Result then Exit;
+      if Result then
+        Exit;
     end;
   end;
 end;
@@ -217,7 +225,8 @@ function TCastleTransform.LocalRayCollision(const RayOrigin, RayDirection: TVect
       begin
         SysUtils.FreeAndNil(Result);
         Result := NewResult;
-      end else
+      end
+      else
         FreeAndNil(NewResult);
     end;
   end;
@@ -268,7 +277,8 @@ begin
   if FOnlyTranslation then
     Result := LocalHeightCollision(
       APosition - Translation, GravityUp, TrianglesToIgnoreFunc,
-      AboveHeight, AboveGround) else
+      AboveHeight, AboveGround)
+  else
   begin
     MInverse := InverseTransform;
     Result := LocalHeightCollision(
@@ -310,7 +320,8 @@ begin
     { translate calculated NewPos back }
     if Result then
       NewPos := NewPos + T;
-  end else
+  end
+  else
   begin
     InternalTransformMatrices(M, MInverse);
     Result := LocalMoveCollision(
@@ -336,7 +347,8 @@ var
 begin
   { LocalMoveCollision will check these anyway. But by checking them here,
     we can potentially avoid the cost of transforming into local space. }
-  if not GetCollides then Exit(true);
+  if not GetCollides then
+    Exit(true);
 
   if FOnlyTranslation then
   begin
@@ -352,7 +364,8 @@ begin
       IsRadius, Radius,
       OldBox.AntiTranslate(T),
       NewBox.AntiTranslate(T), TrianglesToIgnoreFunc);
-  end else
+  end
+  else
   begin
     MInverse := InverseTransform;
     Result := LocalMoveCollision(
@@ -373,13 +386,15 @@ var
 begin
   { LocalSegmentCollision will check these anyway. But by checking them here,
     we can potentially avoid the cost of transforming into local space. }
-  if not (GetCollides or (ALineOfSight and GetExists)) then Exit(false);
+  if not (GetCollides or (ALineOfSight and GetExists)) then
+    Exit(false);
 
   if FOnlyTranslation then
   begin
     T := Translation;
     Result := LocalSegmentCollision(Pos1 - T, Pos2 - T, TrianglesToIgnoreFunc, ALineOfSight);
-  end else
+  end
+  else
   begin
     MInverse := InverseTransform;
     Result := LocalSegmentCollision(
@@ -394,11 +409,13 @@ function TCastleTransform.SphereCollision(
 begin
   { LocalSphereCollision will check these anyway. But by checking them here,
     we can potentially avoid the cost of transforming into local space. }
-  if not GetCollides then Exit(false);
+  if not GetCollides then
+    Exit(false);
 
   if FOnlyTranslation then
     Result := LocalSphereCollision(
-      Pos - Translation, Radius, TrianglesToIgnoreFunc) else
+      Pos - Translation, Radius, TrianglesToIgnoreFunc)
+  else
     Result := LocalSphereCollision(
       InverseTransform.MultPoint(Pos), Radius / AverageScale, TrianglesToIgnoreFunc);
 end;
@@ -410,11 +427,13 @@ function TCastleTransform.SphereCollision2D(
 begin
   { LocalSphereCollision2D will check these anyway. But by checking them here,
     we can potentially avoid the cost of transforming into local space. }
-  if not GetCollides then Exit(false);
+  if not GetCollides then
+    Exit(false);
 
   if FOnlyTranslation then
     Result := LocalSphereCollision2D(
-      Pos - Translation2D, Radius, TrianglesToIgnoreFunc, Details) else
+      Pos - Translation2D, Radius, TrianglesToIgnoreFunc, Details)
+  else
     Result := LocalSphereCollision2D(
       InverseTransform.MultPoint(Pos), Radius / AverageScale2D, TrianglesToIgnoreFunc, Details);
 end;
@@ -425,11 +444,13 @@ function TCastleTransform.PointCollision2D(
 begin
   { LocalPointCollision2D will check these anyway. But by checking them here,
     we can potentially avoid the cost of transforming into local space. }
-  if not GetCollides then Exit(false);
+  if not GetCollides then
+    Exit(false);
 
   if FOnlyTranslation then
     Result := LocalPointCollision2D(
-      Point - Translation2D, TrianglesToIgnoreFunc) else
+      Point - Translation2D, TrianglesToIgnoreFunc)
+  else
     Result := LocalPointCollision2D(
       InverseTransform.MultPoint(Point), TrianglesToIgnoreFunc);
 end;
@@ -440,7 +461,8 @@ function TCastleTransform.BoxCollision(
 begin
   { LocalBoxCollision will check these anyway. But by checking them here,
     we can potentially avoid the cost of transforming into local space. }
-  if not GetCollides then Exit(false);
+  if not GetCollides then
+    Exit(false);
 
   if FOnlyTranslation then
     Result := LocalBoxCollision(
@@ -475,7 +497,8 @@ var
 begin
   { LocalRayCollision will check these anyway. But by checking them here,
     we can potentially avoid the cost of transforming into local space. }
-  if not GetPickable then Exit(nil);
+  if not GetPickable then
+    Exit(nil);
 
   if FOnlyTranslation then
   begin
@@ -489,7 +512,8 @@ begin
       LastNode^.RayOrigin := RayOrigin;
       LastNode^.RayDirection := RayDirection;
     end;
-  end else
+  end
+  else
   begin
     InternalTransformMatrices(M, MInverse);
     Result := LocalRayCollision(

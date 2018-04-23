@@ -581,7 +581,7 @@ var
 begin
   if VerticesStride = 0 then VerticesStride := SizeOf(TVector3);
   for i := 0 to 2 do
-    Tri.Data[i] := PVector3(PointerAdd(VerticesArray, VerticesStride*Integer(Indexes.Data[i])))^;
+    Tri.Data[i] := PVector3(PointerAdd(VerticesArray, VerticesStride * Integer(Indexes.Data[i])))^;
   Result := Tri.Normal;
 end;
 
@@ -630,12 +630,16 @@ begin
     Exit(ResultForIncorrectPoly);
   Tri.Data[0] := VertsIndices(I)^;
 
-  repeat Inc(I) until (I >= IndicesCount) or (Indices^[I] < VertsCount);
+  repeat
+    Inc(I);
+  until (I >= IndicesCount) or (Indices^[I] < VertsCount);
   if I >= IndicesCount then
     Exit(ResultForIncorrectPoly);
   Tri.Data[1] := VertsIndices(I)^;
 
-  repeat Inc(I) until (I >= IndicesCount) or (Indices^[I] < VertsCount);
+  repeat
+    Inc(I);
+  until (I >= IndicesCount) or (Indices^[I] < VertsCount);
   if I >= IndicesCount then
     Exit(ResultForIncorrectPoly);
   Tri.Data[2] := VertsIndices(I)^;
@@ -646,7 +650,9 @@ begin
   repeat
     { find next valid point, which makes another triangle of polygon }
 
-    repeat Inc(I) until (I >= IndicesCount) or (Indices^[I] < VertsCount);
+    repeat
+      Inc(I);
+    until (I >= IndicesCount) or (Indices^[I] < VertsCount);
     if I >= IndicesCount then
       Break;
     Tri.Data[1] := Tri.Data[2];
@@ -703,12 +709,16 @@ begin
     Exit;
   Tri.Data[0] := VertsIndices(I)^;
 
-  repeat Inc(I) until (I >= IndicesCount) or (Indices^[I] < VertsCount);
+  repeat
+    Inc(I);
+  until (I >= IndicesCount) or (Indices^[I] < VertsCount);
   if I >= IndicesCount then
     Exit;
   Tri.Data[1] := VertsIndices(I)^;
 
-  repeat Inc(I) until (I >= IndicesCount) or (Indices^[I] < VertsCount);
+  repeat
+    Inc(I);
+  until (I >= IndicesCount) or (Indices^[I] < VertsCount);
   if I >= IndicesCount then
     Exit;
   Tri.Data[2] := VertsIndices(I)^;
@@ -718,7 +728,9 @@ begin
   repeat
     { find next valid point, which makes another triangle of polygon }
 
-    repeat Inc(I) until (I >= IndicesCount) or (Indices^[I] < VertsCount);
+    repeat
+      Inc(I);
+    until (I >= IndicesCount) or (Indices^[I] < VertsCount);
     if I >= IndicesCount then
       Break;
     Tri.Data[1] := Tri.Data[2];
@@ -756,7 +768,8 @@ var
   i: Integer;
 begin
   Result := 0.0;
-  if VertsCount = 0 then Exit;
+  if VertsCount = 0 then
+    Exit;
 
   { licze i = 0..VertsCount-2, potem osobno przypadek gdy i = VertsCount-1.
     Moglbym ujac je razem, dajac zamiast "Verts^[i+1, 1]"
@@ -774,7 +787,7 @@ end;
 
 function IsPolygon2dCCW(const Verts: array of TVector2): Single;
 begin
-  Result := IsPolygon2dCCW(@Verts, High(Verts)+1);
+  Result := IsPolygon2dCCW(@Verts, High(Verts) + 1);
 end;
 
 function Polygon2dArea(Verts: PVector2Array; const VertsCount: Integer): Single;
@@ -845,13 +858,14 @@ begin
   {$ifdef TRIANGLE_OCTREE_USE_MAILBOX}
   if MailboxSavedTag = SegmentTag then
   begin
-    result := MailboxIsIntersection;
-    if result then
+    Result := MailboxIsIntersection;
+    if Result then
     begin
       Intersection         := MailboxIntersection;
       IntersectionDistance := MailboxIntersectionDistance;
     end;
-  end else
+  end
+  else
   begin
   {$endif}
 
@@ -864,8 +878,8 @@ begin
   {$ifdef TRIANGLE_OCTREE_USE_MAILBOX}
     { save result to mailbox }
     MailboxSavedTag := SegmentTag;
-    MailboxIsIntersection := result;
-    if result then
+    MailboxIsIntersection := Result;
+    if Result then
     begin
       MailboxIntersection         := Intersection;
       MailboxIntersectionDistance := IntersectionDistance;
@@ -887,17 +901,18 @@ begin
   {$ifdef TRIANGLE_OCTREE_USE_MAILBOX}
   if MailboxSavedTag = RayTag then
   begin
-    result := MailboxIsIntersection;
-    if result then
+    Result := MailboxIsIntersection;
+    if Result then
     begin
       Intersection         := MailboxIntersection;
       IntersectionDistance := MailboxIntersectionDistance;
     end;
-  end else
+  end
+  else
   begin
   {$endif}
 
-    result := TryTriangleRayCollision(
+    Result := TryTriangleRayCollision(
       Intersection, IntersectionDistance,
       Local.Triangle, Local.Plane,
       RayOrigin, RayDirection);
@@ -906,8 +921,8 @@ begin
   {$ifdef TRIANGLE_OCTREE_USE_MAILBOX}
     { zapisz wyniki do mailboxa }
     MailboxSavedTag := RayTag;
-    MailboxIsIntersection := result;
-    if result then
+    MailboxIsIntersection := Result;
+    if Result then
     begin
       MailboxIntersection         := Intersection;
       MailboxIntersectionDistance := IntersectionDistance;
@@ -1322,14 +1337,14 @@ var
 begin
   { see http://stackoverflow.com/questions/2049582/how-to-determine-a-point-in-a-2d-triangle }
   Area := 1 / 2 * (
-    - Tri.Data[1].Data[1]*Tri.Data[2].Data[0]
-    + Tri.Data[0].Data[1]*(-Tri.Data[1].Data[0] + Tri.Data[2].Data[0])
-    + Tri.Data[0].Data[0]*(Tri.Data[1].Data[1] - Tri.Data[2].Data[1])
-    + Tri.Data[1].Data[0]*Tri.Data[2].Data[1]);
+    - Tri.Data[1].Data[1] * Tri.Data[2].Data[0]
+    + Tri.Data[0].Data[1] * (-Tri.Data[1].Data[0] + Tri.Data[2].Data[0])
+    + Tri.Data[0].Data[0] * (Tri.Data[1].Data[1] - Tri.Data[2].Data[1])
+    + Tri.Data[1].Data[0] * Tri.Data[2].Data[1]);
 
-  S := 1/(2*Area)*(
-      Tri.Data[0].Data[1]*Tri.Data[2].Data[0]
-    - Tri.Data[0].Data[0]*Tri.Data[2].Data[1]
+  S := 1 / (2 * Area) * (
+      Tri.Data[0].Data[1] * Tri.Data[2].Data[0]
+    - Tri.Data[0].Data[0] * Tri.Data[2].Data[1]
     + (Tri.Data[2].Data[1] - Tri.Data[0].Data[1]) * P.Data[0]
     + (Tri.Data[0].Data[0] - Tri.Data[2].Data[0]) * P.Data[1]);
 
@@ -1339,9 +1354,9 @@ begin
      (S > One) then
     Exit(false);
 
-  T := 1/(2*Area)*(
-      Tri.Data[0].Data[0]*Tri.Data[1].Data[1]
-    - Tri.Data[0].Data[1]*Tri.Data[1].Data[0]
+  T := 1 / (2 * Area) * (
+      Tri.Data[0].Data[0] * Tri.Data[1].Data[1]
+    - Tri.Data[0].Data[1] * Tri.Data[1].Data[0]
     + (Tri.Data[0].Data[1] - Tri.Data[1].Data[1]) * P.Data[0]
     + (Tri.Data[1].Data[0] - Tri.Data[0].Data[0]) * P.Data[1]);
 

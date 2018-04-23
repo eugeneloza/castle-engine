@@ -98,7 +98,7 @@ var
 
   function Sin3Theta: Float;
   begin
-    Result := Sqr(SinTheta)*SinTheta;
+    Result := Sqr(SinTheta) * SinTheta;
   end;
 
   function Sin4Theta: Float;
@@ -113,7 +113,7 @@ var
 
   function Cos3Theta: Float;
   begin
-    Result := Sqr(CosTheta)*CosTheta;
+    Result := Sqr(CosTheta) * CosTheta;
   end;
 
   function Cos4Theta: Float;
@@ -128,7 +128,7 @@ var
 
   function Sin3Phi: Float;
   begin
-    Result := Sqr(SinPhi)*SinPhi;
+    Result := Sqr(SinPhi) * SinPhi;
   end;
 
   function Sin4Phi: Float;
@@ -143,7 +143,7 @@ var
 
   function Cos3Phi: Float;
   begin
-    Result := Sqr(CosPhi)*CosPhi;
+    Result := Sqr(CosPhi) * CosPhi;
   end;
 
   function Cos4Phi: Float;
@@ -199,12 +199,12 @@ begin
   L := 0;
   ReachedLM := -1;
   repeat
-    if ReachedLM + Integer(2*L+1) >= Integer(LM) then
+    if ReachedLM + Integer(2 * L + 1) >= Integer(LM) then
     begin
       M := LM - ReachedLM - L - 1;
       Break;
     end;
-    ReachedLM += Integer(2*L+1);
+    ReachedLM += Integer(2 * L + 1);
     Inc(L);
   until false;
 end;
@@ -246,7 +246,7 @@ begin
     SHVector[LM] := 0;
     for Side := Low(Side) to High(Side) do
       for Pixel := 0 to Sqr(CubeMapSize) - 1 do
-        SHVector[LM] += (Map[Side, Pixel]/255) * SHBasisMap[LM, Side, Pixel];
+        SHVector[LM] += (Map[Side, Pixel] / 255) * SHBasisMap[LM, Side, Pixel];
 
     { SHVector[LM] is now calculated for all sphere points.
       We want this to be integral over a sphere, so normalize now.

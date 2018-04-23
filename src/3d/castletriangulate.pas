@@ -145,7 +145,8 @@ procedure TriangulateFace(
   function Previous(const I: Integer): Integer;
   begin
     Result := I - 1;
-    if Result = -1 then Result += Count;
+    if Result = -1 then
+      Result += Count;
   end;
 
   function Next(const I: Integer): Integer;
@@ -164,7 +165,8 @@ procedure TriangulateFace(
   function Verts(I: Longint): TVector3;
   begin
     if FaceIndices <> nil then
-      Result := Vertices(FaceIndices^[I]) else
+      Result := Vertices(FaceIndices^[I])
+    else
       Result := Vertices(I);
   end;
 
@@ -316,14 +318,16 @@ var
       RDirection[0] := TVector3.DotProduct(RayDirection, XDirection) / XDirectionLenSqr;
       RDirection[1] := TVector3.DotProduct(RayDirection, YDirection) / YDirectionLenSqr;
 
-      if IsZero(RDirection[1]) then Exit(false);
+      if IsZero(RDirection[1]) then
+        Exit(false);
 
       { we're interested now in intersection on OX axis with ray.
         R0 + RDirection * T = (X, 0), so
         T = -R0.y / RDirection.y, and
         X = R0.x + RDirection.x * T }
       T := - R0[1] / RDirection[1];
-      if T < 0 then Exit(false);
+      if T < 0 then
+        Exit(false);
 
       X := R0[0] + RDirection[0] * T;
       Result := (0 <= X) and (X <= 1);
@@ -392,7 +396,8 @@ var
 begin
   if Count = 3 then
     { For Count = 3 this is trivial, do it fast. }
-    NewTriangle(0, 1, 2) else
+    NewTriangle(0, 1, 2)
+  else
   if Count > 3 then
   begin
     EpsilonForEmptyCheck := SingleEpsilon;
@@ -428,7 +433,8 @@ begin
         We calculate them only for the sake of calculating PolygonNormal
         (they do not determine triangulation in any other way). }
       P1 := GetMostDistantVertex(Center);
-      if not EarAround(P1, P0, P2, PolygonNormal) then Exit;
+      if not EarAround(P1, P0, P2, PolygonNormal) then
+        Exit;
       Assert(not PolygonNormal.IsZero);
       PolygonNormal.NormalizeMe;
 
@@ -632,7 +638,8 @@ function IndexedConcavePolygonNormal(
   function Previous(const I: Integer): Integer;
   begin
     Result := I - 1;
-    if Result = -1 then Result += Count;
+    if Result = -1 then
+      Result += Count;
   end;
 
   function Next(const I: Integer): Integer;
