@@ -112,7 +112,7 @@ type
       ...
       Progress.Init(100, 'Doing something time-consuming, please wait');
       try
-        for i := 1 to 100 do
+        for I := 1 to 100 do
         begin
           ... do something ...
           Progress.Step;
@@ -292,7 +292,8 @@ end;
 destructor TProgressUserInterface.Destroy;
 begin
   if OwnsImage then
-    FreeAndNil(FImage) else
+    FreeAndNil(FImage)
+  else
     FImage := nil;
   inherited;
 end;
@@ -356,7 +357,8 @@ begin
   { This means that AMax < Max(AMax, 1), in other words: AMax <= 0.
     Then show to user that this operation actually finished. }
   try
-    if AMax < Max then Step;
+    if AMax < Max then
+      Step;
   except
     { In case of problems within UserInterface.Init, call Fini
       to change our state to not Active. }
@@ -370,7 +372,8 @@ begin
   Assert(Active, 'TProgress.Step error: progress is not active');
 
   FPosition := FPosition + StepSize;
-  if Position > Max then FPosition := Max;
+  if Position > Max then
+    FPosition := Max;
 
   if UserInterfaceDelayed then
   begin
@@ -380,7 +383,8 @@ begin
     begin
       UserInterface.Init(Self);
       UserInterfaceDelayed := false;
-    end else
+    end
+    else
       Exit;
   end;
 

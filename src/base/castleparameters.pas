@@ -346,15 +346,16 @@ function OptionSeparateArgumentToCount(const v: TOptionSeparateArgument): Intege
 
 function ParametersCountString(Count: Integer; const MiddleStr: string): string; overload;
 begin
-  result := IntToStr(Count);
+  Result := IntToStr(Count);
   if Count = 1 then
-    result := result +MiddleStr +' parameter' else
-    result := result +MiddleStr +' parameters';
+    Result := Result + MiddleStr + ' parameter'
+  else
+    Result := Result + MiddleStr + ' parameters';
 end;
 
 function ParametersCountString(Count: Integer): string; overload;
 begin
-  result := ParametersCountString(Count, '');
+  Result := ParametersCountString(Count, '');
 end;
 
 { Since we can modify Parameters, we can't really output
@@ -372,24 +373,25 @@ begin
   begin
     if ParamValue < High then
       raise EInvalidParams.Create('Expected ' +
-        ParametersCountString(High-ParamValue, ' less')) else
+        ParametersCountString(High - ParamValue, ' less'))
+    else
       raise EInvalidParams.Create('Expected ' +
-        ParametersCountString(ParamValue-High, ' more'));
+        ParametersCountString(ParamValue - High, ' more'));
   end;
 end;
 
 procedure TParameters.CheckHighAtLeast(ParamValue: integer);
 begin
- if ParamValue > High then
-  raise EInvalidParams.Create('Expected ' +
-    ParametersCountString(ParamValue-High, ' more'));
+  if ParamValue > High then
+    raise EInvalidParams.Create('Expected ' +
+      ParametersCountString(ParamValue - High, ' more'));
 end;
 
 procedure TParameters.CheckHighAtMost(ParamValue: integer);
 begin
   if ParamValue < High then
     raise EInvalidParams.Create('Expected ' +
-      ParametersCountString(High-ParamValue, ' less'));
+      ParametersCountString(High - ParamValue, ' less'));
 end;
 
 function TParameters.IsPresent(const A: array of string): boolean;
@@ -406,11 +408,11 @@ end;
 procedure TParameters.Parse(const Options: array of TOption; OptionProc: TOptionProc;
   OptionProcData: Pointer; ParseOnlyKnownLongOptions: boolean);
 begin
-  Parse(@Options, System.High(Options)+1, OptionProc, OptionProcData,
+  Parse(@Options, System.High(Options) + 1, OptionProc, OptionProcData,
     ParseOnlyKnownLongOptions);
 end;
 
-procedure SplitLongParameter(const s: string; out ParamLong: string;
+procedure SplitLongParameter(const S: string; out ParamLong: string;
   out HasArgument: boolean; out Argument: string; PrefixLength: Integer);
 { zadany s musi sie zaczynac od PrefixLength znakow ktore sa ignorowane
   (dla "prawdziwej" long option z definicji TParameters.Parse PrefixLength musi byc
@@ -422,7 +424,7 @@ procedure SplitLongParameter(const s: string; out ParamLong: string;
   =false i Argument = '', wpp. ParamLong to czesc zawarta pomiedzy '--' a '=',
   HasArgument = true, Argument to czesc za pierwszyn znakiem '='
   (w ten sposob sam Argument moze bez problemu zawierac znak '=').
-  Przyklady:
+  Example:
     s = '--long-option' ->
       ParamLong = 'long-option', HasArgument = false, Argument = ''
     s = '--long-option=arg' ->
@@ -432,22 +434,23 @@ procedure SplitLongParameter(const s: string; out ParamLong: string;
     s = '--=arg' ->
       EInvalidParams
 }
-var p: Integer;
+var P: Integer;
 begin
- p := Pos('=', s);
- HasArgument := p <> 0;
- if HasArgument then
- begin
-  ParamLong := CopyPos(s, PrefixLength+1, p-1);
-  Argument := SEnding(s, p+1);
- end else
- begin
-  ParamLong := SEnding(s, PrefixLength+1);
-  Argument := '';
- end;
+  P := Pos('=', S);
+  HasArgument := P <> 0;
+  if HasArgument then
+  begin
+    ParamLong := CopyPos(S, PrefixLength + 1, P - 1);
+    Argument := SEnding(S, P + 1);
+  end
+  else
+  begin
+    ParamLong := SEnding(S, PrefixLength + 1);
+    Argument := '';
+  end;
 
- if ParamLong = '' then
-  raise EInvalidParams.Create('Invalid empty parameter "'+s+'"');
+  if ParamLong = '' then
+    raise EInvalidParams.Create('Invalid empty parameter "' + S + '"');
 end;
 
 procedure TParameters.Parse(
@@ -461,27 +464,32 @@ procedure TParameters.Parse(
     zero-based), wyciaga tez zapisany razem z nia parametr i zwraca
     HasArgument i Argument (pamietaj ze wyciaga tylko argumenty dolaczone
     do opcji przy pomocy znaku "="; nie sprawdza tez w ogole czy HasArgument
-    w jakis sposob zgadza sie z Options[result].Argument.).
+    w jakis sposob zgadza sie z Options[Result].Argument.).
 
     Jezeli ParseOnlyKnownLongOptions to moze zwrocic -1 aby zaznaczyc ze
     ten parametr nie reprezentuje zadnej znanej opcji (chociaz ciagle
     nieprawidlowe postacie w rodzaju --=argument czy --non-arg-option=argument
     beda oczywiscie powodowaly wyjatek.) }
-  var ParamLong: string;
-      i: Integer;
+  var
+    ParamLong: string;
+    I: Integer;
   begin
-   SplitLongParameter(s, ParamLong, HasArgument, Argument, 2);
-   for i := 0 to OptionsCount-1 do
-    if Options^[i].Long = ParamLong then
-     begin result := i; Exit; end;
+    SplitLongParameter(s, ParamLong, HasArgument, Argument, 2);
+    for I := 0 to OptionsCount - 1 do
+     if Options^[I].Long = ParamLong then
+      begin
+        Result := I;
+        Exit;
+      end;
 
-   if ParseOnlyKnownLongOptions then
-    result := -1 else
-    raise EInvalidLongOption.Create('Invalid long option "'+s+'"');
+    if ParseOnlyKnownLongOptions then
+      Result := -1
+    else
+      raise EInvalidLongOption.Create('Invalid long option "' + S + '"');
   end;
 
-  function FindShortOption(c: char; const Parameter: string): Integer;
-  { znajdz takie i ze Options[i].Short = c (i c <> #0).
+  function FindShortOption(C: char; const Parameter: string): Integer;
+  { znajdz takie i ze Options[i].Short = C (and C <> #0).
     Jesli sie nie uda - wyjatek EInvalidshortOption.
     Parametr "Parameter" jest nam potrzebny
     _tylko_ zeby skomponowac ladniejszy (wiecej mowiacy) Message wyjatku,
@@ -489,16 +497,17 @@ procedure TParameters.Parse(
   const
     SInvalidShortOpt = 'Invalid short option character "%s" in parameter "%s"';
   begin
-   if c = #0 then
+   if C = #0 then
     raise EInvalidShortOption.CreateFmt(SInvalidShortOpt, ['#0 (null char)', Parameter]);
 
-   for result := 0 to OptionsCount-1 do
-    if Options^[result].Short = c then Exit;
+   for Result := 0 to OptionsCount - 1 do
+    if Options^[Result].Short = C then
+      Exit;
 
-   raise EInvalidShortOption.CreateFmt(SInvalidShortOpt, [c, Parameter]);
+   raise EInvalidShortOption.CreateFmt(SInvalidShortOpt, [C, Parameter]);
   end;
 
-  function ParseShortParameter(const s: string; var HasArgument: boolean;
+  function ParseShortParameter(const S: string; var HasArgument: boolean;
     var Argument: string; SimpleShortOptions: TIntegerList): Integer;
   { s jest jakims parametrem zaczynajacym sie od '-' i nie bedacym '-'.
     Dziala tak jak ParseLongParameter tyle ze nigdy nie zwraca -1
@@ -520,63 +529,66 @@ procedure TParameters.Parse(
     dalsze parametry zeby postac argument/argumenty opcji.
     Zasada jest taka ze ta procedura zajmuje sie TYLKO parametrem s.
     Ona nie wchodzi na inne Strings[], zreszta w ogole nie wie dla jakiego
-    I zachodzi Strings[I] = s.
+    I zachodzi Strings[I] = S.
   }
   var ParamShortStr: string;
-      i: Integer;
+      I: Integer;
   begin
    { calculate ParamShortStr, HasArgument, Argument }
-   SplitLongParameter(s, ParamShortStr, HasArgument, Argument, 1);
+   SplitLongParameter(S, ParamShortStr, HasArgument, Argument, 1);
 
    { add to SimpleShortOptions }
-   for i := 1 to Length(ParamShortStr)-1 do
-    SimpleShortOptions.Add( FindShortOption(ParamShortStr[i], s) );
+   for I := 1 to Length(ParamShortStr) - 1 do
+    SimpleShortOptions.Add( FindShortOption(ParamShortStr[I], S) );
 
    { calculate result }
-   result := FindShortOption(ParamShortStr[Length(ParamShortStr)], s);
+   Result := FindShortOption(ParamShortStr[Length(ParamShortStr)], S);
   end;
 
-var i, j, k, OptionNum: Integer;
+var I, J, K, OptionNum: Integer;
     HasArgument: boolean;
     Argument, OptionName: string;
     SeparateArgs: TSeparateArgs;
     SimpleShortOptions: TIntegerList;
 begin
- i := 1;
- SimpleShortOptions := TIntegerList.Create;
- try
+  I := 1;
+  SimpleShortOptions := TIntegerList.Create;
+  try
 
-  while i <= High do
-  begin
-   if Strings[i] = '--' then
+   while I <= High do
    begin
-    if not ParseOnlyKnownLongOptions then Delete(I);
-    Break
-   end;
+     if Strings[I] = '--' then
+     begin
+       if not ParseOnlyKnownLongOptions then
+         Delete(I);
+       Break
+     end;
 
-   Assert(SimpleShortOptions.Count = 0);
+     Assert(SimpleShortOptions.Count = 0);
 
    { calculate OptionNum; Ustaw je na numer w Params jezeli Strings[i] to opcja
      (w tym przypadku musisz tez ustalic OptionName), wpp. (jesli to nie opcja
      i mozemy ja pominac) ustal OptionNum na -1.
 
-     Warunek Length(Strings[i]) > 1 w linijce ponizej gwarantuje nam
+     Warunek Length(Strings[I]) > 1 w linijce ponizej gwarantuje nam
      ze parametr '-' uznamy za nie-opcje (zamiast np. powodowac wyjatek
      "empty option") }
-   OptionNum := -1;
-   if SCharIs(Strings[i], 1, '-') and (Length(Strings[i]) > 1) then
-   begin
-    if SCharIs(Strings[i], 2, '-') then
+    OptionNum := -1;
+    if SCharIs(Strings[I], 1, '-') and (Length(Strings[I]) > 1) then
     begin
-     OptionNum := ParseLongParameter(Strings[i], HasArgument, Argument);
-     if OptionNum <> -1 then OptionName := '--'+Options^[OptionNum].Long;
-    end else
-    if not ParseOnlyKnownLongOptions then
-    begin
-     OptionNum := ParseShortParameter(Strings[i], HasArgument, Argument, SimpleShortOptions);
-     OptionName := '-'+Options^[OptionNum].Short;
+      if SCharIs(Strings[I], 2, '-') then
+      begin
+        OptionNum := ParseLongParameter(Strings[I], HasArgument, Argument);
+        if OptionNum <> -1 then
+          OptionName := '--' + Options^[OptionNum].Long;
+      end
+      else
+      if not ParseOnlyKnownLongOptions then
+      begin
+        OptionNum := ParseShortParameter(Strings[I], HasArgument, Argument, SimpleShortOptions);
+        OptionName := '-' + Options^[OptionNum].Short;
+      end;
     end;
-   end;
 
    { OptionNum = -1 oznacza ze z jakiegos powodu Strings[i] jednak NIE przedstawia
      soba zadnej opcji i powinnismy postepowac dalej jakby Strings[i] byl
@@ -587,19 +599,19 @@ begin
    if OptionNum <> -1 then
    begin
     { najpierw zajmij sie SimpleShortOptions }
-    for k := 0 to SimpleShortOptions.Count-1 do
+    for K := 0 to SimpleShortOptions.Count - 1 do
     begin
-     if not (Options^[SimpleShortOptions[k]].Argument in [oaNone, oaOptional]) then
+     if not (Options^[SimpleShortOptions[K]].Argument in [oaNone, oaOptional]) then
       raise EMissingOptionArgument.Create('Missing argument for short option -'+
-        Options^[SimpleShortOptions[k]].Short +'; when combining short options only the last '+
+        Options^[SimpleShortOptions[K]].Short + '; when combining short options only the last '+
         'option can have an argument');
-     OptionProc(SimpleShortOptions[k], false, '', EmptySeparateArgs, OptionProcData);
+     OptionProc(SimpleShortOptions[K], false, '', EmptySeparateArgs, OptionProcData);
     end;
     SimpleShortOptions.Count := 0;
 
     { teraz zajmij sie opcja OptionNum o nazwie OptionName }
 
-    Delete(i);
+    Delete(I);
     SeparateArgs := EmptySeparateArgs;
 
     { upewnij sie ze HasArgument ma dopuszczalna wartosc. Odczytaj argumenty
@@ -607,56 +619,61 @@ begin
 
     if (Options^[OptionNum].Argument = oaRequired) and (not HasArgument) then
     begin
-     if i > High then
-      raise EMissingOptionArgument.Create('Missing argument for option '+OptionName);
+     if I > High then
+      raise EMissingOptionArgument.Create('Missing argument for option ' + OptionName);
      HasArgument := true;
-     Argument := Strings[i];
-     Delete(i);
-    end else
+     Argument := Strings[I];
+     Delete(I);
+    end
+    else
     if (Options^[OptionNum].Argument = oaNone) and HasArgument then
-     raise EExcessiveOptionArgument.Create('Excessive argument for option '+OptionName) else
+      raise EExcessiveOptionArgument.Create('Excessive argument for option ' + OptionName)
+    else
     if Options^[OptionNum].Argument in OptionArgumentsRequiredSeparate then
     begin
-     if HasArgument then
-      raise EExcessiveOptionArgument.CreateFmt('Option %s requires %d arguments, '+
-        'you cannot give them using the form --option=argument, you must give '+
-        'all the arguments as separate parameters', [OptionName,
+      if HasArgument then
+        raise EExcessiveOptionArgument.CreateFmt('Option %s requires %d arguments, ' +
+          'you cannot give them using the form --option=argument, you must give ' +
+          'all the arguments as separate parameters', [OptionName,
         OptionSeparateArgumentToCount(Options^[OptionNum].Argument) ]);
 
-     for j := 1 to OptionSeparateArgumentToCount(Options^[OptionNum].Argument) do
+     for J := 1 to OptionSeparateArgumentToCount(Options^[OptionNum].Argument) do
      begin
-      if i > High then
-       raise EMissingOptionArgument.CreateFmt('Not enough arguments for option %s, '+
+      if I > High then
+       raise EMissingOptionArgument.CreateFmt('Not enough arguments for option %s, ' +
          'this option needs %d arguments but we have only %d', [OptionName,
-         OptionSeparateArgumentToCount(Options^[OptionNum].Argument), j-1]);
-      SeparateArgs[j] := Strings[i];
-      Delete(i);
+         OptionSeparateArgumentToCount(Options^[OptionNum].Argument), J - 1]);
+      SeparateArgs[J] := Strings[I];
+      Delete(I);
      end;
     end;
 
     OptionProc(OptionNum, HasArgument, Argument, SeparateArgs, OptionProcData);
-   end else
-    Inc(i);
+   end
+   else
+     Inc(I);
   end;
 
- finally SimpleShortOptions.Free end;
+  finally
+    SimpleShortOptions.Free;
+  end;
 end;
 
 { some simple helper utilities ---------------------------------------------- }
 
-function OptionSeparateArgumentToCount(const v: TOptionSeparateArgument): Integer;
+function OptionSeparateArgumentToCount(const V: TOptionSeparateArgument): Integer;
 begin
- result := RequiredSeparateFirstCount + Ord(v) - Ord(oaRequiredSeparateFirst)
+  Result := RequiredSeparateFirstCount + Ord(V) - Ord(oaRequiredSeparateFirst)
 end;
 
-function SeparateArgsToVector3(const v: TSeparateArgs): TVector3;
+function SeparateArgsToVector3(const V: TSeparateArgs): TVector3;
 begin
- result[0] := StrToFloat(v[1]);
- result[1] := StrToFloat(v[2]);
- result[2] := StrToFloat(v[3]);
+  Result[0] := StrToFloat(V[1]);
+  Result[1] := StrToFloat(V[2]);
+  Result[2] := StrToFloat(V[3]);
 end;
 
-function SeparateArgsToVector3Single(const v: TSeparateArgs): TVector3;
+function SeparateArgsToVector3Single(const V: TSeparateArgs): TVector3;
 begin
   Result := SeparateArgsToVector3(V);
 end;
@@ -667,7 +684,7 @@ var
 begin
   Parameters := TParameters.Create;
   for I := 0 to ParamCount do
-    Parameters.Add(ParamStr(i));
+    Parameters.Add(ParamStr(I));
 end;
 
 procedure FinalizationParams;

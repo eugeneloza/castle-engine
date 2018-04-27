@@ -196,14 +196,14 @@ procedure StringReplaceAllVar(var S: string;
   This is a bit more powerful than simply specyfing Newline parameter
   as @code(NL + Indent), because this function also adds Indent after existing
   newlines in the input string. }
-function BreakLine(const s: string; const MaxCol: integer;
+function BreakLine(const S: string; const MaxCol: integer;
   const AllowedBreakChars: TSetOfChars = WhiteSpaces): string; overload;
-function BreakLine(const s: string; const MaxCol: integer;
+function BreakLine(const S: string; const MaxCol: integer;
   const AllowedBreakChars: TSetOfChars;
   const Newline: string; const Indent: string): string; overload;
 
 { Returns S with all chars in ExcludedChars deleted. }
-function SDeleteChars(const s: string; const excludedChars: TSetOfChars): string;
+function SDeleteChars(const S: string; const excludedChars: TSetOfChars): string;
 
 { Replace all occurrences of characters in FromChars with
   the new string / character. There are three overloaded versions:
@@ -223,29 +223,29 @@ function SDeleteChars(const s: string; const excludedChars: TSetOfChars): string
 
   @groupBegin
 }
-function SReplaceChars(const s, FromChars, ToChars: string): string; overload;
-function SReplaceChars(const s: string; FromChars: TSetOfChars; ToChar: char): string; overload;
-function SReplaceChars(const s: string; FromChar, ToChar: char): string; overload;
+function SReplaceChars(const S, FromChars, ToChars: string): string; overload;
+function SReplaceChars(const S: string; FromChars: TSetOfChars; ToChar: char): string; overload;
+function SReplaceChars(const S: string; FromChar, ToChar: char): string; overload;
 { @groupEnd }
 
 { Pad (fill from the left with character C) string S, until length
   of resulting string is at least Len.
 
   For example, @code(SPad('29', 4, '0')) gives '0029' }
-function SPad(const s: string; len: integer; c: char = ' '): string; overload;
+function SPad(const S: string; Len: integer; C: char = ' '): string; overload;
 
 { Pad (fill from the left)  with zeros string S, until length
   of resulting string is at least Len. It's actually just a shortcut for SPad
   with padding character set to '0'. }
-function SZeroPad(const s: string; len: integer): string;
+function SZeroPad(const S: string; Len: integer): string;
 
 { Convert uppercase letters to lowercase. Analogous to UpCase.
   Doesn't change other characters. Just like UpCase, this doesn't
   take current locale into account, and works only on English
   A-Z -> a-z letters. }
-function LoCase(c: char): char;
+function LoCase(C: char): char;
 
-function CharPos(c: char; const s: string; Offset: Integer = 1): integer;
+function CharPos(C: char; const S: string; Offset: Integer = 1): integer;
   deprecated 'use SysUtils.Pos or StrUtils.PosEx instead';
 
 { Find first occurrence of any character in Chars in string S.
@@ -260,10 +260,10 @@ function CharPos(c: char; const s: string; Offset: Integer = 1): integer;
   They all return 0 if not found.
 
   @groupBegin }
-function CharsPos(const chars: TSetOfChars; const s: string): integer;
-function CharsPosEx(const chars: TSetOfChars; const s: string;
+function CharsPos(const Chars: TSetOfChars; const S: string): integer;
+function CharsPosEx(const Chars: TSetOfChars; const S: string;
   Offset: Integer): integer;
-function BackCharsPos(const chars: TSetOfChars; const s: string): integer;
+function BackCharsPos(const Chars: TSetOfChars; const S: string): integer;
 { @groupEnd }
 
 { Find @bold(last) occurrence of SubString within S.
@@ -279,7 +279,7 @@ function FirstDelimiter(const Delimiters, S: string): Integer;
 { Returns suffix of S starting from position P.
   Returns '' if P > length(S).
   Yes, this is simply equivalent to Copy(S, P, MaxInt). }
-function SEnding(const s: string; P: integer): string;
+function SEnding(const S: string; P: integer): string;
 
 function IsPrefix(const Prefix, S: string;
   IgnoreCase: boolean = true): boolean; overload;
@@ -295,31 +295,31 @@ function PrefixRemove(const Prefix, S: string; IgnoreCase: boolean): string;
 function SuffixRemove(const Suffix, S: string; IgnoreCase: boolean): string;
 
 { Appends to a string S DataSize bytes from Data. }
-procedure SAppendData(var s: string; const Data; DataSize: integer); deprecated 'this function is not very useful';
+procedure SAppendData(var S: string; const Data; DataSize: integer); deprecated 'this function is not very useful';
 
 { A pointer to S[CharNum], that is just @@S[CharNum],
   avoiding range checking. }
-function SChar(const s: string; CharNum: integer): PChar; deprecated 'this function is not very useful';
+function SChar(const S: string; CharNum: integer): PChar; deprecated 'this function is not very useful';
 
 { Check whether S[Index] = C, also checking is Index within S length.
   Return false if S is too short, or the chatacter differs.
 
   @groupBegin }
-function SCharIs(const s: string; index: integer; c: char): boolean; overload;
-function SCharIs(const s: string; index: integer; const chars: TSetOfChars): boolean; overload;
+function SCharIs(const S: string; index: integer; C: char): boolean; overload;
+function SCharIs(const S: string; index: integer; const Chars: TSetOfChars): boolean; overload;
 { @groupEnd }
 
 { Replace typically unreadable characters in string S with #number notation.
   Useful for printing strings with some unprintable chars for
   debugging purposes. }
-function SReadableForm(const s: string): string; overload;
+function SReadableForm(const S: string): string; overload;
 function SReadableForm(const C: char): string; overload;
 
 { Return S[StartPosition..EndPosition].
   This is similar to standard Copy procedure,
   but last parameter is EndPosition instead of Count, which is more comfortable
   sometimes. }
-function CopyPos(const s: string; StartPosition, EndPosition: integer): string;
+function CopyPos(const S: string; StartPosition, EndPosition: integer): string;
 
 { Delete from S range of characters [StartPosition..EndPosition].
   Analogous to standard Delete but with EndPosition parameter (while
@@ -349,7 +349,8 @@ procedure DeletePos(var S: string; StartPosition, EndPosition: Integer);
     SeekPos := 1;
     repeat
       Token := NextToken(S, SeekPos);
-      if Token = '' then break;
+      if Token = '' then
+        Break;
       { ... process_next_token (Token) ... }
     until false;
   #)
@@ -366,7 +367,7 @@ function NextToken(const S: string; var SeekPos: Integer;
   in @italic(all) tokens inside some string, but it's also more comfortable
   when you're interested in only @italic(one) token inside some string.
   When SeekPos = 1, this is the first token. }
-function NextTokenOnce(const s: string; SeekPos: integer = 1;
+function NextTokenOnce(const S: string; SeekPos: integer = 1;
   const TokenDelims: TSetOfChars = WhiteSpaces): string;
   overload;
 
@@ -375,7 +376,7 @@ function NextTokenOnce(const s: string; SeekPos: integer = 1;
   TokenDelims are not contained in resulting items.
   E.g. CreateTokens('foo, bar', [' ', ',']) returns TCastleStringList
   with 2 items: 'foo' and 'bar'. }
-function CreateTokens(const s: string;
+function CreateTokens(const S: string;
   const TokenDelims: TSetOfChars = WhiteSpaces): TCastleStringList;
 
 { Split a string by a character delimiter.
@@ -472,7 +473,7 @@ function FindPos(const SubText, Text: string; StartPosition, Count: integer;
 
 { Return rightmost RPart characters from S.
   If RPart > Length(S) then returns S. }
-function SRight(const s: string; const rpart: integer): string;
+function SRight(const S: string; const rpart: integer): string;
 
 { If S = '' then returns NextPart, else returns S + PartSeparator + NextPart. }
 function SAppendPart(const s, PartSeparator, NextPart: string): string;
@@ -638,12 +639,12 @@ function GetFileFilterExtsStr(const FileFilter: string): string;
   content many times, which is usually not what you want.
 
   That's why you should instead use this function for such situations. }
-function SReplacePatterns(const s: string; const patterns, values: array of string; const IgnoreCase: boolean): string; overload;
-function SReplacePatterns(const s: string; const patterns, values: TStrings; const IgnoreCase: boolean): string; overload;
-function SReplacePatterns(const s: string; const Parameters: TStringStringMap; const IgnoreCase: boolean): string; overload;
+function SReplacePatterns(const S: string; const Patterns, Values: array of string; const IgnoreCase: boolean): string; overload;
+function SReplacePatterns(const S: string; const Patterns, Values: TStrings; const IgnoreCase: boolean): string; overload;
+function SReplacePatterns(const S: string; const Parameters: TStringStringMap; const IgnoreCase: boolean): string; overload;
 
-function SCharsCount(const s: string; c: char): Cardinal; overload;
-function SCharsCount(const s: string; const Chars: TSetOfChars): Cardinal; overload;
+function SCharsCount(const S: string; C: char): Cardinal; overload;
+function SCharsCount(const S: string; const Chars: TSetOfChars): Cardinal; overload;
 
 { Remove from the string S everything after the first hash "#" character.
   Removes also this very "#" character.
@@ -652,14 +653,14 @@ function SCharsCount(const s: string; const Chars: TSetOfChars): Cardinal; overl
 
   Useful for interpreting simple text files when you want to treat
   things after "#" like a comment. }
-function STruncateHash(const s: string): string;
+function STruncateHash(const S: string): string;
 
 { Return the value to reproduce exactly string S by Format procedure.
   Saying simply, this doubles the "%" characters inside the string.
   The intention is to make such string that
   @code(Format(SUnformattable(S), []) = S). In other words, "quote"
   any suspicious "%" characters in S for Format. }
-function SUnformattable(const s: string): string;
+function SUnformattable(const S: string): string;
 
 { Compare strings, taking into account current locale.
   This simply does AnsiCompareStr or AnsiCompareText, depending on IgnoreCase.
@@ -675,9 +676,9 @@ function SAnsiSame(const s1, s2: string; IgnoreCase: boolean): boolean;
 type
   TPercentReplace = record
     { @noAutoLinkHere }
-    c: char;
+    C: char;
     { @noAutoLinkHere }
-    s: string;
+    S: string;
   end;
 
   EUnknownPercentFormat = class(Exception);
@@ -866,7 +867,7 @@ function PointerToStr(Ptr: Pointer): string;
   but this reliably raises EConvertError in case of trouble.
 
   @raises EConvertError In case of invalid string. }
-function Str2ToInt(const s: string): integer;
+function Str2ToInt(const S: string): integer;
 
 { Convert string with hexadecimal number to an integer.
   String must contain only digits (0-9, a-z, A-Z), and with an optional
@@ -877,9 +878,9 @@ function Str2ToInt(const s: string): integer;
   with standard StrToInt.
 
   @raises EConvertError In case of invalid string. }
-function StrHexToInt(const s: string): Int64;
+function StrHexToInt(const S: string): Int64;
 
-function StrToFloatDef(const s: string; DefValue: Extended): Extended;
+function StrToFloatDef(const S: string; DefValue: Extended): Extended;
 
 { Convert a set to a string representation, in somewhat hacky way.
   This assumes that given SetVariable is a set value, and the set type
@@ -914,7 +915,7 @@ function CharSetToStr(const SetVariable: TSetOfChars): string;
 { PCharOrNil simply returns a Pointer(S), you can think of it as a NO-OP.
   If string is empty, this returns @nil, otherwise it works just like
   PChar(S): returns a Pointer(S) with appropriate type cast. }
-function PCharOrNil(const s: string): PChar;
+function PCharOrNil(const S: string): PChar;
 
 { Replace any number of consecutive whitespace (including newlines)
   with a single whitespace. This is nice when you have a string
@@ -1003,11 +1004,14 @@ begin
     to possibly speed up a little (GetCount is virtual) }
   if Value < Count then
   begin
-    for I := 1 to Count - Value do Delete(Count - 1);
-  end else
+    for I := 1 to Count - Value do
+      Delete(Count - 1);
+  end
+  else
   if Value > Count then
   begin
-    for I := 1 to Value - Count do Add('');
+    for I := 1 to Value - Count do
+      Add('');
   end;
 end;
 
@@ -1051,7 +1055,8 @@ var
 begin
   { Need to specially check for Count = 0 case, since (0-1) div 2 = -1 div 2 = 0
     which means that loop would try invalid Exchange(0, -1). }
-  if Count = 0 then Exit;
+  if Count = 0 then
+    Exit;
   for I := 0 to (Count - 1) div 2 do
     Exchange(I, Count - 1 - I);
 end;
@@ -1088,7 +1093,8 @@ function TCastleStringList.Equals(const A: array of string): boolean;
 var
   I: Integer;
 begin
-  if High(A) <> Count - 1 then Exit(false);
+  if High(A) <> Count - 1 then
+    Exit(false);
   for I := 0 to Count - 1 do
     if DoCompareText(A[I], Strings[I]) <> 0 then
       Exit(false);
@@ -1130,7 +1136,10 @@ begin
   Result := TStringStringMap.Create;
   try
     Result.Assign(Self);
-  except FreeAndNil(Result); raise end;
+  except
+    FreeAndNil(Result);
+    raise;
+  end;
 end;
 
 procedure TStringStringMap.Assign(const Source: TStringStringMap);
@@ -1155,11 +1164,14 @@ end;
 { routines ------------------------------------------------------------------- }
 
 function RandomString: string;
-var i: integer;
+var
+  I: integer;
 begin
-  result := '';
-  for i := 1 to random(10) do result := result+char(byte('A')+Random(26));
-  for i := 1 to 3 do result := result+char(byte('0')+Random(10));
+  Result := '';
+  for I := 1 to Random(10) do
+    Result := Result + char(byte('A') + Random(26));
+  for I := 1 to 3 do
+    Result := Result + char(byte('0') + Random(10));
 end;
 
 procedure StringReplaceAllVar(var S: string;
@@ -1169,21 +1181,23 @@ procedure StringReplaceAllVar(var S: string;
  { NAIWNA IMPLEMENTACJA : zawsze szuka w nowym s od subs_orig od poczatku
    (w rezultacie poczatek stringa przeszukajac wiele razy niepotrzebnie).
    No i moze sie zapetlic gdy subs_repl zawiera w sobie subs_orig. }
-var p: integer;
+var
+  P: integer;
 begin
  {assert( Pos(subs_orig, subs_repl) = 0 , 'blad w ReplaceSubstr !');}
- p := Pos(subs_orig, s); (tutaj powinna byc sterowana IgnoreCase) }
- while p > 0 do
+ P := Pos(subs_orig, S); (tutaj powinna byc sterowana IgnoreCase) }
+ while P > 0 do
  begin
-  Delete(s, p, length(subs_Orig));
-  Insert(subs_repl, s, p);
-  p := Pos(subs_orig, s); (tutaj powinna byc sterowana IgnoreCase)
+  Delete(S, P, length(subs_Orig));
+  Insert(subs_repl, S, P);
+  P := Pos(subs_orig, S); (tutaj powinna byc sterowana IgnoreCase)
  end;
 *)
 begin
   if IgnoreCase then
-    s := StringReplace(s, FromPattern, ToPattern, [rfReplaceAll, rfIgnoreCase]) else
-    s := StringReplace(s, FromPattern, ToPattern, [rfReplaceAll]);
+    S := StringReplace(S, FromPattern, ToPattern, [rfReplaceAll, rfIgnoreCase])
+  else
+    S := StringReplace(S, FromPattern, ToPattern, [rfReplaceAll]);
 end;
 
 function BreakLine(const S: string; const MaxCol: integer;
@@ -1196,8 +1210,8 @@ function BreakLine(const S: string; const MaxCol: integer;
   const AllowedBreakChars: TSetOfChars;
   const Newline: string; const Indent: string): string;
 var
-  done: integer;
-  nowcol, i, brk: integer;
+  Done: integer;
+  NowCol, I, Brk: integer;
   BrokenSuccess: boolean;
 begin
   // WrapText is not perfect, in looks for AllowedBreakChars after MaxCol.
@@ -1208,30 +1222,33 @@ begin
   Done := 0;
   Result := '';
 
-  i := 1;
-  while i <= Length(s) do
+  I := 1;
+  while I <= Length(S) do
   begin
-    if s[i] in [#10, #13] then
+    if S[I] in [#10, #13] then
     begin
       { niech i obejmie cale zakonczenie linii ktore moze byc 2-znakowe #13#10 lub #10#13 }
-      case s[i] of
-        #13 : if SCharIs(s, i+1, #10) then Inc(i);
-        #10 : if SCharIs(s, i+1, #13) then Inc(i);
+      case S[I] of
+        #13 : if SCharIs(S, I + 1, #10) then
+                Inc(I);
+        #10 : if SCharIs(S, I + 1, #13) then
+                Inc(I);
       end;
-      Result := Result + CopyPos(s, Done+1, i) + Indent;
-      Done := i;
-    end else
+      Result := Result + CopyPos(S, Done + 1, I) + Indent;
+      Done := I;
+    end
+    else
     begin
-      NowCol := i - Done;
+      NowCol := I - Done;
       if NowCol > MaxCol then
       begin
-        { we got line s[done+1..i] that we have to break somewhere. }
+        { we got line S[Done + 1..I] that we have to break somewhere. }
         BrokenSuccess := false;
-        for brk := i downto Done + 1 do
-          if s[brk] in AllowedBreakChars then
+        for Brk := I downto Done + 1 do
+          if S[Brk] in AllowedBreakChars then
           begin
-            Result := Result + CopyPos(s, Done+1, Brk-1) + Newline + Indent;
-            Done := brk; { we left the rest : s[brk+1..i] to be done }
+            Result := Result + CopyPos(S, Done + 1, Brk - 1) + Newline + Indent;
+            Done := Brk; { we left the rest : S[Brk + 1..I] to be done }
             BrokenSuccess := true;
             Break;
           end;
@@ -1239,157 +1256,180 @@ begin
         begin
           { ups ! it can't be broken - no AllowedBreakChars found ! so we break after
             done+maxcol position. }
-          Result := Result + Copy(s, Done+1, MaxCol) + Newline + Indent;
+          Result := Result + Copy(S, Done + 1, MaxCol) + Newline + Indent;
           Done := Done + MaxCol;
         end;
       end;
     end;
 
-    Inc(i);
+    Inc(I);
   end;
 
   if Done < Length(S) then
-    Result := Result + SEnding(S, Done+1);
+    Result := Result + SEnding(S, Done + 1);
 end;
 
-function SDeleteChars(const s: string; const excludedChars: TSetOfChars): string;
+function SDeleteChars(const S: string; const excludedChars: TSetOfChars): string;
 var
-  i, j: integer;
+  I, J: integer;
 begin
-  SetLength(result, length(s));
-  j := 1;
-  for i := 1 to length(s) do
-    if not (s[i] in excludedChars) then
-      begin result[j] := s[i]; Inc(j); end;
-  SetLength(result, j-1);
+  SetLength(Result, Length(S));
+  J := 1;
+  for I := 1 to Length(S) do
+    if not (S[I] in excludedChars) then
+    begin
+      Result[J] := S[I];
+      Inc(J);
+    end;
+  SetLength(Result, J - 1);
 end;
 
-function SReplaceChars(const s, FromChars, ToChars: string): string;
+function SReplaceChars(const S, FromChars, ToChars: string): string;
 var
-  i, p: integer;
+  I, P: integer;
 begin
   Assert(Length(FromChars) = Length(ToChars));
-  result := s;
-  for i := 1 to Length(result) do
+  Result := S;
+  for I := 1 to Length(Result) do
   begin
-    p := Pos(result[i], FromChars);
-    if p > 0 then result[i] := ToChars[p];
+    P := Pos(Result[i], FromChars);
+    if P > 0 then
+      Result[I] := ToChars[p];
   end;
 end;
 
-function SReplaceChars(const s: string; FromChars: TSetOfChars; ToChar: char): string;
+function SReplaceChars(const S: string; FromChars: TSetOfChars; ToChar: char): string;
 var
-  i: integer;
-begin
-  result := s;
-  for i := 1 to Length(result) do
-    if result[i] in FromChars then result[i] := ToChar;
-end;
-
-function SReplaceChars(const s: string; FromChar, ToChar: char): string;
-var
-  i: Integer;
+  I: integer;
 begin
   Result := S;
-  for i := 1 to Length(Result) do
-    if Result[i] = FromChar then Result[i] := ToChar;
+  for I := 1 to Length(Result) do
+    if Result[I] in FromChars then
+      Result[I] := ToChar;
 end;
 
-function SPad(const s: string; len: integer; c: char): string;
+function SReplaceChars(const S: string; FromChar, ToChar: char): string;
 var
-  lnow: integer;
+  I: Integer;
 begin
-  lnow := length(s);
-  if lnow < len then
-    Result := StringOfChar(c, len-lnow) + s else
-    Result := s;
+  Result := S;
+  for I := 1 to Length(Result) do
+    if Result[I] = FromChar then
+      Result[I] := ToChar;
 end;
 
-function SZeroPad(const s: string; len: integer): string;
-begin result := SPad(s, len, '0') end;
-
-function LoCase(c: char): char;
-begin
-  if c in ['A'..'Z'] then
-    result := chr(ord(c)-ord('A')+ord('a')) else
-    result := c;
-end;
-
-function CharPos(c: char; const s: string; Offset: Integer): integer;
+function SPad(const S: string; Len: integer; C: char): string;
 var
-  i: integer;
+  LNow: integer;
 begin
-  for i := Offset to length(s) do
-    if s[i] = c then begin result := i; exit end;
-  result := 0;
+  LNow := Length(S);
+  if LNow < Len then
+    Result := StringOfChar(C, Len - LNow) + S
+  else
+    Result := S;
 end;
 
-function CharsPos(const chars: TSetOfChars; const s: string): integer;
+function SZeroPad(const S: string; Len: integer): string;
 begin
-  for result := 1 to Length(s) do
-    if s[result] in chars then exit;
-  result := 0;
+  Result := SPad(S, Len, '0')
+end;
+
+function LoCase(C: char): char;
+begin
+  if C in ['A'..'Z'] then
+    Result := chr(ord(C) - ord('A') + ord('a'))
+  else
+    Result := C;
+end;
+
+function CharPos(C: char; const S: string; Offset: Integer): integer;
+var
+  I: integer;
+begin
+  for I := Offset to Length(S) do
+    if S[I] = C then
+    begin
+      Result := I;
+      Exit;
+    end;
+  Result := 0;
+end;
+
+function CharsPos(const Chars: TSetOfChars; const S: string): integer;
+begin
+  for Result := 1 to Length(S) do
+    if S[Result] in Chars then
+      Exit;
+  Result := 0;
 end;
 
 function CharsPosEx(const Chars: TSetOfChars; const S: string;
   Offset: Integer): integer;
 begin
   for Result := Offset to Length(S) do
-    if S[Result] in Chars then Exit;
+    if S[Result] in Chars then
+      Exit;
   Result := 0;
 end;
 
-function BackCharsPos(const chars: TSetOfChars; const s: string): integer;
+function BackCharsPos(const Chars: TSetOfChars; const S: string): integer;
 begin
-  for result := Length(s) downto 1 do
-    if s[result] in chars then exit;
-  result := 0;
+  for Result := Length(S) downto 1 do
+    if S[Result] in Chars then
+      Exit;
+  Result := 0;
 end;
 
 function BackPos(const SubString, S: string): integer;
 begin
   for Result := Length(S) - Length(SubString) + 1 downto 1 do
-    if SubString = Copy(S, Result, Length(SubString)) then Exit;
+    if SubString = Copy(S, Result, Length(SubString)) then
+      Exit;
   Result := 0;
 end;
 
 function BackPos(const SubString: char; const S: string): Integer;
 begin
   for Result := Length(S) downto 1 do
-    if S[Result] = SubString then Exit;
+    if S[Result] = SubString then
+      Exit;
   Result := 0;
 end;
 
 function FirstDelimiter(const Delimiters, S: string): Integer;
 begin
-  for result := 1 to Length(s) do
-    if Pos(S[result], Delimiters) <> 0 then exit;
-  result := 0;
+  for Result := 1 to Length(S) do
+    if Pos(S[Result], Delimiters) <> 0 then
+      Exit;
+  Result := 0;
 end;
 
 function SEnding(const S: string; P: integer): string;
 begin
-  result := Copy(S, P, MaxInt)
+  Result := Copy(S, P, MaxInt)
 end;
 
 function IsPrefix(const Prefix, S: string; IgnoreCase: boolean): boolean;
 begin
   if IgnoreCase then
-    Result := AnsiCompareText(Copy(S, 1, Length(Prefix)), Prefix) = 0 else
+    Result := AnsiCompareText(Copy(S, 1, Length(Prefix)), Prefix) = 0
+  else
     Result := AnsiCompareStr(Copy(S, 1, Length(Prefix)), Prefix) = 0;
 end;
 
 function IsSuffix(const Suffix, S: string; IgnoreCase: boolean): boolean;
 begin
   if IgnoreCase then
-    result := AnsiCompareText(SRight(S, Length(Suffix)), Suffix) = 0 else
-    result := AnsiCompareStr(SRight(S, Length(Suffix)), Suffix) = 0;
+    Result := AnsiCompareText(SRight(S, Length(Suffix)), Suffix) = 0
+  else
+    Result := AnsiCompareStr(SRight(S, Length(Suffix)), Suffix) = 0;
 end;
 
 function PrefixRemove(const Prefix, S: string; IgnoreCase: boolean): string;
 begin
   if IsPrefix(Prefix, S, IgnoreCase) then
-    Result := SEnding(S, Length(Prefix) + 1) else
+    Result := SEnding(S, Length(Prefix) + 1)
+  else
     Result := S;
 end;
 
@@ -1400,37 +1440,37 @@ begin
   begin
     { doing assignment and SetLength should be a little faster
       than doing Result := Copy(S, 1, ...) }
-    SetLength(Result, Length(s) - Length(Suffix));
+    SetLength(Result, Length(S) - Length(Suffix));
   end;
 end;
 
-procedure SAppendData(var s: string; const Data; DataSize: integer);
+procedure SAppendData(var S: string; const Data; DataSize: integer);
 var
   OldLen: integer;
 begin
-  OldLen := Length(s);
-  SetLength(s, OldLen+DataSize);
+  OldLen := Length(S);
+  SetLength(S, OldLen+DataSize);
   {$warnings off}
   // using deprecated within deprecated
-  Move(Data, SChar(s, OldLen+1)^ , DataSize);
+  Move(Data, SChar(S, OldLen + 1)^ , DataSize);
   {$warnings on}
 end;
 
 {$Include NoRQCheckBegin.inc}
-function SChar(const s: string; CharNum: integer): PChar;
+function SChar(const S: string; CharNum: integer): PChar;
 begin
-  Result := @s[CharNum]
+  Result := @S[CharNum]
 end;
 {$Include NoRQCheckEnd.inc}
 
-function SCharIs(const s: string; index: integer; c: char): boolean;
+function SCharIs(const S: string; Index: integer; C: char): boolean;
 begin
-  Result := (index <= Length(s)) and (s[index] = c)
+  Result := (Index <= Length(S)) and (S[index] = C)
 end;
 
-function SCharIs(const s: string; index: integer; const chars: TSetOfChars): boolean;
+function SCharIs(const S: string; Index: integer; const Chars: TSetOfChars): boolean;
 begin
-  Result := (index <= Length(s)) and (s[index] in chars)
+  Result := (Index <= Length(S)) and (S[Index] in Chars)
 end;
 
 function SReadableForm(const S: string): string;
@@ -1445,13 +1485,14 @@ end;
 function SReadableForm(const C: char): string;
 begin
   if (Ord(C) < Ord(' ')) or (Ord(C) >= 128) then
-    Result := '#'+IntToStr(Ord(C)) else
+    Result := '#' + IntToStr(Ord(C))
+  else
     Result := C;
 end;
 
-function CopyPos(const s: string; StartPosition, EndPosition: integer): string;
+function CopyPos(const S: string; StartPosition, EndPosition: integer): string;
 begin
-  result := Copy(s, StartPosition, EndPosition - StartPosition + 1);
+  Result := Copy(S, StartPosition, EndPosition - StartPosition + 1);
 end;
 
 procedure DeletePos(var S: string; StartPosition, EndPosition: Integer);
@@ -1465,28 +1506,36 @@ var
   TokStart: Integer;
 begin
   repeat
-    if SeekPos > Length(s) then begin Result := ''; Exit end;
-    if S[SeekPos] in TokenDelims then Inc(SeekPos) else Break;
+    if SeekPos > Length(S) then
+    begin
+      Result := '';
+      Exit;
+    end;
+    if S[SeekPos] in TokenDelims then
+      Inc(SeekPos)
+    else
+      Break;
   until false;
   TokStart := SeekPos; { TokStart := first character not in TokenDelims }
 
-  while (SeekPos <= Length(s)) and not(S[SeekPos] in TokenDelims) do Inc(SeekPos);
+  while (SeekPos <= Length(S)) and not(S[SeekPos] in TokenDelims) do
+    Inc(SeekPos);
 
-  { Calculate result := s[TokStart, ... , SeekPos-1] }
-  result := Copy(s, TokStart, SeekPos-TokStart);
+  { Calculate Result := S[TokStart, ... , SeekPos - 1] }
+  Result := Copy(S, TokStart, SeekPos - TokStart);
 
   { We don't have to do Inc(seekPos) below. But it's obvious that searching
     for next token can skip SeekPos, since we know S[SeekPos] is TokenDelim. }
   Inc(SeekPos);
 end;
 
-function NextTokenOnce(const s: string; SeekPos: integer;
+function NextTokenOnce(const S: string; SeekPos: integer;
   const TokenDelims: TSetOfChars): string;
 begin
-  result := Nexttoken(S, SeekPos, TokenDelims);
+  Result := Nexttoken(S, SeekPos, TokenDelims);
 end;
 
-function CreateTokens(const s: string;
+function CreateTokens(const S: string;
   const TokenDelims: TSetOfChars): TCastleStringList;
 var
   SeekPos: Integer;
@@ -1496,11 +1545,15 @@ begin
   try
     SeekPos := 1;
     repeat
-      Token := NextToken(s, SeekPos, TokenDelims);
-      if Token = '' then break;
+      Token := NextToken(S, SeekPos, TokenDelims);
+      if Token = '' then
+        Break;
       Result.Add(Token);
     until false;
-  except Result.Free; raise end;
+  except
+    Result.Free;
+    raise;
+  end;
 end;
 
 function SplitString(const S: string; const Delimiter: char): TCastleStringList;
@@ -1524,21 +1577,26 @@ begin
           or when S is empty }
         Result.Add('');
         Break;
-      end else
+      end
+      else
       begin
         NextDelimiter := PosEx(Delimiter, S, NextChar);
         if NextDelimiter = 0 then
         begin
           Result.Add(SEnding(S, NextChar));
           Break;
-        end else
+        end
+        else
         begin
           Result.Add(CopyPos(S, NextChar, NextDelimiter - 1));
           NextChar := NextDelimiter + 1;
         end;
       end;
     end;
-  except Result.Free; raise end;
+  except
+    Result.Free;
+    raise;
+  end;
 end;
 
 function GlueStrings(const Strings: array of string; const Delimiter: char): string;
@@ -1586,258 +1644,293 @@ begin
 end;
 
 function FindPos(const SubText, Text: string; StartPosition, Count: integer; const Options: TSearchOptions; const WordBorders: TSetOfChars): integer;
-var S, SubS: string;
+var
+  S, SubS: string;
 
-  function MatchingPos(i: integer): boolean;
+  function MatchingPos(I: integer): boolean;
   { sprawdz czy i jest dobra Position wystapienia SubS w S.
     Uwzglednij przy tym czy soWholeWord in Options, zachowuj sie zawsze
     jakby bylo soMatchCase in Options. }
-  var realI: integer;
+  var
+    RealI: integer;
   begin
-   result := false;
-   if Copy(S, i, Length(SubS)) = SubS then
-   begin
-    if soWholeWord in Options then
+    Result := false;
+    if Copy(S, I, Length(SubS)) = SubS then
     begin
-     realI := i+StartPosition-1;
-     if ( (realI = 1) or (Text[realI-1] in wordBorders) ) and
-        ( (realI+length(subS)-1 = length(Text)) or (Text[realI+length(subS)] in WordBorders) )
-     then result := true
-    end else result := true;
-   end;
+      if soWholeWord in Options then
+      begin
+        RealI := I + StartPosition - 1;
+        if ( (RealI = 1) or (Text[RealI - 1] in WordBorders) ) and
+           ( (RealI + Length(SubS) - 1 = Length(Text)) or (Text[RealI + Length(SubS)] in WordBorders) )
+        then
+          Result := true
+      end
+      else
+        Result := true;
+    end;
   end;
 
-var i: integer;
+var
+  I: integer;
 begin
- S := copy(Text, StartPosition, Count);
- SubS := SubText;
- if not (soMatchCase in Options) then
- begin
-  S := AnsiUpperCase(S);
-  SubS := AnsiUpperCase(SubS);
- end;
- result := 0;
- if soBackwards in Options then
- begin
-  for i := Count-Length(SubS)+1 downto 1 do
-   if MatchingPos(i) then begin result := i; break end;
- end else
- begin
-  for i := 1 to Count-Length(SubS)+1 do
-   if MatchingPos(i) then begin result := i; break end;
- end;
- if result > 0 then result := result+StartPosition-1;
+  S := Copy(Text, StartPosition, Count);
+  SubS := SubText;
+  if not (soMatchCase in Options) then
+  begin
+    S := AnsiUpperCase(S);
+    SubS := AnsiUpperCase(SubS);
+  end;
+  Result := 0;
+  if soBackwards in Options then
+  begin
+    for I := Count - Length(SubS) + 1 downto 1 do
+      if MatchingPos(I) then
+      begin
+        Result := I;
+        Break;
+      end;
+  end
+  else
+  begin
+    for I := 1 to Count - Length(SubS) + 1 do
+      if MatchingPos(I) then
+      begin
+        Result := I;
+        Break;
+      end;
+  end;
+  if Result > 0 then
+    Result := Result + StartPosition - 1;
 end;
 
-function SRight(const s: string; const rpart: integer): string;
+function SRight(const S: string; const RPart: integer): string;
 begin
- if Length(s) < rpart then
-  result := s else
-  result := Copy(s, Length(s)-rpart+1, rpart);
+  if Length(S) < RPart then
+    Result := S
+  else
+    Result := Copy(S, Length(S) - RPart + 1, RPart);
 end;
 
-function SAppendPart(const s, PartSeparator, NextPart: string): string;
+function SAppendPart(const S, PartSeparator, NextPart: string): string;
 begin
- if s = '' then
-  result := NextPart else
-  result := s+PartSeparator+NextPart;
+  if S = '' then
+    Result := NextPart
+  else
+    Result := S + PartSeparator + NextPart;
 end;
 
 procedure DeFormat(Data: string; const Format: string;
-  const args: array of pointer;
+  const Args: array of pointer;
   const IgnoreCase: boolean;
   const RelaxedWhitespaceChecking: boolean);
 begin
- if TryDeFormat(Data, Format, args, IgnoreCase,
-   RelaxedWhitespaceChecking) < High(args)+1 then
-  raise EDeformatError.CreateFmt(
-    'Unexpected end of Data (%s) - format (%s) not fully evaluated',
-    [Data, Format]);
+  if TryDeFormat(Data, Format, Args, IgnoreCase,
+    RelaxedWhitespaceChecking) < High(Args) + 1 then
+      raise EDeformatError.CreateFmt(
+        'Unexpected end of Data (%s) - format (%s) not fully evaluated',
+         [Data, Format]);
 end;
 
 function TryDeFormat(Data: string; const Format: string;
-  const args: array of pointer;
+  const Args: array of pointer;
   const IgnoreCase: boolean;
   const RelaxedWhitespaceChecking: boolean): integer;
-var datapos, formpos: integer;
+var
+  DataPos, FormPos: integer;
 
   function ReadExtendedData: Extended;
-  var dataposstart: integer;
+  var
+    DataPosstart: integer;
   begin
-   {pierwszy znak liczby moze byc + lub -. Potem musza byc same cyfry.}
-   if not (data[datapos] in ['0'..'9', '+', '-']) then
-    raise EDeformatError.CreateFmt('float not found in data ''%s'' on position %d', [data, datapos]);
-   dataposstart := datapos;
-   Inc(datapos);
-   while (datapos <= Length(data)) and (data[datapos] in ['0'..'9','.', 'e','E', '-', '+']) do
-    Inc(datapos);
-   {ponizsze StrToFloat tez moze spowodowac blad jesli np.
-    wyszedl nam string '-' lub '+' lub string z dwoma kropkami}
-   result := StrToFloat(CopyPos(data, dataposstart, datapos-1));
+    {pierwszy znak liczby moze byc + lub -. Potem musza byc same cyfry.}
+    if not (data[DataPos] in ['0'..'9', '+', '-']) then
+      raise EDeformatError.CreateFmt('float not found in data ''%s'' on position %d', [Data, DataPos]);
+    DataPosstart := DataPos;
+    Inc(DataPos);
+    while (DataPos <= Length(Data)) and (data[DataPos] in ['0'..'9','.', 'e','E', '-', '+']) do
+      Inc(DataPos);
+    {ponizsze StrToFloat tez moze spowodowac blad jesli np.
+     wyszedl nam string '-' lub '+' lub string z dwoma kropkami}
+    Result := StrToFloat(CopyPos(Data, DataPosstart, DataPos - 1));
   end;
 
   function ReadIntegerData: Integer;
-  var dataposstart: integer;
+  var
+    DataPosstart: integer;
   begin
-   {pierwszy znak integera moze byc + lub -. Potem musza byc same cyfry.}
-   if not (data[datapos] in ['0'..'9', '+', '-']) then
-    raise EDeformatError.CreateFmt('integer not found in data ''%s'' on position %d', [data, datapos]);
-   dataposstart := datapos;
-   Inc(datapos);
-   while (datapos <= Length(data)) and (data[datapos] in ['0'..'9']) do
-    Inc(datapos);
-   {ponizszy StrToInt tez moze spowodowac blad jesli np.
-    wyszedl nam string '-' lub '+'}
-   result := StrToInt(CopyPos(data, dataposstart, datapos-1));
+    {pierwszy znak integera moze byc + lub -. Potem musza byc same cyfry.}
+    if not (Data[DataPos] in ['0'..'9', '+', '-']) then
+      raise EDeformatError.CreateFmt('integer not found in data ''%s'' on position %d', [data, DataPos]);
+    DataPosstart := DataPos;
+    Inc(DataPos);
+    while (DataPos <= Length(Data)) and (data[DataPos] in ['0'..'9']) do
+      Inc(DataPos);
+    {ponizszy StrToInt tez moze spowodowac blad jesli np.
+     wyszedl nam string '-' lub '+'}
+    Result := StrToInt(CopyPos(Data, DataPosstart, DataPos - 1));
   end;
 
   function ReadStringData: string;
-  var dataposstart: integer;
+  var
+    DataPosstart: integer;
   begin
-   dataposstart := datapos;
-   while (datapos <= Length(data)) and
-         (not (data[datapos] in WhiteSpaces)) do Inc(datapos);
-   result := CopyPos(data, dataposstart, datapos-1);
+   DataPosstart := DataPos;
+   while (DataPos <= Length(Data)) and
+         (not (Data[DataPos] in WhiteSpaces)) do
+     Inc(DataPos);
+   Result := CopyPos(Data, DataPosstart, DataPos - 1);
   end;
 
   function ReadTypeSpecifier: string;
-  {odczytaj type specifier z kropka z format. Przesun formpos}
-  var formposstart: integer;
+  {odczytaj type specifier z kropka z format. Przesun FormPos}
+  var
+    FormPosStart: integer;
   begin
-   formposstart := formpos;
+   FormPosStart := FormPos;
    repeat
-    if formpos > Length(format) then
-     raise EDeformatError.Create('type specifier incorrect in  format '''+format+'''');
-    if format[formpos] = '.' then
-     break else
-     Inc(formpos);
+     if FormPos > Length(Format) then
+       raise EDeformatError.Create('type specifier incorrect in  format ''' + Format + '''');
+     if Format[FormPos] = '.' then
+       Break
+     else
+       Inc(FormPos);
    until false;
-   result := CopyPos(format, formposstart, formpos-1);
-   Inc(formpos); { omin kropke '.' w format }
+   Result := CopyPos(Format, FormPosStart, FormPos - 1);
+   Inc(FormPos); { omin kropke '.' w format }
   end;
 
-  procedure CheckBlackChar(formatchar: char);
-  var BlackCharsCheck: boolean;
+  procedure CheckBlackChar(FormatChar: char);
+  var
+    BlackCharsCheck: boolean;
   begin
-   if IgnoreCase then
-    BlackCharsCheck := SameText(Data[datapos], format[formpos]) else
-    BlackCharsCheck := Data[datapos] = format[formpos];
-   if not BlackCharsCheck then
-    raise EDeformatError.CreateFmt('data (%s) and format (%s) don''t match', [data, format]);
+    if IgnoreCase then
+      BlackCharsCheck := SameText(Data[DataPos], Format[FormPos])
+    else
+      BlackCharsCheck := Data[DataPos] = Format[FormPos];
+    if not BlackCharsCheck then
+      raise EDeformatError.CreateFmt('data (%s) and format (%s) don''t match', [Data, Format]);
   end;
 
   procedure CheckFormatNotEnd;
   begin
-    if formpos > Length(format) then
-      raise EDeformatError.Create('Unexpected end of format : "'+format+'"');
+    if FormPos > Length(Format) then
+      raise EDeformatError.Create('Unexpected end of format : "' + Format + '"');
   end;
 
 begin
- datapos := 1;
- formpos := 1;
- result := 0; { no args done yet }
+  DataPos := 1;
+  FormPos := 1;
+  Result := 0; { no args done yet }
 
- { Skip whitespace and the beginning of data }
- if RelaxedWhitespaceChecking then
-   while SCharIs(Data, DataPos, WhiteSpaces) do Inc(DataPos);
+  { Skip whitespace and the beginning of data }
+  if RelaxedWhitespaceChecking then
+     while SCharIs(Data, DataPos, WhiteSpaces) do
+       Inc(DataPos);
 
- while formpos <= Length(Format) do
- begin
-  {datapos > Length(data) -> means Data has ended but Format not.
-   OK, so we can exit, because we are doing only TryDeFormat.
-   Real DeFormat should check our result if it wishes to check that we parsed
-   whole Format.}
-  if datapos > Length(data) then
+  while FormPos <= Length(Format) do
   begin
-    { Actually, if next thing in format is %s, we can parse it too
-      (string will just be '') }
+    {DataPos > Length(Data) -> means Data has ended but Format not.
+     OK, so we can exit, because we are doing only TryDeFormat.
+     Real DeFormat should check our result if it wishes to check that we parsed
+     whole Format.}
+    if DataPos > Length(Data) then
+    begin
+      { Actually, if next thing in format is %s, we can parse it too
+        (string will just be '') }
+      if Format[FormPos] = '%' then
+      begin
+        Inc(FormPos);
+        CheckFormatNotEnd;
+        if Format[FormPos] = 's' then
+        begin
+          PString(Args[Result])^ := ReadStringData;
+          Inc(FormPos);
+          Inc(Result);
+        end;
+      end;
+      Exit;
+    end;
+
+    {1 or more whitespace in format means 1 or more whitespaces in data}
+    if RelaxedWhitespaceChecking and (Format[FormPos] in WhiteSpaces) then
+    begin
+      if not SCharIs(Data, DataPos, WhiteSpaces) then
+        raise EDeformatError.Create('Whitespace not found in data "' + data +
+          '" as requested by format "' + Format + '"');
+      repeat
+        Inc(FormPos)
+      until not SCharIs(Format, FormPos, WhiteSpaces);
+      repeat
+        Inc(DataPos)
+      until not SCharIs(Data, DataPos, WhiteSpaces);
+    end
+    else
+
+    {%+something means "read this from data", %% means "read %"}
     if Format[FormPos] = '%' then
     begin
-      Inc(formpos);
+      Inc(FormPos);
       CheckFormatNotEnd;
-      if Format[FormPos] = 's' then
-      begin
-        PString(args[result])^ := ReadStringData;
-        Inc(formpos);
-        Inc(result);
+      try
+        case Format[FormPos] of
+          '%': begin
+                 CheckBlackChar('%');
+                 Inc(FormPos);
+                 Inc(DataPos);
+               end;
+          's': begin
+                 PString(Args[Result])^ := ReadStringData;
+                 Inc(FormPos);
+                 Inc(Result);
+               end;
+          'd': begin
+                 PInteger(Args[Result])^ := ReadIntegerData;
+                 Inc(FormPos);
+                 Inc(Result);
+               end;
+          'f': begin
+                 PFloat(Args[Result])^ := ReadExtendedData;
+                 Inc(FormPos);
+                 Inc(Result);
+               end;
+          '.': begin
+                 Inc(FormPos);
+                 case ArrayPosStr(ReadTypeSpecifier, ['single', 'double', 'extended']) of
+                   0: PSingle(Args[Result])^ := ReadExtendedData;
+                   1: PDouble(Args[Result])^ := ReadExtendedData;
+                   2: PExtended(Args[Result])^ := ReadExtendedData;
+                 end;
+                 Inc(Result);
+               end;
+           else
+             raise EDeformatError.Create('incorrect format specifier after "%" sign : ''' + Format + '''');
+         end;
+      except
+        on E: EConvertError do raise EDeformatError.Create('convert error - ' + E.Message)
       end;
+    end
+    else
+    begin
+      CheckBlackChar(Format[FormPos]);
+      Inc(DataPos);
+      Inc(FormPos);
     end;
-    Exit;
   end;
 
-  {1 or more whitespace in format means 1 or more whitespaces in data}
-  if RelaxedWhitespaceChecking and (format[formpos] in WhiteSpaces) then
-  begin
-   if not SCharIs(Data, datapos, WhiteSpaces) then
-    raise EDeformatError.Create('Whitespace not found in data "' + data +
-      '" as requested by format "' + format + '"');
-   repeat Inc(formpos) until not SCharIs(format, formpos, WhiteSpaces);
-   repeat Inc(datapos) until not SCharIs(data, datapos, WhiteSpaces);
-  end else
+  if RelaxedWhitespaceChecking then
+    while SCharIs(Data, DataPos, WhiteSpaces) do
+      Inc(DataPos);
 
-  {%+something means "read this from data", %% means "read %"}
-  if format[formpos] = '%' then
-  begin
-   Inc(formpos);
-   CheckFormatNotEnd;
-   try
-    case format[formpos] of
-     '%':begin
-          CheckBlackChar('%');
-          Inc(formpos);
-          Inc(datapos);
-         end;
-     's':begin
-          PString(args[result])^:=ReadStringData;
-          Inc(formpos);
-          Inc(result);
-         end;
-     'd':begin
-          PInteger(args[result])^:=ReadIntegerData;
-          Inc(formpos);
-          Inc(result);
-         end;
-     'f':begin
-          PFloat(args[result])^:=ReadExtendedData;
-          Inc(formpos);
-          Inc(result);
-         end;
-     '.':begin
-          Inc(formpos);
-          case ArrayPosStr(ReadTypeSpecifier, ['single', 'double', 'extended']) of
-           0: PSingle(args[result])^:=ReadExtendedData;
-           1: PDouble(args[result])^:=ReadExtendedData;
-           2: PExtended(args[result])^:=ReadExtendedData;
-          end;
-          Inc(result);
-         end;
-     else raise EDeformatError.Create('incorrect format specifier after "%" sign : '''+format+'''');
-    end;
-   except
-    on E: EConvertError do raise EDeformatError.Create('convert error - '+E.Message)
-   end;
-  end else
-
-  begin
-   CheckBlackChar(format[formpos]);
-   Inc(datapos);
-   Inc(formpos);
-  end;
- end;
-
- if RelaxedWhitespaceChecking then
-   while SCharIs(Data, DataPos, WhiteSpaces) do Inc(DataPos);
-
- if datapos <= Length(data) then
-  raise EDeformatError.CreateFmt(
-    'data ''%s'' too long - unexpected end of format ''%s''', [Data, Format]);
+  if DataPos <= Length(Data) then
+    raise EDeformatError.CreateFmt(
+      'data ''%s'' too long - unexpected end of format ''%s''', [Data, Format]);
 end;
 
 {$ifdef FPC}
 procedure GetFileFilterExts(const FileFilter: string; Extensions: TStringList);
 var
-  p, SeekPos: integer;
-  ExtsStr, filemask: string;
+  P, SeekPos: integer;
+  ExtsStr, FileMask: string;
 begin
   Extensions.Clear;
   {$warnings off} // using deprecated in deprecated
@@ -1845,13 +1938,15 @@ begin
   {$warnings on}
   SeekPos := 1;
   repeat
-    filemask := NextToken(ExtsStr, SeekPos,[';']);
-    if filemask = '' then break;
-    p := Pos('.', filemask);
-    if p > 0 then
-      Delete(filemask, 1, p-1) else { delete name from filemask }
-      filemask := '.'+filemask; { it means there was no name and dot in filemask. So prepend dot. }
-    Extensions.Add(filemask);
+    FileMask := NextToken(ExtsStr, SeekPos,[';']);
+    if FileMask = '' then
+      Break;
+    P := Pos('.', FileMask);
+    if P > 0 then
+      Delete(FileMask, 1, P - 1)
+    else { delete name from FileMask }
+      FileMask := '.' + FileMask; { it means there was no name and dot in FileMask. So prepend dot. }
+    Extensions.Add(FileMask);
   until false;
 end;
 
@@ -1859,58 +1954,77 @@ function GetFileFilterName(const FileFilter: string): string;
 var
   Left, Right: string;
   LeftUpperCase, RightUpperCase: string;
-  p, len: integer;
+  P, Len: integer;
 begin
-  p := Pos('|', FileFilter);
-  if p = 0 then result := Trim(FileFilter) else
+  P := Pos('|', FileFilter);
+  if P = 0 then
+    Result := Trim(FileFilter)
+  else
   begin
-    Left := Trim(Copy(FileFilter, 1, p-1));
-    Right := Trim(SEnding(FileFilter, p+1));
+    Left := Trim(Copy(FileFilter, 1, P - 1));
+    Right := Trim(SEnding(FileFilter, P + 1));
     if Right = '' then
     begin
-      result := Left;
+      Result := Left;
       { if FileFilter = 'xxx()|' then it matches to pattern 'xxx(exts)|exts'
         so we should return 'xxx', not 'xxx()'.
         This is often really useful when FileFilter was constructed in an
         automatic way (e.g. as in mine edytorek). }
       if IsSuffix('()', Result) then
       begin
-        SetLength(Result, Length(Result)-2);
+        SetLength(Result, Length(Result) - 2);
         { trim once again to delete rightmost whitespace (as in 'xxx ()|') }
         Result := TrimRight(Result);
       end;
-    end else
+    end
+    else
     begin
       // convert to uppercase to search ignoring case with RPos below
       LeftUpperCase := AnsiUpperCase(Left);
       RightUpperCase := AnsiUpperCase(Right);
-      p := RPos(RightUpperCase, LeftUpperCase);
-      if p = 0 then
-        p := RPos(SReplaceChars(RightUpperCase, ';', ','), LeftUpperCase);
-      if p = 0 then result := Left else
+      P := RPos(RightUpperCase, LeftUpperCase);
+      if P = 0 then
+        P := RPos(SReplaceChars(RightUpperCase, ';', ','), LeftUpperCase);
+      if P = 0 then
+        Result := Left
+      else
       begin
-        len := Length(Right);
+        Len := Length(Right);
         {zwieksz len tak zeby objelo biale znaki az do ')'}
-        while p+len <= Length(Left) do
+        while P + Len <= Length(Left) do
         begin
-          if Left[p+len] = ')' then
-            begin Inc(len); break end else
-          if Left[p+len] in WhiteSpaces then
-            Inc(len) else
-            break;
+          if Left[P + Len] = ')' then
+          begin
+            Inc(Len);
+            Break;
+          end
+          else
+          if Left[P + Len] in WhiteSpaces then
+            Inc(Len)
+          else
+            Break;
         end;
         {zmniejsz p tak zeby objelo biale znaki az do '('}
-        while p-1 >= 1 do
+        while P - 1 >= 1 do
         begin
-          if Left[p-1] = '(' then
-            begin Dec(p); Inc(len); break end else
-          if Left[p-1] in WhiteSpaces then
-            begin Dec(p); Inc(len) end else
-            break;
+          if Left[P - 1] = '(' then
+          begin
+            Dec(P);
+            Inc(len);
+            Break
+          end
+          else
+          if Left[P - 1] in WhiteSpaces then
+          begin
+            Dec(P);
+            Inc(Len);
+          end
+          else
+            Break;
         end;
-        {koniec; wypieprz p, len}
-        Delete(Left, p, len);
-        result := Trim(Left);
+        {the end; delete P, Len}
+        Delete(Left, P, Len);
+        Result := Trim(Left);
       end;
     end;
   end;
@@ -1918,12 +2032,13 @@ end;
 
 function GetFileFilterExtsStr(const FileFilter: string): string;
 var
-  p: integer;
+  P: integer;
 begin
-  p := Pos('|', FileFilter);
-  if p > 0 then
-    result := SEnding(FileFilter, p+1) else
-    result := '';
+  P := Pos('|', FileFilter);
+  if P > 0 then
+    Result := SEnding(FileFilter, P + 1)
+  else
+    Result := '';
 end;
 {$endif}
 
@@ -1931,11 +2046,12 @@ function SReplacePatterns(const S: string;
   const Patterns, Values: array of string; const IgnoreCase: boolean): string;
 begin
   if IgnoreCase then
-    Result := StringsReplace(S, Patterns, Values, [rfReplaceAll, rfIgnoreCase]) else
+    Result := StringsReplace(S, Patterns, Values, [rfReplaceAll, rfIgnoreCase])
+  else
     Result := StringsReplace(S, Patterns, Values, [rfReplaceAll]);
 end;
 
-function SReplacePatterns(const s: string; const Parameters: TStringStringMap;
+function SReplacePatterns(const S: string; const Parameters: TStringStringMap;
   const IgnoreCase: boolean): string;
 begin
   Result := SReplacePatterns(S, Parameters.Keys.ToArray, Parameters.Values.ToArray, IgnoreCase);
@@ -1949,44 +2065,50 @@ end;
 
 function SCharsCount(const S: string; C: char): Cardinal;
 var
-  i: Integer;
+  I: Integer;
 begin
   Result := 0;
-  for I := 1 to Length(s) do if S[I] = C then Inc(Result);
+  for I := 1 to Length(S) do
+    if S[I] = C then
+      Inc(Result);
 end;
 
-function SCharsCount(const s: string; const Chars: TSetOfChars): Cardinal;
+function SCharsCount(const S: string; const Chars: TSetOfChars): Cardinal;
 var
-  i: Integer;
+  I: Integer;
 begin
   Result := 0;
-  for I := 1 to Length(s) do if S[I] in Chars then Inc(Result);
+  for I := 1 to Length(S) do
+    if S[I] in Chars then
+      Inc(Result);
 end;
 
-function STruncateHash(const s: string): string;
+function STruncateHash(const S: string): string;
 var
-  p: integer;
+  P: integer;
 begin
-  p := Pos('#', s);
-  result := s;
-  if p > 0 then SetLength(result, p-1);
+  P := Pos('#', S);
+  Result := S;
+  if P > 0 then
+    SetLength(Result, P - 1);
 end;
 
-function SUnformattable(const s: string): string;
+function SUnformattable(const S: string): string;
 begin
-  result := StringReplace(s, '%', '%%', [rfReplaceAll]);
+  Result := StringReplace(S, '%', '%%', [rfReplaceAll]);
 end;
 
-function SAnsiCompare(const s1, s2: string; IgnoreCase: boolean): Integer;
+function SAnsiCompare(const S1, S2: string; IgnoreCase: boolean): Integer;
 begin
   if IgnoreCase then
-    result := AnsiCompareText(s1, s2) else
-    result := AnsiCompareStr(s1, s2);
+    Result := AnsiCompareText(S1, S2)
+  else
+    Result := AnsiCompareStr(S1, S2);
 end;
 
-function SAnsiSame(const s1, s2: string; IgnoreCase: boolean): boolean;
+function SAnsiSame(const S1, S2: string; IgnoreCase: boolean): boolean;
 begin
-  result := SAnsiCompare(s1, s2, IgnoreCase) = 0;
+  Result := SAnsiCompare(S1, S2, IgnoreCase) = 0;
 end;
 
 function SPercentReplace(const InitialFormat: string;
@@ -1996,26 +2118,35 @@ function SPercentReplace(const InitialFormat: string;
   PercentChar: char;
   IgnoreCase: boolean): string;
 
-  function ReplaceWithC(c: char): Integer;
+  function ReplaceWithC(C: char): Integer;
   var
     I: Integer;
   begin
     if IgnoreCase then
     begin
-      for i := 0 to High(Replaces) do
-        if AnsiSameText(c, Replaces[i].c) then begin result := i; Exit end;
-    end else
+      for I := 0 to High(Replaces) do
+        if AnsiSameText(C, Replaces[I].C) then
+        begin
+          Result := I;
+          Exit;
+        end;
+    end
+    else
     begin
-      for i := 0 to High(Replaces) do
-        if c = Replaces[i].c then begin result := i; Exit end;
+      for I := 0 to High(Replaces) do
+        if C = Replaces[I].C then
+        begin
+          Result := I;
+          Exit;
+        end;
     end;
-    result := -1;
+    Result := -1;
   end;
 
   procedure UnknownPercentFormat(const WrongSequence: string);
   begin
     raise EUnknownPercentFormat.Create('Unknown format pattern in format "'
-      +InitialFormat+'", wrong sequence is : ' +WrongSequence);
+      + InitialFormat + '", wrong sequence is : ' + WrongSequence);
   end;
 
 var
@@ -2033,30 +2164,37 @@ begin
   while Format <> '' do
   begin
     P := Pos(PercentChar, Format);
-    if P = 0 then begin Result := Result + Format; Exit end;
+    if P = 0 then
+    begin
+      Result := Result + Format;
+      Exit;
+    end;
 
     Result := Result + Copy(Format, 1, P - 1);
     if P + 1 <= Length(Format) then
     begin
-      { zwieksz Result o element wynikajacy z formatu Format[p+1] }
+      { zwieksz Result o element wynikajacy z formatu Format[P + 1] }
       if Format[P + 1] = PercentChar then
-        Result := Result + PercentChar else
+        Result := Result + PercentChar
+      else
       begin
         ReplNum := ReplaceWithC(Format[P + 1]);
         if ReplNum = -1 then
         begin
           if ErrorOnUnknownPercentFormat then
-            UnknownPercentFormat('"'+PercentChar+Format[P + 1]+'"');
+            UnknownPercentFormat('"' + PercentChar + Format[P + 1] + '"');
           Result := Result + PercentChar + Format[P + 1];
-        end else
+        end
+        else
         begin
-          Result := Result + Replaces[ReplNum].s;
+          Result := Result + Replaces[ReplNum].S;
           Inc(ReplacementsDone);
         end;
       end;
       { obetnij wykonana czesc z Format }
       Delete(Format, 1, P + 1);
-    end else
+    end
+    else
     begin
       { mamy PercentChar na koncu stringa }
       if ErrorOnUnknownPercentFormat then
@@ -2101,46 +2239,56 @@ begin
   while Format <> '' do
   begin
     P := Pos(PercentChar, Format);
-    if P = 0 then begin Result := Result + Format; Exit end;
+    if P = 0 then
+    begin
+      Result := Result + Format;
+      Exit;
+    end;
 
     Result := Result + Copy(Format, 1, P - 1);
     if P + 1 <= Length(Format) then
     begin
       { zwieksz Result o element wynikajacy z formatu Format[P + 1] }
       if Format[P + 1] = PercentChar then
-        Result := Result + PercentChar else
-      if Format[P + 1] = 'd' then
-      begin
-        Result := Result + IntToStr(Index);
-        Inc(ReplacementsDone);
-      end else
-      if Format[P + 1] in ['0'..'9'] then
-      begin
-        Inc(P);
-        StartP := P;
-        while SCharIs(Format, P, ['0'..'9']) do Inc(P);
-        if SCharIs(Format, P, 'd') then
+        Result := Result + PercentChar
+      else
+        if Format[P + 1] = 'd' then
         begin
-          { valid % + number + d sequence, do the replace }
-          MinLength := StrToInt(Copy(Format, StartP, P - StartP));
-          Result := Result + IntToStrZPad(Index, MinLength);
+          Result := Result + IntToStr(Index);
           Inc(ReplacementsDone);
-        end else
-        begin
-          { invalid %-pattern, just copy it (including leading PercentChar
-            and following character <> 'd') }
-          Result := Result + Copy(Format, StartP - 1, P - StartP + 2);
-        end;
-        { decrement P just so that Delete(Format, ...) below will work Ok }
-        Dec(P);
-      end else
-      begin
-        { unknown %-pattern, just copy it }
-        Result := Result + PercentChar + Format[P + 1];
-      end;
+        end
+        else
+          if Format[P + 1] in ['0'..'9'] then
+          begin
+            Inc(P);
+            StartP := P;
+            while SCharIs(Format, P, ['0'..'9']) do
+              Inc(P);
+            if SCharIs(Format, P, 'd') then
+            begin
+              { valid % + number + d sequence, do the replace }
+              MinLength := StrToInt(Copy(Format, StartP, P - StartP));
+              Result := Result + IntToStrZPad(Index, MinLength);
+              Inc(ReplacementsDone);
+            end
+            else
+            begin
+              { invalid %-pattern, just copy it (including leading PercentChar
+                and following character <> 'd') }
+              Result := Result + Copy(Format, StartP - 1, P - StartP + 2);
+            end;
+            { decrement P just so that Delete(Format, ...) below will work Ok }
+            Dec(P);
+          end
+          else
+          begin
+            { unknown %-pattern, just copy it }
+            Result := Result + PercentChar + Format[P + 1];
+          end;
       { obetnij wykonana czesc z Format }
       Delete(Format, 1, P + 1);
-    end else
+    end
+    else
     begin
       { mamy PercentChar na koncu stringa }
       Result := Result + PercentChar;
@@ -2193,11 +2341,15 @@ begin
       {$else}
         // Fix for delphi < Tokio, needs an extra Variable for the call
          P := C.ReplaceCallback;
-         Result :=  r.Replace(NamePattern, P);
+         Result :=  R.Replace(NamePattern, P);
       {$endif}
       ReplacementsDone := C.ReplacementsDone;
-    finally FreeAndNil(C) end;
-  finally FreeAndNil(R) end;
+    finally
+      FreeAndNil(C);
+    end;
+  finally
+    FreeAndNil(R)
+  end;
 
   if (ReplacementsDone = 0) and AllowOldPercentSyntax then
     Result := FormatIndexedName(NamePattern, Index, ReplacementsDone);
@@ -2214,181 +2366,213 @@ end;
 
 { conversions ------------------------------------------------------------ }
 
-function DigitAsChar(b: byte): char;
-begin Result := char(b+byte('0')) end;
+function DigitAsChar(B: byte): char;
+begin
+  Result := char(B + byte('0'));
+end;
 
-function DigitAsByte(c: char): byte;
-begin Result := byte(c)-byte('0') end;
+function DigitAsByte(C: char): byte;
+begin
+  Result := byte(C) - byte('0');
+end;
 
-function IntToStrZPad(n: integer; minLength: integer): string;
-begin result := SZeroPad(IntToStr(n), minLength) end;
+function IntToStrZPad(N: integer; MinLength: integer): string;
+begin
+  Result := SZeroPad(IntToStr(N), MinLength);
+end;
 
 function IntToStrThousands(const Value: Int64; const Separator: char): string;
 begin
   if Value > 1000 then
-    Result := IntToStrThousands(Value div 1000, Separator) + Separator + IntToStrZPad(Value mod 1000, 3) else
+    Result := IntToStrThousands(Value div 1000, Separator) + Separator + IntToStrZPad(Value mod 1000, 3)
+  else
     Result := IntToStr(Value);
 end;
 
 function IntToStrThousands(const Value: Int64; const Separator: string): string;
 begin
   if Value > 1000 then
-    Result := IntToStrThousands(Value div 1000, Separator) + Separator + IntToStrZPad(Value mod 1000, 3) else
+    Result := IntToStrThousands(Value div 1000, Separator) + Separator + IntToStrZPad(Value mod 1000, 3)
+  else
     Result := IntToStr(Value);
 end;
 
-function IntToStrBase(n: QWord; Base: Byte): string;
+function IntToStrBase(N: QWord; Base: Byte): string;
 
-  function TablZnakow(cyfra: Byte): char;
-  { result := symbol cyfry 'cyfra'. Zawsze cyfra < Base }
+  function SymbolsTable(Digit: Byte): char;
+  { Result := symbol of digit 'digit'. Digit is always smaller than Base }
   begin
-   if cyfra < 10 then
-    result := DigitAsChar(cyfra) else
-    result := Chr( cyfra-10+Ord('A') ); {'A'=10 , 'B'=11 itd.}
+    if Digit < 10 then
+      Result := DigitAsChar(Digit)
+    else
+      Result := Chr( Digit - 10 + Ord('A') ); {'A'=10, 'B'=11 and so on}
   end;
 
 begin
- {Nasze symbole to 0..9, 'A' ..'Z'. Mamy wiec 10+'Z'-'A'+1 symboli na Base cyfr. }
- Assert(Base < 10+Ord('Z')-Ord('A')+1, 'too large Base in IntToStrBase');
- if n = 0 then result := '0' else
- begin
-  result := '';
-  while n <> 0 do
+  {Nasze symbole to 0..9, 'A' ..'Z'. Mamy wiec 10+'Z'-'A'+1 symboli na Base cyfr. }
+  Assert(Base < 10 + Ord('Z') - Ord('A') + 1, 'too large Base in IntToStrBase');
+  if N = 0 then
+    Result := '0'
+  else
   begin
-   result := TablZnakow(n mod Base)+result;
-   n := n div Base;
+    Result := '';
+    while N <> 0 do
+    begin
+      Result := SymbolsTable(N mod Base) + Result;
+      N := N div Base;
+    end;
   end;
- end;
 end;
 
-function IntToStrBase(const n: Int64; Base: Byte): string;
+function IntToStrBase(const N: Int64; Base: Byte): string;
 begin
   if N < 0 then
-    Result := '-' + IntToStrBase(QWord(Abs(N)), Base) else
+    Result := '-' + IntToStrBase(QWord(Abs(N)), Base)
+  else
     Result := IntToStrBase(QWord(N), Base);
 end;
 
-function IntToStrBase(const n: Int64; Base: Byte; minLength: Cardinal): string;
+function IntToStrBase(const N: Int64; Base: Byte; MinLength: Cardinal): string;
 {wywoluje IntToStrBase, dodatkowo wypelniajac zerami z lewej, jesli trzeba}
 begin
- result := IntToStrBase(n, Base);
- if n < 0 then
-  result := '-'+SZeroPad(SEnding(result, 2), minLength) else
-  result := SZeroPad(result, minLength);
+  Result := IntToStrBase(N, Base);
+  if N < 0 then
+    Result := '-' + SZeroPad(SEnding(Result, 2), MinLength)
+  else
+    Result := SZeroPad(Result, MinLength);
 end;
 
-function IntToStrBase(const n: QWord; Base: Byte; minLength: Cardinal): string;
+function IntToStrBase(const N: QWord; Base: Byte; MinLength: Cardinal): string;
 {wywoluje IntToStrBase, dodatkowo wypelniajac zerami z lewej, jesli trzeba}
 begin
- result := IntToStrBase(n, Base);
- result := SZeroPad(result, minLength);
+  Result := IntToStrBase(N, Base);
+  Result := SZeroPad(Result, MinLength);
 end;
 
-function IntToStr2(n: Int64;
+function IntToStr2(N: Int64;
   const MinLength: Cardinal;
   const ZeroDigit: char;
   const OneDigit: char;
   const MinusSign: char): string;
-var Negative: boolean;
-    i: Integer;
+var
+  Negative: boolean;
+  I: Integer;
 begin
- { Simple implementation : Result := IntToStrBase(n, 2, minLength) }
+  { Simple implementation : Result := IntToStrBase(N, 2, minLength) }
 
- { Negative := n < 0, n := Abs(n) }
- Negative := n < 0;
- if Negative then n := -n;
+  { Negative := N < 0, N := Abs(N) }
+  Negative := N < 0;
+  if Negative then
+    N := -N;
 
- Result := '';
+  Result := '';
 
- { from 0 .. SizeOf(n)*8-1 we have SizeOf(n)*8 values,
-   all possible bits positions. So we're taking SizeOf(n)*8-2,
-   to avoid most significant bit, the sign bit. }
- for i := SizeOf(n)*8-2 downto 0 do
-  if ((Int64(1) shl i) and n) <> 0 then
-   Result := Result + OneDigit else
-  if Result <> '' then
-   Result := Result + ZeroDigit;
+  { from 0 .. SizeOf(N)*8-1 we have SizeOf(N)*8 values,
+    all possible bits positions. So we're taking SizeOf(N)*8-2,
+    to avoid most significant bit, the sign bit. }
+  for I := SizeOf(N) * 8 - 2 downto 0 do
+    if ((Int64(1) shl I) and N) <> 0 then
+      Result := Result + OneDigit
+    else
+      if Result <> '' then
+        Result := Result + ZeroDigit;
 
- if Result = '' then Result := ZeroDigit;
+  if Result = '' then
+    Result := ZeroDigit;
 
- Result := SPad(Result, MinLength, ZeroDigit);
+  Result := SPad(Result, MinLength, ZeroDigit);
 
- if Negative then Result := MinusSign + Result;
+  if Negative then
+    Result := MinusSign + Result;
 end;
 
-function IntToStr16(const n: Int64; const minLength: Cardinal): string;
-begin result := IntToStrBase(n, 16, minLength) end;
+function IntToStr16(const N: Int64; const MinLength: Cardinal): string;
+begin
+  Result := IntToStrBase(N, 16, MinLength);
+end;
 
-function IntToStr16(const n: QWord; const minLength: Cardinal): string;
-begin result := IntToStrBase(n, 16, minLength) end;
+function IntToStr16(const N: QWord; const MinLength: Cardinal): string;
+begin
+  Result := IntToStrBase(N, 16, MinLength);
+end;
 
-function Str2ToInt(const s: string): integer;
+function Str2ToInt(const S: string): integer;
 
-  function BinInt(c: char): integer;
+  function BinInt(C: char): integer;
   begin
-   case c of
-    '0': result := 0;
-    '1': result := 1;
-    else raise EConvertError.Create('Invalid Str2ToInt argument, contains invalid chars: ' + s);
+   case C of
+    '0': Result := 0;
+    '1': Result := 1;
+    else 
+      raise EConvertError.Create('Invalid Str2ToInt argument, contains invalid chars: ' + S);
    end;
   end;
 
-var NextChar: integer;
+var
+  NextChar: integer;
 begin
- if s = '' then
-  raise EConvertError.Create('Invalid Str2ToInt argument: empty string');
- if s[1] = '-' then
- begin
-  if Length(s) = 1 then
-   raise EConvertError.Create('Invalid Str2ToInt argument: cannot convert single dash ''-'' to integer.');
-  result := -BinInt(s[2]);
-  NextChar := 3;
- end else
- begin
-  result := BinInt(s[1]);
-  NextChar := 2;
- end;
- while NextChar <= Length(s) do
- begin
-  result := result*2+binInt(s[NextChar]);
-  Inc(NextChar);
- end;
+  if S = '' then
+    raise EConvertError.Create('Invalid Str2ToInt argument: empty string');
+  if S[1] = '-' then
+  begin
+    if Length(S) = 1 then
+      raise EConvertError.Create('Invalid Str2ToInt argument: cannot convert single dash ''-'' to integer.');
+    Result := -BinInt(S[2]);
+    NextChar := 3;
+  end
+  else
+  begin
+    Result := BinInt(S[1]);
+    NextChar := 2;
+  end;
+  while NextChar <= Length(S) do
+  begin
+    Result := Result * 2 + BinInt(S[NextChar]);
+    Inc(NextChar);
+  end;
 end;
 
-function StrHexToInt(const s: string): Int64;
-var ScanStart: integer;
+function StrHexToInt(const S: string): Int64;
+var
+  ScanStart: integer;
 
   procedure Scan;
-  var digit: Int64;
-      i: integer;
+  var
+    Digit: Int64;
+    I: integer;
   begin
-   if ScanStart > Length(s) then
-    raise EConvertError.Create('StrHexToInt found unexpected end of string: no digits');
-   result := 0;
-   for i := ScanStart to Length(s) do
-   begin
-    case S[I] of
-     '0'..'9':digit := Ord(S[I])-Ord('0');
-     'a'..'f':digit := Ord(S[I])-Ord('a')+10;
-     'A'..'F':digit := Ord(S[I])-Ord('A')+10;
-     else raise EConvertError.Create('Character "'+S[I]+
-       '" is not a hexadecimal digit');
+    if ScanStart > Length(S) then
+      raise EConvertError.Create('StrHexToInt found unexpected end of string: no digits');
+    Result := 0;
+    for I := ScanStart to Length(S) do
+    begin
+      case S[I] of
+        '0'..'9': Digit := Ord(S[I]) - Ord('0');
+        'a'..'f': Digit := Ord(S[I]) - Ord('a') + 10;
+        'A'..'F': Digit := Ord(S[I]) - Ord('A') + 10;
+        else
+          raise EConvertError.Create('Character "' + S[I] +
+             '" is not a hexadecimal digit');
+      end;
+      Result := Result * 16 + Digit;
     end;
-    result := result*16 + digit;
-   end;
   end;
 
 begin
- if SCharIs(s, 1, '-') then
- begin
-  ScanStart := 2;
-  Scan;
-  Result := -Result;
- end else
- begin
-  if SCharIs(s, 1, '+') then ScanStart := 2 else ScanStart := 1;
-  Scan;
- end;
+  if SCharIs(S, 1, '-') then
+  begin
+    ScanStart := 2;
+    Scan;
+    Result := -Result;
+  end
+  else
+  begin
+    if SCharIs(S, 1, '+') then
+      ScanStart := 2
+    else
+      ScanStart := 1;
+    Scan;
+  end;
 end;
 
 function PointerToStr(Ptr: Pointer): string;
@@ -2401,14 +2585,15 @@ end;
 function SetToStr(const SetVariable; NumStart, NumEnd: byte): string;
 var
   BSet: set of byte absolute SetVariable;
-  i: byte;
+  I: byte;
 begin
   Result := '[';
-  for i := 0 to NumEnd-NumStart do
-    if i in BSet then
+  for I := 0 to NumEnd - NumStart do
+    if I in BSet then
       if Result = '[' then
-        Result := '[' + IntToStr(i + NumStart) else
-        Result := Result + ',' + IntToStr(i + NumStart);
+        Result := '[' + IntToStr(I + NumStart)
+      else
+        Result := Result + ',' + IntToStr(I + NumStart);
   Result := Result + ']';
 end;
 
@@ -2420,22 +2605,29 @@ begin
   for C := Low(C) to High(C) do
     if C in SetVariable then
       if Result = '[' then
-        Result := '[' + SReadableForm(C) else
+        Result := '[' + SReadableForm(C)
+      else
         Result := Result + ',' + SReadableForm(C);
   Result := Result + ']';
 end;
 
-function StrToFloatDef(const s: string; DefValue: Extended): Extended;
+function StrToFloatDef(const S: string; DefValue: Extended): Extended;
 begin
- try
-  result := StrToFloat(s);
- except
-  on EConvertError do result := DefValue
- end;
+  try
+    Result := StrToFloat(S);
+  except
+    on EConvertError do
+      Result := DefValue
+  end;
 end;
 
-function PCharOrNil(const s: string): PChar;
-begin if s = '' then result := nil else result := PChar(s); end;
+function PCharOrNil(const S: string): PChar;
+begin
+  if S = '' then
+    Result := nil
+  else
+    Result := PChar(S);
+end;
 
 function SCompressWhiteSpace(const S: string): string;
 var
@@ -2451,7 +2643,8 @@ begin
   begin
     Result[1] := ' ';
     Inc(ResultPos);
-    while SCharIs(S, SPos, WhiteSpaces) do Inc(SPos);
+    while SCharIs(S, SPos, WhiteSpaces) do
+      Inc(SPos);
   end;
 
   while SPos <= Length(S) do
@@ -2476,7 +2669,8 @@ begin
     begin
       Result[ResultPos] := ' ';
       Inc(ResultPos);
-      while SCharIs(S, SPos, WhiteSpaces) do Inc(SPos);
+      while SCharIs(S, SPos, WhiteSpaces) do
+        Inc(SPos);
     end;
   end;
 
@@ -2498,7 +2692,8 @@ var
   begin
     SError := Format('Invalid character "%s" at position %d in string "%s"', [C, I, S]);
     if RaiseExceptionOnError then
-      raise EInvalidChar.Create(SError) else
+      raise EInvalidChar.Create(SError)
+    else
       WritelnWarning('SCheckChars', SError);
   end;
 
