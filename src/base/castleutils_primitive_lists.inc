@@ -211,21 +211,25 @@ end;
 { TFloatList ------------------------------------------------------------ }
 
 procedure TFloatList.AppendFloats(Floats: TSingleList);
-var OldCount, i: Integer;
+var
+  OldCount, I: Integer;
 begin
  OldCount := Count;
  Count := Count + Floats.Count;
- for i := 0 to Floats.Count - 1 do Items[OldCount+i] := Floats.Items[i];
+ for I := 0 to Floats.Count - 1 do
+   Items[OldCount + I] := Floats.Items[I];
 end;
 
 { TSingleList ------------------------------------------------------------ }
 
 procedure TSingleList.AppendFloats(Floats: TFloatList);
-var OldCount, i: Integer;
+var
+  OldCount, I: Integer;
 begin
- OldCount := Count;
- Count := Count + Floats.Count;
- for i := 0 to Floats.Count - 1 do Items[OldCount+i] := Floats.Items[i];
+  OldCount := Count;
+  Count := Count + Floats.Count;
+  for I := 0 to Floats.Count - 1 do
+    Items[OldCount + I] := Floats.Items[I];
 end;
 
 function TSingleList.ToDouble: TDoubleList;
@@ -402,10 +406,12 @@ end;
 { TCardinalList ------------------------------------------------------------ }
 
 function TCardinalList.BigSum: Int64;
-var i: integer;
+var
+  I: integer;
 begin
- result := 0;
- for i := 0 to Count-1 do result := result + Items[i];
+  Result := 0;
+  for I := 0 to Count - 1 do
+    Result := Result + Items[I];
 end;
 
 function TCardinalList.Sum: Cardinal;

@@ -869,8 +869,8 @@ begin
   if Epsilon = 0 then
     Result := (V1.Data[0] = V2.Data[0]) and
               (V1.Data[1] = V2.Data[1]) else
-    Result := (System.Abs(V1.Data[0]-V2.Data[0]) < Epsilon) and
-              (System.Abs(V1.Data[1]-V2.Data[1]) < Epsilon);
+    Result := (System.Abs(V1.Data[0] - V2.Data[0]) < Epsilon) and
+              (System.Abs(V1.Data[1] - V2.Data[1]) < Epsilon);
 end;
 
 class function TGenericVector2.PerfectlyEquals(const V1, V2: TGenericVector2): boolean;
@@ -1111,10 +1111,11 @@ begin
   if Epsilon = 0 then
     Result := (V1.Data[0] = V2.Data[0]) and
               (V1.Data[1] = V2.Data[1]) and
-              (V1.Data[2] = V2.Data[2]) else
-    Result := (System.Abs(V1.Data[0]-V2.Data[0]) < Epsilon) and
-              (System.Abs(V1.Data[1]-V2.Data[1]) < Epsilon) and
-              (System.Abs(V1.Data[2]-V2.Data[2]) < Epsilon);
+              (V1.Data[2] = V2.Data[2])
+  else
+    Result := (System.Abs(V1.Data[0] - V2.Data[0]) < Epsilon) and
+              (System.Abs(V1.Data[1] - V2.Data[1]) < Epsilon) and
+              (System.Abs(V1.Data[2] - V2.Data[2]) < Epsilon);
 end;
 
 class function TGenericVector3.PerfectlyEquals(const V1, V2: TGenericVector3): boolean;
@@ -1327,7 +1328,8 @@ begin
     Result := (V1.Data[0] = V2.Data[0]) and
               (V1.Data[1] = V2.Data[1]) and
               (V1.Data[2] = V2.Data[2]) and
-              (V1.Data[3] = V2.Data[3]) else
+              (V1.Data[3] = V2.Data[3])
+  else
     Result := (System.Abs(V1.Data[0]-V2.Data[0]) < Epsilon) and
               (System.Abs(V1.Data[1]-V2.Data[1]) < Epsilon) and
               (System.Abs(V1.Data[2]-V2.Data[2]) < Epsilon) and
@@ -1788,15 +1790,15 @@ begin
     see MatrixInverse on TMatrix2 comments. }
 
   ADeterminant := 1 / ADeterminant;
-  Result.Data[0,0] := (Data[1,1] * Data[2,2]-Data[2,1] * Data[1,2]) * ADeterminant;
-  Result.Data[0,1] := -(Data[0,1] * Data[2,2]-Data[2,1] * Data[0,2]) * ADeterminant;
-  Result.Data[0,2] := (Data[0,1] * Data[1,2]-Data[1,1] * Data[0,2]) * ADeterminant;
-  Result.Data[1,0] := -(Data[1,0] * Data[2,2]-Data[2,0] * Data[1,2]) * ADeterminant;
-  Result.Data[1,1] := (Data[0,0] * Data[2,2]-Data[2,0] * Data[0,2]) * ADeterminant;
-  Result.Data[1,2] := -(Data[0,0] * Data[1,2]-Data[1,0] * Data[0,2]) * ADeterminant;
-  Result.Data[2,0] := (Data[1,0] * Data[2,1]-Data[2,0] * Data[1,1]) * ADeterminant;
-  Result.Data[2,1] := -(Data[0,0] * Data[2,1]-Data[2,0] * Data[0,1]) * ADeterminant;
-  Result.Data[2,2] := (Data[0,0] * Data[1,1]-Data[1,0] * Data[0,1]) * ADeterminant;
+  Result.Data[0,0] := (Data[1,1] * Data[2,2] - Data[2,1] * Data[1,2]) * ADeterminant;
+  Result.Data[0,1] := -(Data[0,1] * Data[2,2] - Data[2,1] * Data[0,2]) * ADeterminant;
+  Result.Data[0,2] := (Data[0,1] * Data[1,2] - Data[1,1] * Data[0,2]) * ADeterminant;
+  Result.Data[1,0] := -(Data[1,0] * Data[2,2] - Data[2,0] * Data[1,2]) * ADeterminant;
+  Result.Data[1,1] := (Data[0,0] * Data[2,2] - Data[2,0] * Data[0,2]) * ADeterminant;
+  Result.Data[1,2] := -(Data[0,0] * Data[1,2] - Data[1,0] * Data[0,2]) * ADeterminant;
+  Result.Data[2,0] := (Data[1,0] * Data[2,1] - Data[2,0] * Data[1,1]) * ADeterminant;
+  Result.Data[2,1] := -(Data[0,0] * Data[2,1] - Data[2,0] * Data[0,1]) * ADeterminant;
+  Result.Data[2,2] := (Data[0,0] * Data[1,1] - Data[1,0] * Data[0,1]) * ADeterminant;
 end;
 
 function TGenericMatrix3.TryInverse(out MInverse: TGenericMatrix3): boolean;

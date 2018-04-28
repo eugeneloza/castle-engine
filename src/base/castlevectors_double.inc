@@ -43,11 +43,13 @@ function ThreePlanesIntersectionPointDouble(
   https://bugs.freepascal.org/view.php?id=32188
 }
 
-function MaxAbsVectorCoordDouble(const v: TVector3Double): integer;
+function MaxAbsVectorCoordDouble(const V: TVector3Double): integer;
 begin
   Result := 0;
-  if Abs(v.Data[1]) > Abs(v.Data[Result]) then Result := 1;
-  if Abs(v.Data[2]) > Abs(v.Data[Result]) then Result := 2;
+  if Abs(V.Data[1]) > Abs(V.Data[Result]) then
+    Result := 1;
+  if Abs(V.Data[2]) > Abs(V.Data[Result]) then
+    Result := 2;
 end;
 
 procedure TwoPlanesIntersectionLineDouble(const Plane0, Plane1: TVector4Double;
@@ -85,14 +87,16 @@ begin
     PlaneMultiply := - Plane1.Data[Index1] / Plane0.Data[Index1];
     Sum_Index2 := Plane0.Data[Index2] * PlaneMultiply + Plane1.Data[Index2];
     Sum_3      := Plane0.Data[3]      * PlaneMultiply + Plane1.Data[3];
-  end else
+  end
+  else
   if not IsZero(Plane1.Data[Index1]) then
   begin
     PlaneWithNonZeroIndex1 := @Plane1;
     PlaneMultiply := - Plane0.Data[Index1] / Plane1.Data[Index1];
     Sum_Index2 := Plane0.Data[Index2] + Plane1.Data[Index2] * PlaneMultiply;
     Sum_3      := Plane0.Data[3]      + Plane1.Data[3]      * PlaneMultiply;
-  end else
+  end
+  else
   begin
     { If Plane0.Data[Index1] = Plane1.Data[Index1] = 0, this is simple.
         Sum_Index2 := Plane0.Data[Index2] + Plane1.Data[Index2];
@@ -123,8 +127,8 @@ begin
     PlaneWithNonZeroIndex1^.Data[Index1];
 end;
 
-function TryPlaneLineIntersectionDouble(out t: Double;
-  const plane: TVector4Double; const line0, lineVector: TVector3Double): boolean; overload;
+function TryPlaneLineIntersectionDouble(out T: Double;
+  const Plane: TVector4Double; const Line0, LineVector: TVector3Double): boolean; overload;
 var
   PlaneDir: TVector3Double absolute plane;
   Dot: Double;
@@ -133,18 +137,20 @@ begin
   if not IsZero(Dot) then
   begin
     Result := true;
-    t := -(plane.Data[0]*line0.Data[0] + plane.Data[1]*line0.Data[1] + plane.Data[2]*line0.Data[2] + plane.Data[3])/Dot;
-  end else
+    T := -(Plane.Data[0] * Line0.Data[0] + Plane.Data[1] * Line0.Data[1] + Plane.Data[2] * Line0.Data[2] + Plane.Data[3]) / Dot;
+  end
+  else
     Result := false;
 end;
 
-function TryPlaneLineIntersectionDouble(out intersection: TVector3Double;
-  const plane: TVector4Double; const line0, lineVector: TVector3Double): boolean; overload;
+function TryPlaneLineIntersectionDouble(out Intersection: TVector3Double;
+  const Plane: TVector4Double; const Line0, LineVector: TVector3Double): boolean; overload;
 var
   T: Double;
 begin
-  Result := TryPlaneLineIntersectionDouble(t, Plane, Line0, LineVector);
-  if Result then Intersection := Line0 + LineVector * t;
+  Result := TryPlaneLineIntersectionDouble(T, Plane, Line0, LineVector);
+  if Result then
+    Intersection := Line0 + LineVector * T;
 end;
 
 function ThreePlanesIntersectionPointDouble(

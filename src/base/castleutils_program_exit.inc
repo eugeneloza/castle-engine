@@ -63,22 +63,26 @@ begin
         107: NiceMessage := 'File already open';
         else NiceMessage := '';
       end;
-      if NiceMessage <> '' then Message := Message +' (' +NiceMessage +')';
+      if NiceMessage <> '' then
+        Message := Message +' (' + NiceMessage + ')';
     end;
 
-  end else
+  end
+  else
     Message := '';
 
   if (E is EWithHiddenClassName) and (Message <> '') then
-    result := Message else
+    Result := Message
+  else
   begin
-    result := 'Exception "' + E.ClassName + '"';
+    Result := 'Exception "' + E.ClassName + '"';
     // not usually useful
     // {$ifdef DEBUG}
     // if ExceptAddr <> nil then
-    //   result := result +' (at address ' + PointerToStr(ExceptAddr) + ')';
+    //   Result := Result +' (at address ' + PointerToStr(ExceptAddr) + ')';
     // {$endif}
-    if Message <> '' then result := result +' : ' +nl +Message;
+    if Message <> '' then
+      Result := Result + ' : ' + NL + Message;
   end;
 end;
 

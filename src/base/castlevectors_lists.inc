@@ -195,11 +195,17 @@ begin
     Max := List^[0];
     for I := 1 to Count - 1 do
     begin
-      if List^[I].Data[0] < Min.Data[0] then Min.Data[0] := List^[I].Data[0] else
-      if List^[I].Data[0] > Max.Data[0] then Max.Data[0] := List^[I].Data[0];
+      if List^[I].Data[0] < Min.Data[0] then
+        Min.Data[0] := List^[I].Data[0]
+      else
+        if List^[I].Data[0] > Max.Data[0] then
+          Max.Data[0] := List^[I].Data[0];
 
-      if List^[I].Data[1] < Min.Data[1] then Min.Data[1] := List^[I].Data[1] else
-      if List^[I].Data[1] > Max.Data[1] then Max.Data[1] := List^[I].Data[1];
+      if List^[I].Data[1] < Min.Data[1] then
+        Min.Data[1] := List^[I].Data[1]
+      else
+        if List^[I].Data[1] > Max.Data[1] then
+          Max.Data[1] := List^[I].Data[1];
     end;
   end;
 end;
