@@ -440,8 +440,7 @@ begin
     // detected Windows with 32-bit GetTickCount, it just wrapped, fix
     SecondTimeMinusDelay := SecondTimeMinusDelay + High(LongWord);
     Result := (FirstTime > SecondTime) and (FirstTime <= SecondTimeMinusDelay);
-  end
-  else
+  end else
     Result := FirstTime <= SecondTimeMinusDelay;
 end;
 
@@ -499,8 +498,7 @@ begin
                              GetProcAddress(lib, 'GetTickCount64'));
     end;
     Result := WinGetTickCount64();
-  end
-  else
+  end else
 {$ENDIF}
     Result := Windows.GetTickCount;
 end;
@@ -539,8 +537,7 @@ begin
   begin
     WritelnLog('Time', 'Detected gettimeofday() going backwards on Unix, workarounding. This is known to happen on some Android devices');
     Result := LastGetTickCount64;
-  end
-  else
+  end else
     LastGetTickCount64 := Result;
 end;
 {$I norqcheckend.inc}
@@ -706,8 +703,7 @@ begin
   begin
     WritelnLog('Time', 'Detected gettimeofday() going backwards on Unix, workarounding. This is known to happen on some Android devices');
     Result.Value := LastTimer.Value;
-  end
-  else
+  end else
     LastTimer.Value := Result.Value;
   {$endif ANDROID}
 
@@ -824,8 +820,7 @@ begin
   begin
     FSecondsPassed := 0.0;
     DoZeroNextSecondsPassed := false;
-  end
-  else
+  end else
   begin
     FSecondsPassed := TimerSeconds(NewUpdateStartTime, FUpdateStartTime);
     if MaxSensibleSecondsPassed > 0 then

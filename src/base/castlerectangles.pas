@@ -553,8 +553,7 @@ begin
   begin
     Result.Left := Left + Width div 2;
     Result.Width := 0;
-  end
-  else
+  end else
   begin
     Result.Left := Left - DeltaX;
     Result.Width := Integer(Width) + 2 * DeltaX;
@@ -564,8 +563,7 @@ begin
   begin
     Result.Bottom := Bottom + Height div 2;
     Result.Height := 0;
-  end
-  else
+  end else
   begin
     Result.Bottom := Bottom - DeltaY;
     Result.Height := Integer(Height) + 2 * DeltaY;
@@ -708,10 +706,10 @@ begin
   if X <  Left then
     Result := Left
   else
-  if X >= Left + Width then
-    Result := Left + Width - 1
-  else
-    Result := X;
+    if X >= Left + Width then
+      Result := Left + Width - 1
+    else
+      Result := X;
 end;
 
 function TRectangle.ClampY(const Y: Integer): Integer;
@@ -719,10 +717,10 @@ begin
   if Y <  Bottom then
     Result := Bottom
   else
-  if Y >= Bottom + Height then
-    Result := Bottom + Height - 1
-  else
-    Result := Y;
+    if Y >= Bottom + Height then
+      Result := Bottom + Height - 1
+    else
+      Result := Y;
 end;
 
 function TRectangle.ToString: string;
@@ -772,8 +770,7 @@ begin
   begin
     Result.Width  := Round(Width  * Factor);
     Result.Left   := Left   + (Width  - Result.Width ) div 2;
-  end
-  else
+  end else
   begin
     Result.Width  := Width;
     Result.Left   := Left;
@@ -783,8 +780,7 @@ begin
   begin
     Result.Height := Round(Height * Factor);
     Result.Bottom := Bottom + (Height - Result.Height) div 2;
-  end
-  else
+  end else
   begin
     Result.Height := Height;
     Result.Bottom := Bottom;
@@ -800,8 +796,7 @@ begin
     Result.Left   := Floor(Left * Factor);
     ResultRight := Ceil(Right * Factor);
     Result.Width  := ResultRight - Result.Left;
-  end
-  else
+  end else
   begin
     Result.Width  := Width;
     Result.Left   := Left;
@@ -812,8 +807,7 @@ begin
     Result.Bottom := Floor(Bottom * Factor);
     ResultTop   := Ceil(Top * Factor);
     Result.Height := ResultTop - Result.Bottom;
-  end
-  else
+  end else
   begin
     Result.Height := Height;
     Result.Bottom := Bottom;
@@ -844,8 +838,7 @@ begin
   begin
     Result.Height := R.Height;
     Result.Width := Width * Result.Height div Height;
-  end
-  else
+  end else
   begin
     Result.Width := R.Width;
     Result.Height := Height * Result.Width div Width;
@@ -942,17 +935,17 @@ begin
   if R1.IsEmpty then
     Result := R2
   else
-  if R2.IsEmpty then
-    Result := R1
-  else
-  begin
-    Result.Left   := Min(R1.Left  , R2.Left);
-    Result.Bottom := Min(R1.Bottom, R2.Bottom);
-    NewRight := Max(R1.Right   , R2.Right);
-    NewTop   := Max(R1.Top     , R2.Top);
-    Result.Width  := NewRight - Result.Left;
-    Result.Height := NewTop   - Result.Bottom;
-  end;
+    if R2.IsEmpty then
+      Result := R1
+    else
+    begin
+      Result.Left   := Min(R1.Left  , R2.Left);
+      Result.Bottom := Min(R1.Bottom, R2.Bottom);
+      NewRight := Max(R1.Right   , R2.Right);
+      NewTop   := Max(R1.Top     , R2.Top);
+      Result.Width  := NewRight - Result.Left;
+      Result.Height := NewTop   - Result.Bottom;
+    end;
 end;
 
 class operator TRectangle.{$ifdef FPC}*{$else}Multiply{$endif} (const R1, R2: TRectangle): TRectangle;
@@ -971,8 +964,7 @@ begin
     begin
       Result.Width  := NewRight - Result.Left;
       Result.Height := NewTop   - Result.Bottom;
-    end
-    else
+    end else
       Result := TRectangle.Empty;
   end;
 end;
@@ -1067,8 +1059,7 @@ begin
   begin
     Result.Left := Left + Width / 2;
     Result.Width := 0;
-  end
-  else
+  end else
   begin
     Result.Left := Left - DeltaX;
     Result.Width := Width + 2 * DeltaX;
@@ -1078,8 +1069,7 @@ begin
   begin
     Result.Bottom := Bottom + Height / 2;
     Result.Height := 0;
-  end
-  else
+  end else
   begin
     Result.Bottom := Bottom - DeltaY;
     Result.Height := Height + 2 * DeltaY;
@@ -1306,16 +1296,14 @@ begin
     ClosestCornerX := Left;
     if Left - DiscCenter.Data[0] > Radius then
       Exit(false);
-  end
-  else
+  end else
   if DiscCenter.Data[0] > ARight then
   begin
     InsideX := false;
     ClosestCornerX := ARight;
     if DiscCenter.Data[0] - ARight > Radius then
       Exit(false);
-  end
-  else
+  end else
   begin
     InsideX := true;
     if DiscCenter.Data[0] < (Left + ARight) / 2 then
@@ -1330,16 +1318,14 @@ begin
     ClosestCornerY := Bottom;
     if Bottom - DiscCenter.Data[1] > Radius then
       Exit(false);
-  end
-  else
+  end else
   if DiscCenter.Data[1] > ATop then
   begin
     InsideY := false;
     ClosestCornerY := ATop;
     if DiscCenter.Data[1] - ATop > Radius then
       Exit(false);
-  end
-  else
+  end else
   begin
     InsideY := true;
     if DiscCenter.Data[1] < (Bottom + ATop) / 2 then
@@ -1369,8 +1355,7 @@ begin
   begin
     Result.Width  := Width  * Factor;
     Result.Left   := Left   + (Width  - Result.Width ) / 2;
-  end
-  else
+  end else
   begin
     Result.Width  := Width;
     Result.Left   := Left;
@@ -1380,8 +1365,7 @@ begin
   begin
     Result.Height := Height * Factor;
     Result.Bottom := Bottom + (Height - Result.Height) / 2;
-  end
-  else
+  end else
   begin
     Result.Height := Height;
     Result.Bottom := Bottom;
@@ -1397,8 +1381,7 @@ begin
     Result.Left  := Left * Factor;
     ResultRight  := Right * Factor;
     Result.Width := ResultRight - Result.Left;
-  end
-  else
+  end else
   begin
     Result.Width  := Width;
     Result.Left   := Left;
@@ -1409,8 +1392,7 @@ begin
     Result.Bottom := Bottom * Factor;
     ResultTop     := Top * Factor;
     Result.Height := ResultTop - Result.Bottom;
-  end
-  else
+  end else
   begin
     Result.Height := Height;
     Result.Bottom := Bottom;
@@ -1425,15 +1407,13 @@ begin
     Result.Bottom := P.Data[1];
     Result.Width := 0;
     Result.Height := 0;
-  end
-  else
+  end else
   begin
     if P.Data[0] < Left then
     begin
       Result.Left := P.Data[0];
       Result.Width := (Left - P.Data[0]) + Width;
-    end
-    else
+    end else
     begin
       Result.Left := Left;
       if P.Data[0] > Right then
@@ -1446,8 +1426,7 @@ begin
     begin
       Result.Bottom := P.Data[1];
       Result.Height := (Bottom - P.Data[1]) + Height;
-    end
-    else
+    end else
     begin
       Result.Bottom := Bottom;
       if P.Data[1] > Top then
@@ -1527,8 +1506,7 @@ begin
         but better stay safe when dealing with floating point numbers. }
       Result.Width  := Max(0, NewRight - Result.Left);
       Result.Height := Max(0, NewTop   - Result.Bottom);
-    end
-    else
+    end else
       Result := TFloatRectangle.Empty;
   end;
 end;

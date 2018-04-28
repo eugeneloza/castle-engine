@@ -176,9 +176,7 @@ begin
       Destroy(s);
       raise Exception.Create('Error when opening gz stream');
     end;
-  end
-
-  else
+  end else
   begin
     GetMem (s^.inbuf, Z_BUFSIZE);
     s^.stream.next_in := s^.inbuf;
@@ -211,8 +209,7 @@ begin
     s^.gzStream.WriteBuffer(gzheader, 10);
     s^.startpos := longint(10);
 {$ENDIF}
-  end
-  else
+  end else
   begin
     check_header(s); { skip the .gz header }
     s^.startpos := s^.gzStream.Position - s^.stream.avail_in;
@@ -459,8 +456,7 @@ begin
 {$ELSE}
       Destroy := deflateEnd(s^.stream);
 {$ENDIF}
-    end
-    else
+    end else
     begin
       Destroy := inflateEnd(s^.stream);
     end;

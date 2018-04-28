@@ -966,8 +966,7 @@ begin
     X := Axis.Data[0] * L;
     Y := Axis.Data[1] * L;
     Z := Axis.Data[2] * L;
-  end
-  else
+  end else
   begin
     { In case vector has zero length (so it's just zero),
       the Angle must be zero, and we can exit early. }
@@ -1064,8 +1063,7 @@ begin
        begin
          Middle := 1;
          Min := 2;
-       end
-       else
+       end else
        begin
          Middle := 2;
          Min := 1;
@@ -1074,8 +1072,7 @@ begin
        begin
          Middle := 0;
          Min := 2;
-       end
-       else
+       end else
        begin
          Middle := 2;
          Min := 0;
@@ -1085,8 +1082,7 @@ begin
        begin
          Middle := 0;
          Min := 1;
-      end
-      else
+      end else
       begin
          Middle := 1;
          Min := 0;
@@ -1170,16 +1166,14 @@ begin
     PlaneMultiply := - Plane1.Data[Index1] / Plane0.Data[Index1];
     Sum_Index2 := Plane0.Data[Index2] * PlaneMultiply + Plane1.Data[Index2];
     Sum_3      := Plane0.Data[3]      * PlaneMultiply + Plane1.Data[3];
-  end
-  else
+  end else
   if not IsZero(Plane1.Data[Index1]) then
   begin
     PlaneWithNonZeroIndex1 := @Plane1;
     PlaneMultiply := - Plane0.Data[Index1] / Plane1.Data[Index1];
     Sum_Index2 := Plane0.Data[Index2] + Plane1.Data[Index2] * PlaneMultiply;
     Sum_3      := Plane0.Data[3]      + Plane1.Data[3]      * PlaneMultiply;
-  end
-  else
+  end else
   begin
     { If Plane0.Data[Index1] = Plane1.Data[Index1] = 0, this is simple.
         Sum_Index2 := Plane0.Data[Index2] + Plane1.Data[Index2];
@@ -1230,8 +1224,7 @@ begin
       raise ELinesParallel.Create('Lines are parallel, Lines2DIntersection not possible');
     Result.Data[1] := - (Line0.Data[2] * Ratio - Line1.Data[2]) / Divide;
     Result.Data[0] := - (Line0.Data[1] * Result.Data[1] + Line0.Data[2]) / Line0.Data[0];
-  end
-  else
+  end else
   begin
     Ratio := Line1.Data[1] / Line0.Data[1];
 
@@ -1450,8 +1443,7 @@ begin
     Result.Data[0] := 0;
     Result.Data[1] := V.Data[2];
     Result.Data[2] := -V.Data[1];
-  end
-  else
+  end else
   begin
     Result.Data[0] := V.Data[1];
     Result.Data[1] := -V.Data[0];
@@ -1620,8 +1612,7 @@ begin
   begin
     Result := true;
     T := -(Plane.Data[0] * Line0.Data[0] + Plane.Data[1] * Line0.Data[1] + Plane.Data[2] * Line0.Data[2] + Plane.Data[3])/Dot;
-  end
-  else
+  end else
     Result := false;
 end;
 
@@ -1807,8 +1798,7 @@ begin
   begin
     cGood := 0;
     cOther := 1;
-  end
-  else
+  end else
   begin
     cOther := 0;
     cGood := 1;
@@ -1898,14 +1888,13 @@ begin
   if Delta < 0 then
     Result := false
   else
-  if Delta = 0 then
-  begin
-    T := -B / (2 * A);
-    Result := T >= 0;
-  end
-  else
-  begin
-    Delta := Sqrt(Delta);
+    if Delta = 0 then
+    begin
+      T := -B / (2 * A);
+      Result := T >= 0;
+    end else
+    begin
+      Delta := Sqrt(Delta);
 
     { There are two solutions, choose closest to RayOrigin (smallest)
       but >= 0 (the one < 0 does not fall on ray). }
@@ -1916,15 +1905,13 @@ begin
     begin
       T := T1;
       Result := true;
-    end
-    else
-    if T2 >= 0 then
-    begin
-      T := T2;
-      Result := true;
-    end
-    else
-      Result := false;
+    end else
+      if T2 >= 0 then
+      begin
+        T := T2;
+        Result := true;
+      end else
+        Result := false;
   end;
 end;
 

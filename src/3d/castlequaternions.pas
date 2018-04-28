@@ -401,8 +401,7 @@ begin
   begin
     NegateOneQuaternion := -1;
     CosTheta := -CosTheta;
-  end
-  else
+  end else
     NegateOneQuaternion := 1;
 
   { Sometimes CosTheta may get slightly > 1, and then ArcCos fails with
@@ -416,8 +415,7 @@ begin
   begin
     W1 := NegateOneQuaternion * Sin( (1-A) * Theta ) / SinTheta;
     W2 :=                       Sin(    A  * Theta ) / SinTheta;
-  end
-  else
+  end else
   begin
     { Theta ~= 0, so both rotations equal (or opposite, in which case
       result in undefined anyway). }
@@ -441,8 +439,7 @@ begin
   begin
     { negate one quaternion }
     Result.Data.Vector4 := Lerp(A, -Q1.Data.Vector4, Q2.Data.Vector4);
-  end
-  else
+  end else
     Result.Data.Vector4 := Lerp(A, Q1.Data.Vector4, Q2.Data.Vector4);
 
   Result.NormalizeMe;

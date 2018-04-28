@@ -496,8 +496,7 @@ begin
   begin
     Smaller := X;
     Larger := Y;
-  end
-  else
+  end else
   begin
     Smaller := Y;
     Larger := X;
@@ -510,8 +509,7 @@ begin
   begin
     Smaller := X;
     Larger := Y;
-  end
-  else
+  end else
   begin
     Smaller := Y;
     Larger := X;
@@ -524,8 +522,7 @@ begin
   begin
     Smaller := X;
     Larger := Y;
-  end
-  else
+  end else
   begin
     Smaller := Y;
     Larger := X;
@@ -538,8 +535,7 @@ begin
   begin
     Smaller := X;
     Larger := Y;
-  end
-  else
+  end else
   begin
     Smaller := Y;
     Larger := X;
@@ -553,8 +549,7 @@ begin
   begin
     Smaller := X;
     Larger := Y;
-  end
-  else
+  end else
   begin
     Smaller := Y;
     Larger := X;
@@ -662,8 +657,7 @@ begin
       Result := 2
     else
       Result := 0;
-  end
-  else
+  end else
   begin
     if a2 > a1 then
       Result := 2
@@ -680,8 +674,7 @@ begin
       Result := 2
     else
       Result := 0;
-  end
-  else
+  end else
   begin
     if a2 < a1 then
       Result := 2
@@ -1178,8 +1171,7 @@ begin
       if Result < 0 then
         Result := Result + Pi;
     end;
-  end
-  else
+  end else
     if y1 > y2 then
     begin
       if SameValue(x1, x2) then
@@ -1191,8 +1183,7 @@ begin
             Result := Result + Pi;
           Result := Result + Pi;
         end;
-    end
-    else
+    end else
       if x2 > x1 then
         Result := 0
       else
@@ -1251,8 +1242,7 @@ begin
       Result and Remainder, and all it's Ok. }
     Result := -Result;
     Remainder := -Remainder;
-  end
-  else
+  end else
     DivMod(Dividend, Divisor, Result, Remainder);
 {$else}
 { Workaround lack of DivMod overload with signed (SmallInt) params.
@@ -1275,8 +1265,7 @@ begin
   begin
     Dec(Result);
     Remainder := Divisor + SignedRemainder;
-  end
-  else
+  end else
     Remainder := SignedRemainder;
 end;
 
@@ -1329,8 +1318,7 @@ begin
     { FloatDivMod requires that 1st param be >= 0. }
     FloatDivMod(-A, B, DivResult, Result);
     Result := Clamped(B - Result, 0, B);
-  end
-  else
+  end else
     FloatDivMod(A, B, DivResult, Result);
 end;
 

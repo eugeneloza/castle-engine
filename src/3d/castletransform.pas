@@ -2259,8 +2259,7 @@ begin
     if FWorld <> nil then
       raise ECannotAddToAnotherWorld.Create('Cannot add object existing in one world to another. This means that your object is part of SceneManager1.Items, and you are adding it to SceneManager2.Items. You have to remove it from SceneManager1.Items first.');
     ChangeWorld(Value);
-  end
-  else
+  end else
     Inc(FWorldReferences);
 
   // list stuff
@@ -2650,8 +2649,7 @@ begin
         List.Delete(I);
         if RemoveItem = rtRemoveAndFree then
           FreeAndNil(Item);
-      end
-      else
+      end else
         Inc(I);
     end;
 
@@ -2823,8 +2821,7 @@ begin
     begin
       WritelnLog('Watch out, UpdateWorldTransformAndInverse overflows the NextTransformId');
       NextTransformId := 1; // skip over 0
-    end
-    else
+    end else
       Inc(NextTransformId);
 
     FWorldTransformAndInverseId := NextTransformId;
@@ -2834,8 +2831,7 @@ begin
     begin
       FWorldTransform := Transform;
       FWorldInverseTransform := InverseTransform;
-    end
-    else
+    end else
     begin
       FWorldTransform := FLastParentWorldTransform * Transform;
       FWorldInverseTransform := InverseTransform * FLastParentWorldInverseTransform;
@@ -2991,8 +2987,7 @@ begin
     begin
       MultMatricesTranslation(NewParamsTransformValue, NewParamsInverseTransformValue, T);
       NewFrustumValue.MoveVar(-T);
-    end
-    else
+    end else
     begin
       InternalTransformMatricesMult(NewParamsTransformValue, NewParamsInverseTransformValue);
       if IsNan(NewParamsInverseTransformValue.Data[0, 0]) then
@@ -3037,8 +3032,7 @@ begin
     else
       LocalRenderShadowVolume(ShadowVolumeRenderer,
         false, TranslationMatrix(T) * ParentTransform);
-  end
-  else
+  end else
     LocalRenderShadowVolume(ShadowVolumeRenderer,
       false, Transform * ParentTransform);
 end;
@@ -3192,8 +3186,7 @@ procedure TCastleTransform.UpdateSimpleGravity(const SecondsPassed: Single);
 
       if not Move(GravityUp * -FallingDistance, true) then
         FFalling := false;
-    end
-    else
+    end else
     begin
       FFalling := false;
 
@@ -3240,8 +3233,7 @@ begin
   begin
     ProposedNewMiddle := OldMiddle + ATranslation;
     Result := MoveAllowed(OldMiddle, ProposedNewMiddle, NewMiddle, BecauseOfGravity);
-  end
-  else
+  end else
   begin
     NewMiddle := OldMiddle + ATranslation;
     Result := MoveAllowed(OldMiddle, NewMiddle, BecauseOfGravity);

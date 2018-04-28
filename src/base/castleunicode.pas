@@ -112,12 +112,13 @@ end;
 
 function UTF8CharacterLength(p: PChar): integer;
 begin
-  if p<>nil then begin
+  if p <> nil then
+  begin
     if ord(p^)<$C0 { binary 11000000 } then begin
       // regular single byte character (#0 is a character, this is pascal ;)
       Result:=1;
-    end
-    else begin
+    end else
+    begin
       // multi byte
       if ((ord(p^) and $E0 { binary 11100000 }) = $C0 { binary 11000000 }) then begin
         // could be 2 byte character
@@ -125,25 +126,24 @@ begin
           Result:=2
         else
           Result:=1;
-      end
-      else if ((ord(p^) and $F0 { binary 11110000 }) = $E0 { binary 11100000 }) then begin
-        // could be 3 byte character
-        if ((ord(p[1]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
-        and ((ord(p[2]) and $C0 { binary 11000000 }) = $80 { binary 10000000 }) then
-          Result:=3
-        else
-          Result:=1;
-      end
-      else if ((ord(p^) and $F8 { binary 11111000 }) = $F0 { binary 11110000 }) then begin
-        // could be 4 byte character
-        if ((ord(p[1]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
-        and ((ord(p[2]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
-        and ((ord(p[3]) and $C0 { binary 11000000 }) = $80 { binary 10000000 }) then
-          Result:=4
-        else
-          Result:=1;
-      end
-      else
+      end else
+        if ((ord(p^) and $F0 { binary 11110000 }) = $E0 { binary 11100000 }) then begin
+          // could be 3 byte character
+          if ((ord(p[1]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
+          and ((ord(p[2]) and $C0 { binary 11000000 }) = $80 { binary 10000000 }) then
+            Result:=3
+          else
+            Result:=1;
+      end else
+        if ((ord(p^) and $F8 { binary 11111000 }) = $F0 { binary 11110000 }) then begin
+          // could be 4 byte character
+          if ((ord(p[1]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
+          and ((ord(p[2]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
+          and ((ord(p[3]) and $C0 { binary 11000000 }) = $80 { binary 10000000 }) then
+            Result:=4
+          else
+            Result:=1;
+      end else
         Result:=1;
     end;
   end else
@@ -195,16 +195,17 @@ var
   EndBytePos: PChar;
   MaxBytes: PtrInt;
 begin
-  StartBytePos:=UTF8CharStart(PChar(s),length(s),StartCharIndex-1);
+  StartBytePos:=UTF8CharStart(PChar(S), Length(S), StartCharIndex - 1);
   if StartBytePos=nil then
     Result:=''
-  else begin
-    MaxBytes:=PtrInt(PChar(s)+length(s)-StartBytePos);
-    EndBytePos:=UTF8CharStart(StartBytePos,MaxBytes,CharCount);
-    if EndBytePos=nil then
-      Result:=copy(s,StartBytePos-PChar(s)+1,MaxBytes)
+  else
+  begin
+    MaxBytes := PtrInt(PChar(s) + Length(S) - StartBytePos);
+    EndBytePos := UTF8CharStart(StartBytePos, MaxBytes, CharCount);
+    if EndBytePos = nil then
+      Result := copy(S, StartBytePos - PChar(S) + 1, MaxBytes)
     else
-      Result:=copy(s,StartBytePos-PChar(s)+1,EndBytePos-StartBytePos);
+      Result := copy(S, StartBytePos - PChar(S) + 1, EndBytePos - StartBytePos);
   end;
 end;
 
@@ -215,31 +216,38 @@ function UTF8CharacterToUnicode(p: PChar; out CharLen: integer): Cardinal;
   It does not check if the codepoint is defined in the Unicode tables.
 }
 begin
-  if p<>nil then begin
+  if p <> nil then
+  begin
     if ord(p^)<$C0 { binary 11000000 } then begin
       // regular single byte character (#0 is a normal char, this is pascal ;)
-      Result:=ord(p^);
-      CharLen:=1;
-    end
-    else if ((ord(p^) and $E0 { binary 11100000 }) = $C0 { binary 11000000 }) then begin
+      Result := ord(p^);
+      CharLen := 1;
+    end else
+    if ((ord(p^) and $E0 { binary 11100000 }) = $C0 { binary 11000000 }) then
+    begin
       // starts with %110 => could be double byte character
-      if (ord(p[1]) and $C0 { binary 11000000 }) = $80 { binary 10000000 } then begin
+      if (ord(p[1]) and $C0 { binary 11000000 }) = $80 { binary 10000000 } then
+      begin
         CharLen:=2;
         Result:=((ord(p^) and $1F { binary 00011111 }) shl 6)
                 or (ord(p[1]) and $3F { binary 00111111 });
-        if Result<(1 shl 7) then begin
+        if Result<(1 shl 7) then
+        begin
           // wrong encoded, could be an XSS attack
           Result:=0;
         end;
-      end else begin
+      end else
+      begin
         Result:=ord(p^);
         CharLen:=1;
       end;
-    end
-    else if ((ord(p^) and $F0 { binary 11110000 }) = $E0 { binary 11100000 }) then begin
+    end else
+    if ((ord(p^) and $F0 { binary 11110000 }) = $E0 { binary 11100000 }) then
+    begin
       // starts with %1110 => could be triple byte character
       if ((ord(p[1]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
-      and ((ord(p[2]) and $C0 { binary 11000000 }) = $80 { binary 10000000 }) then begin
+      and ((ord(p[2]) and $C0 { binary 11000000 }) = $80 { binary 10000000 }) then
+      begin
         CharLen:=3;
         Result:=((ord(p^) and $1F { binary 00011111 }) shl 12)
                 or ((ord(p[1]) and $3F { binary 00111111 }) shl 6)
@@ -248,36 +256,40 @@ begin
           // wrong encoded, could be an XSS attack
           Result:=0;
         end;
-      end else begin
+      end else
+      begin
         Result:=ord(p^);
         CharLen:=1;
       end;
-    end
-    else if ((ord(p^) and $F8 { binary 11111000 }) = $F0 { binary 11110000 }) then begin
+    end else
+    if ((ord(p^) and $F8 { binary 11111000 }) = $F0 { binary 11110000 }) then begin
       // starts with %11110 => could be 4 byte character
       if ((ord(p[1]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
       and ((ord(p[2]) and $C0 { binary 11000000 }) = $80 { binary 10000000 })
       and ((ord(p[3]) and $C0 { binary 11000000 }) = $80 { binary 10000000 }) then begin
-        CharLen:=4;
-        Result:=((ord(p^) and $0F { binary 00001111 }) shl 18)
+        CharLen := 4;
+        Result := ((ord(p^) and $0F { binary 00001111 }) shl 18)
                 or ((ord(p[1]) and $3F { binary 00111111 }) shl 12)
                 or ((ord(p[2]) and $3F { binary 00111111 }) shl 6)
                 or (ord(p[3]) and $3F { binary 00111111 });
-        if Result<(1 shl 16) then begin
+        if Result < (1 shl 16) then
+        begin
           // wrong encoded, could be an XSS attack
           Result:=0;
         end;
-      end else begin
-        Result:=ord(p^);
-        CharLen:=1;
+      end else
+      begin
+        Result := Ord(P^);
+        CharLen := 1;
       end;
-    end
-    else begin
+    end else
+    begin
       // invalid character
-      Result:=ord(p^);
-      CharLen:=1;
+      Result := Ord(p^);
+      CharLen := 1;
     end;
-  end else begin
+  end else
+  begin
     Result:=0;
     CharLen:=0;
   end;

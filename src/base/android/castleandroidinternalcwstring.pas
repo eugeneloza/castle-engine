@@ -125,7 +125,8 @@ begin
   InitThreadData;
   if (cp = CP_UTF8) or (cp = CP_ACP) then
     Result:=DefConv
-  else begin
+  else
+  begin
     if cp <> LastCP then begin
       Str(cp, s);
       LastConv:=OpenConverter('cp' + s);
@@ -157,7 +158,8 @@ begin
   err:=0;
   if conv <> nil then
     len2:=ucnv_fromUChars(conv, PAnsiChar(dest), len2, source, len, err)
-  else begin
+  else
+  begin
     // Use UTF-8 conversion from RTL
     cp:=CP_UTF8;
     len2:=UnicodeToUtf8(PAnsiChar(dest), len2, source, len) - 1;
@@ -293,7 +295,8 @@ begin
     err:=0;
     Result:=u_strCaseCompare(PUnicodeChar(s1), Length(s1), PUnicodeChar(s2), Length(s2), U_COMPARE_CODE_POINT_ORDER, err);
   end
-  else begin
+  else
+  begin
     InitThreadData;
     if DefColl <> nil then
       Result:=ucol_strcoll(DefColl, PUnicodeChar(s1), Length(s1), PUnicodeChar(s2), Length(s2))
@@ -382,7 +385,8 @@ begin
   c:=byte(Str^);
   if c =  0 then
     Result:=0
-  else begin
+  else
+  begin
     Result:=1;
     if c < $80 then
       exit; // 1-byte ASCII char
@@ -492,7 +496,8 @@ begin
   InitThreadData;
   if (cp = DefaultSystemCodePage) or (cp = CP_ACP) then
     Result:=DefConv
-  else begin
+  else
+  begin
     if cp <> LastCP then begin
       Str(cp, s);
       LastConv:=OpenConverter('cp' + s);
@@ -732,7 +737,8 @@ begin
   c:=byte(Str^);
   if c =  0 then
     Result:=0
-  else begin
+  else
+  begin
     Result:=1;
     if c < $80 then
       exit; // 1-byte ASCII char
@@ -871,8 +877,8 @@ var
       // unload lib on failure
       UnloadICU;
       Result:=False;
-    end
-    else begin
+    end else
+    begin
       pointer(ProcPtr):=p;
       Result:=True;
     end;

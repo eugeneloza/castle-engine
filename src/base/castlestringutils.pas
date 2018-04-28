@@ -1006,8 +1006,7 @@ begin
   begin
     for I := 1 to Count - Value do
       Delete(Count - 1);
-  end
-  else
+  end else
   if Value > Count then
   begin
     for I := 1 to Value - Count do
@@ -1236,8 +1235,7 @@ begin
       end;
       Result := Result + CopyPos(S, Done + 1, I) + Indent;
       Done := I;
-    end
-    else
+    end else
     begin
       NowCol := I - Done;
       if NowCol > MaxCol then
@@ -1577,16 +1575,14 @@ begin
           or when S is empty }
         Result.Add('');
         Break;
-      end
-      else
+      end else
       begin
         NextDelimiter := PosEx(Delimiter, S, NextChar);
         if NextDelimiter = 0 then
         begin
           Result.Add(SEnding(S, NextChar));
           Break;
-        end
-        else
+        end else
         begin
           Result.Add(CopyPos(S, NextChar, NextDelimiter - 1));
           NextChar := NextDelimiter + 1;
@@ -1664,8 +1660,7 @@ var
            ( (RealI + Length(SubS) - 1 = Length(Text)) or (Text[RealI + Length(SubS)] in WordBorders) )
         then
           Result := true
-      end
-      else
+      end else
         Result := true;
     end;
   end;
@@ -1689,8 +1684,7 @@ begin
         Result := I;
         Break;
       end;
-  end
-  else
+  end else
   begin
     for I := 1 to Count - Length(SubS) + 1 do
       if MatchingPos(I) then
@@ -1863,58 +1857,56 @@ begin
       repeat
         Inc(DataPos)
       until not SCharIs(Data, DataPos, WhiteSpaces);
-    end
-    else
+    end else
 
-    {%+something means "read this from data", %% means "read %"}
-    if Format[FormPos] = '%' then
-    begin
-      Inc(FormPos);
-      CheckFormatNotEnd;
-      try
-        case Format[FormPos] of
-          '%': begin
-                 CheckBlackChar('%');
-                 Inc(FormPos);
-                 Inc(DataPos);
-               end;
-          's': begin
-                 PString(Args[Result])^ := ReadStringData;
-                 Inc(FormPos);
-                 Inc(Result);
-               end;
-          'd': begin
-                 PInteger(Args[Result])^ := ReadIntegerData;
-                 Inc(FormPos);
-                 Inc(Result);
-               end;
-          'f': begin
-                 PFloat(Args[Result])^ := ReadExtendedData;
-                 Inc(FormPos);
-                 Inc(Result);
-               end;
-          '.': begin
-                 Inc(FormPos);
-                 case ArrayPosStr(ReadTypeSpecifier, ['single', 'double', 'extended']) of
-                   0: PSingle(Args[Result])^ := ReadExtendedData;
-                   1: PDouble(Args[Result])^ := ReadExtendedData;
-                   2: PExtended(Args[Result])^ := ReadExtendedData;
+      {%+something means "read this from data", %% means "read %"}
+      if Format[FormPos] = '%' then
+      begin
+        Inc(FormPos);
+        CheckFormatNotEnd;
+        try
+          case Format[FormPos] of
+            '%': begin
+                   CheckBlackChar('%');
+                   Inc(FormPos);
+                   Inc(DataPos);
                  end;
-                 Inc(Result);
-               end;
-           else
-             raise EDeformatError.Create('incorrect format specifier after "%" sign : ''' + Format + '''');
-         end;
-      except
-        on E: EConvertError do raise EDeformatError.Create('convert error - ' + E.Message)
+            's': begin
+                   PString(Args[Result])^ := ReadStringData;
+                   Inc(FormPos);
+                   Inc(Result);
+                 end;
+            'd': begin
+                   PInteger(Args[Result])^ := ReadIntegerData;
+                   Inc(FormPos);
+                   Inc(Result);
+                 end;
+            'f': begin
+                   PFloat(Args[Result])^ := ReadExtendedData;
+                   Inc(FormPos);
+                   Inc(Result);
+                 end;
+            '.': begin
+                   Inc(FormPos);
+                   case ArrayPosStr(ReadTypeSpecifier, ['single', 'double', 'extended']) of
+                     0: PSingle(Args[Result])^ := ReadExtendedData;
+                     1: PDouble(Args[Result])^ := ReadExtendedData;
+                     2: PExtended(Args[Result])^ := ReadExtendedData;
+                   end;
+                   Inc(Result);
+                 end;
+             else
+               raise EDeformatError.Create('incorrect format specifier after "%" sign : ''' + Format + '''');
+           end;
+        except
+          on E: EConvertError do raise EDeformatError.Create('convert error - ' + E.Message)
+        end;
+      end else
+      begin
+        CheckBlackChar(Format[FormPos]);
+        Inc(DataPos);
+        Inc(FormPos);
       end;
-    end
-    else
-    begin
-      CheckBlackChar(Format[FormPos]);
-      Inc(DataPos);
-      Inc(FormPos);
-    end;
   end;
 
   if RelaxedWhitespaceChecking then
@@ -1976,8 +1968,7 @@ begin
         { trim once again to delete rightmost whitespace (as in 'xxx ()|') }
         Result := TrimRight(Result);
       end;
-    end
-    else
+    end else
     begin
       // convert to uppercase to search ignoring case with RPos below
       LeftUpperCase := AnsiUpperCase(Left);
@@ -1997,12 +1988,11 @@ begin
           begin
             Inc(Len);
             Break;
-          end
-          else
-          if Left[P + Len] in WhiteSpaces then
-            Inc(Len)
-          else
-            Break;
+          end else
+            if Left[P + Len] in WhiteSpaces then
+              Inc(Len)
+            else
+              Break;
         end;
         {zmniejsz p tak zeby objelo biale znaki az do '('}
         while P - 1 >= 1 do
@@ -2012,15 +2002,13 @@ begin
             Dec(P);
             Inc(len);
             Break
-          end
-          else
-          if Left[P - 1] in WhiteSpaces then
-          begin
-            Dec(P);
-            Inc(Len);
-          end
-          else
-            Break;
+          end else
+            if Left[P - 1] in WhiteSpaces then
+            begin
+              Dec(P);
+              Inc(Len);
+            end else
+              Break;
         end;
         {the end; delete P, Len}
         Delete(Left, P, Len);
@@ -2130,8 +2118,7 @@ function SPercentReplace(const InitialFormat: string;
           Result := I;
           Exit;
         end;
-    end
-    else
+    end else
     begin
       for I := 0 to High(Replaces) do
         if C = Replaces[I].C then
@@ -2184,8 +2171,7 @@ begin
           if ErrorOnUnknownPercentFormat then
             UnknownPercentFormat('"' + PercentChar + Format[P + 1] + '"');
           Result := Result + PercentChar + Format[P + 1];
-        end
-        else
+        end else
         begin
           Result := Result + Replaces[ReplNum].S;
           Inc(ReplacementsDone);
@@ -2193,8 +2179,7 @@ begin
       end;
       { obetnij wykonana czesc z Format }
       Delete(Format, 1, P + 1);
-    end
-    else
+    end else
     begin
       { mamy PercentChar na koncu stringa }
       if ErrorOnUnknownPercentFormat then
@@ -2256,8 +2241,7 @@ begin
         begin
           Result := Result + IntToStr(Index);
           Inc(ReplacementsDone);
-        end
-        else
+        end else
           if Format[P + 1] in ['0'..'9'] then
           begin
             Inc(P);
@@ -2270,8 +2254,7 @@ begin
               MinLength := StrToInt(Copy(Format, StartP, P - StartP));
               Result := Result + IntToStrZPad(Index, MinLength);
               Inc(ReplacementsDone);
-            end
-            else
+            end else
             begin
               { invalid %-pattern, just copy it (including leading PercentChar
                 and following character <> 'd') }
@@ -2279,16 +2262,14 @@ begin
             end;
             { decrement P just so that Delete(Format, ...) below will work Ok }
             Dec(P);
-          end
-          else
+          end else
           begin
             { unknown %-pattern, just copy it }
             Result := Result + PercentChar + Format[P + 1];
           end;
       { obetnij wykonana czesc z Format }
       Delete(Format, 1, P + 1);
-    end
-    else
+    end else
     begin
       { mamy PercentChar na koncu stringa }
       Result := Result + PercentChar;
@@ -2519,8 +2500,7 @@ begin
       raise EConvertError.Create('Invalid Str2ToInt argument: cannot convert single dash ''-'' to integer.');
     Result := -BinInt(S[2]);
     NextChar := 3;
-  end
-  else
+  end else
   begin
     Result := BinInt(S[1]);
     NextChar := 2;
@@ -2564,8 +2544,7 @@ begin
     ScanStart := 2;
     Scan;
     Result := -Result;
-  end
-  else
+  end else
   begin
     if SCharIs(S, 1, '+') then
       ScanStart := 2

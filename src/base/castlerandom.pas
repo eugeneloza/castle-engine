@@ -103,8 +103,7 @@ begin
   if RandomSeed = 0 then
   begin
     Seed := GetRandomSeed;
-  end
-  else
+  end else
     Seed := LongInt(RandomSeed);
 end;
 
@@ -236,8 +235,7 @@ begin
 
     {and another 64-bit XorShift cycle to kill everything left off "now"}
     XorShift64;
-  end
-  else
+  end else
     c64 := Store64bitSeed; //else - just grab the last seed.
 
   {Now we cycle xorshift64 as we have a decent random c64 variable}
@@ -344,8 +342,7 @@ begin
      larger than (High(QWORD) div 2), i.e. we can never get "negative" result
      as the first bit of the result will be always zero}
     Result := Int64(QWord(c64) mod QWord(N))
-  end
-  else
+  end else
     Result := 0;
 end;
 

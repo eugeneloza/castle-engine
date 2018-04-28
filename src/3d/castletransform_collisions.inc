@@ -88,8 +88,7 @@ begin
           Exit;
       end;
     end;
-  end
-  else
+  end else
   begin
     Result := true;
     NewPos := ProposedNewPos;
@@ -225,8 +224,7 @@ function TCastleTransform.LocalRayCollision(const RayOrigin, RayDirection: TVect
       begin
         SysUtils.FreeAndNil(Result);
         Result := NewResult;
-      end
-      else
+      end else
         FreeAndNil(NewResult);
     end;
   end;
@@ -320,8 +318,7 @@ begin
     { translate calculated NewPos back }
     if Result then
       NewPos := NewPos + T;
-  end
-  else
+  end else
   begin
     InternalTransformMatrices(M, MInverse);
     Result := LocalMoveCollision(
@@ -364,8 +361,7 @@ begin
       IsRadius, Radius,
       OldBox.AntiTranslate(T),
       NewBox.AntiTranslate(T), TrianglesToIgnoreFunc);
-  end
-  else
+  end else
   begin
     MInverse := InverseTransform;
     Result := LocalMoveCollision(
@@ -393,8 +389,7 @@ begin
   begin
     T := Translation;
     Result := LocalSegmentCollision(Pos1 - T, Pos2 - T, TrianglesToIgnoreFunc, ALineOfSight);
-  end
-  else
+  end else
   begin
     MInverse := InverseTransform;
     Result := LocalSegmentCollision(
@@ -512,8 +507,7 @@ begin
       LastNode^.RayOrigin := RayOrigin;
       LastNode^.RayDirection := RayDirection;
     end;
-  end
-  else
+  end else
   begin
     InternalTransformMatrices(M, MInverse);
     Result := LocalRayCollision(

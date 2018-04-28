@@ -205,8 +205,7 @@ begin
         {$ifdef UNIX} + ': ' + dlerror {$endif})
     else
       Result := nil;
-  end
-  else
+  end else
     Result := Self.Create(AName, Handle);
 end;
 

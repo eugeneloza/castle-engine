@@ -189,8 +189,7 @@ begin
       if AnsiUpperCase(Arr[Result]) = AA then
         Exit;
     Result := -1;
-  end
-  else
+  end else
     Result := ArrayPosStr(A, Arr);
 end;
 

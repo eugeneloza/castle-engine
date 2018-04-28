@@ -1103,8 +1103,7 @@ begin
   if ExceptionOnError then
   begin
     OpenCore;
-  end
-  else
+  end else
   try
     OpenCore;
   except
@@ -1246,8 +1245,7 @@ begin
     {$I norqcheckbegin.inc}
     alSourcei(ALSource, AL_BUFFER, Value.ALBuffer);
     {$I norqcheckend.inc}
-  end
-  else
+  end else
     alSourcei(ALSource, AL_BUFFER, 0);
 end;
 
@@ -1432,8 +1430,7 @@ begin
         list). But that's OK, because if Result <> nil here, then we will
         not need MinImportanceIndex later. }
       Break;
-    end
-    else
+    end else
     begin
       { Update MinImportanceIndex }
       if (MinImportanceIndex = -1) or
@@ -1735,8 +1732,7 @@ function TSoundEngine.Devices: TSoundDeviceList;
         pDeviceList := StrEnd(pDeviceList);
         Inc(pDeviceList);
       end;
-    end
-    else
+    end else
     if ALLibraryAvailable and OpenALSampleImplementation then
     begin
       Add(SampleImpALCDeviceName('native'), 'Operating system native');
@@ -1943,8 +1939,7 @@ procedure TSoundEngine.ALContextOpenCore;
         { call ALContextOpen on all buffers }
         for Buffer in LoadedBuffers do
           Buffer.ALContextOpen(false);
-      end
-      else
+      end else
       begin
         { same as above, but with added Progress.Init / Step / Fini }
         Progress.Init(LoadedBuffers.Count, 'Loading sounds');
@@ -2135,8 +2130,7 @@ begin
 
         Result.Relative := false;
         Result.Position := Parameters.Position;
-      end
-      else
+      end else
       begin
         { No attenuation by distance. }
         Result.RolloffFactor := 0;
@@ -2317,8 +2311,7 @@ begin
       end;
     end;
     Buffer := nil;
-  end
-  else
+  end else
     raise ESoundBufferNotLoaded.CreateFmt('Sound buffer "%s" not loaded by this sound engine',
       [URIDisplay(Buffer.URL)]);
 end;
@@ -2380,8 +2373,7 @@ begin
       OpenALRestart;
       FDevice := Value;
       ALContextOpen;
-    end
-    else
+    end else
       FDevice := Value;
     DeviceSaveToConfig := true; // caller will eventually change it to false
   end;
@@ -2396,8 +2388,7 @@ begin
       ALContextClose;
       FEnabled := Value;
       ALContextOpen;
-    end
-    else
+    end else
       FEnabled := Value;
     FEnableSaveToConfig := true; // caller will eventually change it to false
   end;
@@ -2541,8 +2532,7 @@ begin
     begin
       FResumeToInitialized := ALInitialized;
       ALContextClose;
-    end
-    else
+    end else
     begin
       if FResumeToInitialized then
         ALContextOpen;

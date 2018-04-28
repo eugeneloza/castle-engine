@@ -750,8 +750,7 @@ begin
     begin
       EndingChar := -1;
       Break;
-    end
-    else
+    end else
     if Ch in EndingChars then
     begin
       EndingChar := Ord(Ch);
@@ -928,8 +927,7 @@ begin
     if C = #10 then
       Inc(FLine);
     FColumn  := 1;
-  end
-  else
+  end else
     Inc(FColumn);
 end;
 
@@ -986,8 +984,7 @@ begin
     { Note that if SourceStream.Read will raise an exception,
       we will still have IsPeekedChar = true. }
     IsPeekedChar := false;
-  end
-  else
+  end else
     Result := SourceStream.Read(Buffer, Count);
   FPosition := FPosition + Result;
 
@@ -1020,8 +1017,7 @@ begin
     Result := PeekedChar;
     IsPeekedChar := false;
     Inc(FPosition);
-  end
-  else
+  end else
   begin
     if SourceStream.Read(C, 1) = 0 then
       Result := -1
@@ -1079,8 +1075,7 @@ begin
     Move(Buffer^[BufferPos], LocalBuffer, Count);
     BufferPos := BufferPos + LongWord(Count);
     Result := Count;
-  end
-  else
+  end else
   begin
     Move(Buffer^[BufferPos], LocalBuffer, BufferEnd - BufferPos);
     Result := BufferEnd - BufferPos;
@@ -1099,8 +1094,7 @@ begin
       Move(Buffer^[0], PChar(@LocalBuffer)[Result], CopyCount);
       BufferPos := BufferPos + CopyCount;
       Result := Result + LongInt(CopyCount);
-    end
-    else
+    end else
     begin
       Result := Result + SourceStream.Read(PChar(@LocalBuffer)[Result], Count);
     end;
@@ -1131,8 +1125,7 @@ begin
     Result := Buffer^[BufferPos];
     Inc(BufferPos);
     Inc(FPosition);
-  end
-  else
+  end else
   begin
     FillBuffer;
     if BufferPos < BufferEnd then
@@ -1140,8 +1133,7 @@ begin
       Result := Buffer^[BufferPos];
       Inc(BufferPos);
       Inc(FPosition);
-    end
-    else
+    end else
       Result := -1;
   end;
 
@@ -1419,8 +1411,7 @@ begin
     begin
       Delete(I);
       Inc(Result);
-    end
-    else
+    end else
       Inc(I);
   end;
 end;

@@ -567,8 +567,7 @@ begin
     Check(AsLeaf, 'TOctreeNode.Create error: attempt to create non-leaf'
       +' node with empty bounding box');
     AMiddlePoint := Vector3(0, 0, 0);
-  end
-  else
+  end else
     AMiddlePoint := ABox.Center;
 
   CreateBase(ABox, AParentTree, AParentNode, ADepth, AsLeaf, AMiddlePoint);

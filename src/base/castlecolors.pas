@@ -300,8 +300,7 @@ begin
   begin
     Result.Data[0] := 0;
     Result.Data[1] := 0;
-  end
-  else
+  end else
   begin
     { calculate hue }
     if V = Value.Data[0] then
@@ -309,8 +308,7 @@ begin
       Result.Data[0] := (Value.Data[1] - Value.Data[2]) / Chroma;
       if Result.Data[0] < 0 then
         Result.Data[0] := Result.Data[0] + 6.0;
-    end
-    else
+    end else
     if V = Value.Data[1] then
       Result.Data[0] := (Value.Data[2] - Value.Data[0]) / Chroma + 2.0
     else
@@ -391,19 +389,17 @@ begin
       HOut.Data[0] := H1.Data[0] + A * (H2.Data[0] - H1.Data[0]);
       if HOut.Data[0] < 0 then
         HOut.Data[0] := HOut.Data[0] + 6;
-    end
-    else
-    if HueDiff < -3 then
-    begin
-      { from hue 1 to hue 2 go up through 6.0 }
-      H2.Data[0] := H2.Data[0] + 6;
-      HOut.Data[0] := H1.Data[0] + A * (H2.Data[0] - H1.Data[0]);
-      if HOut.Data[0] > 6 then
-        HOut.Data[0] := HOut.Data[0] - 6;
-    end
-    else
-      { normal lerp when HueDiff inside [-3, 3] }
-      HOut.Data[0] := H1.Data[0] + A * (H2.Data[0] - H1.Data[0]);
+    end else
+      if HueDiff < -3 then
+      begin
+        { from hue 1 to hue 2 go up through 6.0 }
+        H2.Data[0] := H2.Data[0] + 6;
+        HOut.Data[0] := H1.Data[0] + A * (H2.Data[0] - H1.Data[0]);
+        if HOut.Data[0] > 6 then
+          HOut.Data[0] := HOut.Data[0] - 6;
+      end else
+        { normal lerp when HueDiff inside [-3, 3] }
+        HOut.Data[0] := H1.Data[0] + A * (H2.Data[0] - H1.Data[0]);
   end;
 
   { lerp on saturation and value is normal }
@@ -500,8 +496,7 @@ begin
       Result := White * MapRange(FadeIntensity, FullBlack, 0, MinScale, 1);
 
     Result.Data[3] := 1.0; { alpha always 1.0 in this case }
-  end
-  else
+  end else
     Result := TVector4.Zero;
 end;
 
@@ -520,8 +515,7 @@ begin
       Intensity := MapRange(FadeIntensity, FullTime, 1, 1, 0);
     Result := Color;
     Result.Data[3] := Intensity;
-  end
-  else
+  end else
     Result := TVector4.Zero;
 end;
 

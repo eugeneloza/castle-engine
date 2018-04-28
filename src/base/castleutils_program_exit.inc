@@ -67,8 +67,7 @@ begin
         Message := Message +' (' + NiceMessage + ')';
     end;
 
-  end
-  else
+  end else
     Message := '';
 
   if (E is EWithHiddenClassName) and (Message <> '') then

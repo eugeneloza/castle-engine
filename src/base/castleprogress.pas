@@ -383,8 +383,7 @@ begin
     begin
       UserInterface.Init(Self);
       UserInterfaceDelayed := false;
-    end
-    else
+    end else
       Exit;
   end;
 

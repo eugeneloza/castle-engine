@@ -442,8 +442,7 @@ begin
   begin
     ParamLong := CopyPos(S, PrefixLength + 1, P - 1);
     Argument := SEnding(S, P + 1);
-  end
-  else
+  end else
   begin
     ParamLong := SEnding(S, PrefixLength + 1);
     Argument := '';
@@ -581,13 +580,12 @@ begin
         OptionNum := ParseLongParameter(Strings[I], HasArgument, Argument);
         if OptionNum <> -1 then
           OptionName := '--' + Options^[OptionNum].Long;
-      end
-      else
-      if not ParseOnlyKnownLongOptions then
-      begin
-        OptionNum := ParseShortParameter(Strings[I], HasArgument, Argument, SimpleShortOptions);
-        OptionName := '-' + Options^[OptionNum].Short;
-      end;
+      end else
+        if not ParseOnlyKnownLongOptions then
+        begin
+          OptionNum := ParseShortParameter(Strings[I], HasArgument, Argument, SimpleShortOptions);
+          OptionName := '-' + Options^[OptionNum].Short;
+        end;
     end;
 
    { OptionNum = -1 oznacza ze z jakiegos powodu Strings[i] jednak NIE przedstawia
@@ -624,8 +622,7 @@ begin
      HasArgument := true;
      Argument := Strings[I];
      Delete(I);
-    end
-    else
+    end else
     if (Options^[OptionNum].Argument = oaNone) and HasArgument then
       raise EExcessiveOptionArgument.Create('Excessive argument for option ' + OptionName)
     else
@@ -649,8 +646,7 @@ begin
     end;
 
     OptionProc(OptionNum, HasArgument, Argument, SeparateArgs, OptionProcData);
-   end
-   else
+   end else
      Inc(I);
   end;
 

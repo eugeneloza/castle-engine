@@ -101,19 +101,18 @@ begin
   else
     Result:=GetWindowsSpecialDir(CSIDL_LOCAL_APPDATA);
   If (Result<>'') then
-    begin
-      if VendorName<>'' then
-        Result:=IncludeTrailingPathDelimiter(Result+VendorName);
-      Result:=IncludeTrailingPathDelimiter(Result+ApplicationName);
-    end
-  else
+  begin
+    if VendorName<>'' then
+      Result:=IncludeTrailingPathDelimiter(Result+VendorName);
+    Result:=IncludeTrailingPathDelimiter(Result+ApplicationName);
+  end else
     Result:=IncludeTrailingPathDelimiter(DGetAppConfigDir(Global));
 end;
 
 function StringsReplace(const S: string; OldPattern, NewPattern: array of string;  Flags: TReplaceFlags): string;
 
 var pc,pcc,lastpc : pchar;
-    strcount      : integer;
+    StrCount      : integer;
     ResStr,
     CompStr       : string;
     Found         : Boolean;
@@ -124,50 +123,49 @@ begin
   if sc <> length(NewPattern) then
     raise exception.Create('Amount of search and replace strings don''t match');
 
-  dec(sc);
+  Dec(sc);
 
   if rfIgnoreCase in Flags then
-    begin
+  begin
     CompStr:=AnsiUpperCase(S);
-    for strcount := 0 to sc do
-      OldPattern[strcount] := AnsiUpperCase(OldPattern[strcount]);
-    end
-  else
+    for StrCount := 0 to sc do
+      OldPattern[StrCount] := AnsiUpperCase(OldPattern[StrCount]);
+  end else
     CompStr := s;
 
   ResStr := '';
   pc := @CompStr[1];
   pcc := @s[1];
-  lastpc := pc+Length(S);
+  lastpc := pc + Length(S);
 
   while pc < lastpc do
-    begin
+  begin
     Found := False;
-    for strcount := 0 to sc do
+    for StrCount := 0 to sc do
+    begin
+      if (length(OldPattern[StrCount]) > 0) and
+         (OldPattern[StrCount][1] = pc^) and
+         (Length(OldPattern[StrCount]) <= (lastpc-pc)) and
+         CompareMem(Pointer(OldPattern[StrCount]), pc, Length(OldPattern[StrCount])) then
       begin
-      if (length(OldPattern[strcount])>0) and
-         (OldPattern[strcount][1]=pc^) and
-         (Length(OldPattern[strcount]) <= (lastpc-pc)) and
-         CompareMem(Pointer(OldPattern[strcount]), pc, Length(OldPattern[strcount])) then
-        begin
-        ResStr := ResStr + NewPattern[strcount];
-        pc := pc+Length(OldPattern[strcount]);
-        pcc := pcc+Length(OldPattern[strcount]);
+        ResStr := ResStr + NewPattern[StrCount];
+        pc := pc + Length(OldPattern[StrCount]);
+        pcc := pcc + Length(OldPattern[StrCount]);
         Found := true;
-        end
-      end;
-    if not found then
-      begin
-      ResStr := ResStr + pcc^;
-      inc(pc);
-      inc(pcc);
       end
-    else if not (rfReplaceAll in Flags) then
-      begin
-      ResStr := ResStr + StrPas(pcc);
-      break;
-      end;
     end;
+    if not found then
+    begin
+      ResStr := ResStr + pcc^;
+      Inc(pc);
+      Inc(pcc);
+    end else
+      if not (rfReplaceAll in Flags) then
+      begin
+        ResStr := ResStr + StrPas(pcc);
+        Break;
+      end;
+  end;
   Result := ResStr;
 end;
 

@@ -87,16 +87,14 @@ begin
     PlaneMultiply := - Plane1.Data[Index1] / Plane0.Data[Index1];
     Sum_Index2 := Plane0.Data[Index2] * PlaneMultiply + Plane1.Data[Index2];
     Sum_3      := Plane0.Data[3]      * PlaneMultiply + Plane1.Data[3];
-  end
-  else
+  end else
   if not IsZero(Plane1.Data[Index1]) then
   begin
     PlaneWithNonZeroIndex1 := @Plane1;
     PlaneMultiply := - Plane0.Data[Index1] / Plane1.Data[Index1];
     Sum_Index2 := Plane0.Data[Index2] + Plane1.Data[Index2] * PlaneMultiply;
     Sum_3      := Plane0.Data[3]      + Plane1.Data[3]      * PlaneMultiply;
-  end
-  else
+  end else
   begin
     { If Plane0.Data[Index1] = Plane1.Data[Index1] = 0, this is simple.
         Sum_Index2 := Plane0.Data[Index2] + Plane1.Data[Index2];
@@ -138,8 +136,7 @@ begin
   begin
     Result := true;
     T := -(Plane.Data[0] * Line0.Data[0] + Plane.Data[1] * Line0.Data[1] + Plane.Data[2] * Line0.Data[2] + Plane.Data[3]) / Dot;
-  end
-  else
+  end else
     Result := false;
 end;
 

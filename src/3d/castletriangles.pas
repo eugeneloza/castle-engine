@@ -864,8 +864,7 @@ begin
       Intersection         := MailboxIntersection;
       IntersectionDistance := MailboxIntersectionDistance;
     end;
-  end
-  else
+  end else
   begin
   {$endif}
 
@@ -907,8 +906,7 @@ begin
       Intersection         := MailboxIntersection;
       IntersectionDistance := MailboxIntersectionDistance;
     end;
-  end
-  else
+  end else
   begin
   {$endif}
 
