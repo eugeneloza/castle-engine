@@ -173,17 +173,17 @@ const
      (tokNotEqual, tokLesserEqual, tokGreaterEqual, tokLesser, tokGreater,
       tokEqual, tokPlus, tokMinus, tokMultiply, tokDivide, tokComma, tokLParen, tokRParen,
       tokPower, tokLQaren, tokRQaren, tokModulo, tokSemicolon, tokAssignment);
-  var i: integer;
+  var I: integer;
   begin
-   for i := 0 to High(toks_strs) do
-    if Copy(text, TextPos, Length(toks_strs[i])) = toks_strs[i] then
-    begin
-     ftoken := toks_tokens[i];
-     Inc(fTextPos, Length(toks_strs[i]));
-     result := true;
-     exit;
-    end;
-   result := false;
+    for I := 0 to High(toks_strs) do
+      if Copy(text, TextPos, Length(toks_strs[I])) = toks_strs[I] then
+      begin
+        ftoken := toks_tokens[I];
+        Inc(fTextPos, Length(toks_strs[I]));
+        Result := true;
+        Exit;
+      end;
+    Result := false;
   end;
 
   { Read a string, to a tokString token.

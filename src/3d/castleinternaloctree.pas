@@ -686,7 +686,7 @@ procedure TOctreeNode.EnumerateCollidingOctreeItems(
   var i: Integer;
   begin
     for i := 0 to ItemsIndices.Count - 1 do
-     EnumerateOctreeItemsFunc(ItemsIndices[i], CollidesForSure);
+      EnumerateOctreeItemsFunc(ItemsIndices[i], CollidesForSure);
   end;
 
 begin

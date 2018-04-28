@@ -102,7 +102,7 @@ var
   col: PUCollator;
 begin
   if (hlibICU = 0) or ThreadDataInited then
-    exit;
+    Exit;
   ThreadDataInited:=True;
   DefConv:=OpenConverter('utf8');
   err:=0;
@@ -120,7 +120,7 @@ var
 begin
   if hlibICU = 0 then begin
     Result:=nil;
-    exit;
+    Exit;
   end;
   InitThreadData;
   if (cp = CP_UTF8) or (cp = CP_ACP) then
@@ -136,21 +136,21 @@ begin
   end;
 end;
 
-procedure Unicode2AnsiMove(source: PUnicodeChar; var dest: RawByteString; cp: TSystemCodePage; len: SizeInt);
+procedure Unicode2AnsiMove(source: PUnicodeChar; var Dest: RawByteString; cp: TSystemCodePage; Len: SizeInt);
 var
   len2: SizeInt;
   conv: PUConverter;
   err: UErrorCode;
 begin
   if len = 0 then begin
-    dest:='';
-    exit;
+    Dest := '';
+    Exit;
   end;
   conv:=GetConverter(cp);
   if (conv = nil) and not ( (cp = CP_UTF8) or (cp = CP_ACP) ) then begin
     // fallback implementation
     DefaultUnicode2AnsiMove(source,dest,DefaultSystemCodePage,len);
-    exit;
+    Exit;
   end;
 
   len2:=len*3;
@@ -178,21 +178,21 @@ begin
   SetCodePage(dest, cp, False);
 end;
 
-procedure Ansi2UnicodeMove(source:pchar;cp : TSystemCodePage;var dest:unicodestring;len:SizeInt);
+procedure Ansi2UnicodeMove(source:pchar;cp : TSystemCodePage; var Dest:unicodestring; Len:SizeInt);
 var
   len2: SizeInt;
   conv: PUConverter;
   err: UErrorCode;
 begin
-  if len = 0 then begin
-    dest:='';
-    exit;
+  if Len = 0 then begin
+    Dest := '';
+    Exit;
   end;
   conv:=GetConverter(cp);
   if (conv = nil) and not ( (cp = CP_UTF8) or (cp = CP_ACP) ) then begin
     // fallback implementation
     DefaultAnsi2UnicodeMove(source,DefaultSystemCodePage,dest,len);
-    exit;
+    Exit;
   end;
 
   len2:=len;
@@ -216,20 +216,20 @@ begin
   SetLength(dest, len2);
 end;
 
-function UpperUnicodeString(const s : UnicodeString) : UnicodeString;
+function UpperUnicodeString(const S: UnicodeString): UnicodeString;
 var
   len, len2: SizeInt;
   err: UErrorCode;
 begin
   if hlibICU = 0 then begin
     // fallback implementation
-    Result:=UnicodeString(UpCase(AnsiString(s)));
-    exit;
+    Result := UnicodeString(UpCase(AnsiString(S)));
+    Exit;
   end;
   len:=Length(s);
   SetLength(Result, len);
   if len = 0 then
-    exit;
+    Exit;
   err:=0;
   len2:=u_strToUpper(PUnicodeChar(Result), len, PUnicodeChar(s), len, nil, err);
   if len2 > len then begin
@@ -247,19 +247,19 @@ var
 begin
   if hlibICU = 0 then begin
     // fallback implementation
-    Result:=UnicodeString(LowerCase(AnsiString(s)));
-    exit;
+    Result := UnicodeString(LowerCase(AnsiString(s)));
+    Exit;
   end;
-  len:=Length(s);
+  len := Length(S);
   SetLength(Result, len);
   if len = 0 then
-    exit;
-  err:=0;
+    Exit;
+  err := 0;
   len2:=u_strToLower(PUnicodeChar(Result), len, PUnicodeChar(s), len, nil, err);
   if len2 > len then begin
     SetLength(Result, len2);
-    err:=0;
-    len2:=u_strToLower(PUnicodeChar(Result), len2, PUnicodeChar(s), len, nil, err);
+    err := 0;
+    len2 := u_strToLower(PUnicodeChar(Result), len2, PUnicodeChar(s), len, nil, err);
   end;
   SetLength(Result, len2);
 end;
@@ -289,7 +289,7 @@ begin
   if hlibICU = 0 then begin
     // fallback implementation
     Result:=_CompareStr(s1, s2);
-    exit;
+    Exit;
   end;
   if (coIgnoreCase in Options) then begin
     err:=0;
@@ -382,23 +382,23 @@ var
   c: byte;
 begin
   // Only UTF-8 encoding is supported
-  c:=byte(Str^);
+  c := byte(Str^);
   if c =  0 then
     Result:=0
   else
   begin
     Result:=1;
     if c < $80 then
-      exit; // 1-byte ASCII char
+      Exit; // 1-byte ASCII char
     while c and $C0 = $C0 do begin
       Inc(Result);
-      c:=c shl 1;
+      c := c shl 1;
     end;
     if Result > 6 then
-      Result:=1 // Invalid code point
+      Result := 1 // Invalid code point
     else
       if Result > MaxLookAead then
-        Result:=-1; // Incomplete code point
+        Result := -1; // Incomplete code point
   end;
 end;
 
@@ -491,7 +491,7 @@ var
 begin
   if hlibICU = 0 then begin
     Result:=nil;
-    exit;
+    Exit;
   end;
   InitThreadData;
   if (cp = DefaultSystemCodePage) or (cp = CP_ACP) then
@@ -507,49 +507,52 @@ begin
   end;
 end;
 
-procedure Unicode2AnsiMove(source: PUnicodeChar; var dest: RawByteString; cp: TSystemCodePage; len: SizeInt);
+procedure Unicode2AnsiMove(source: PUnicodeChar; var Dest: RawByteString; cp: TSystemCodePage; len: SizeInt);
 var
   len2: SizeInt;
   conv: PUConverter;
   err: UErrorCode;
 begin
   if len = 0 then begin
-    dest:='';
-    exit;
+    Dest:='';
+    Exit;
   end;
   conv:=GetConverter(cp);
   if conv = nil then begin
     DefaultUnicode2AnsiMove(source,dest,DefaultSystemCodePage,len);
-    exit;
+    Exit;
   end;
 
   len2:=len*3;
   SetLength(dest, len2);
   err:=0;
   len2:=ucnv_fromUChars(conv, PAnsiChar(dest), len2, source, len, err);
-  if len2 > Length(dest) then begin
-    SetLength(dest, len2);
-    err:=0;
-    len2:=ucnv_fromUChars(conv, PAnsiChar(dest), len2, source, len, err);
+  if len2 > Length(dest) then
+  begin
+    SetLength(Dest, len2);
+    Err := 0;
+    len2 := ucnv_fromUChars(conv, PAnsiChar(dest), len2, source, len, err);
   end;
   SetLength(dest, len2);
   SetCodePage(dest, cp, False);
 end;
 
-procedure Ansi2UnicodeMove(source:pchar;cp : TSystemCodePage;var dest:unicodestring;len:SizeInt);
+procedure Ansi2UnicodeMove(source: PChar; cp: TSystemCodePage; var Dest: unicodestring; Len: SizeInt);
 var
   len2: SizeInt;
   conv: PUConverter;
   err: UErrorCode;
 begin
-  if len = 0 then begin
-    dest:='';
-    exit;
+  if len = 0 then
+  begin
+    Dest := '';
+    Exit;
   end;
   conv:=GetConverter(cp);
-  if conv = nil then begin
+  if conv = nil then
+  begin
     DefaultAnsi2UnicodeMove(source,DefaultSystemCodePage,dest,len);
-    exit;
+    Exit;
   end;
 
   len2:=len;
@@ -572,12 +575,12 @@ begin
   if hlibICU = 0 then begin
     // fallback implementation
     Result:=UnicodeString(UpCase(AnsiString(s)));
-    exit;
+    Exit;
   end;
   len:=Length(s);
   SetLength(Result, len);
   if len = 0 then
-    exit;
+    Exit;
   err:=0;
   len2:=u_strToUpper(PUnicodeChar(Result), len, PUnicodeChar(s), len, nil, err);
   if len2 > len then begin
@@ -596,12 +599,12 @@ begin
   if hlibICU = 0 then begin
     // fallback implementation
     Result:=UnicodeString(LowerCase(AnsiString(s)));
-    exit;
+    Exit;
   end;
   len:=Length(s);
   SetLength(Result, len);
   if len = 0 then
-    exit;
+    Exit;
   err:=0;
   len2:=u_strToLower(PUnicodeChar(Result), len, PUnicodeChar(s), len, nil, err);
   if len2 > len then begin
@@ -633,7 +636,7 @@ begin
   if hlibICU = 0 then begin
     // fallback implementation
     Result:=_CompareStr(s1, s2);
-    exit;
+    Exit;
   end;
   InitThreadData;
   if DefColl <> nil then
@@ -651,7 +654,7 @@ begin
   if hlibICU = 0 then begin
     // fallback implementation
     Result:=_CompareStr(UpperUnicodeString(s1), UpperUnicodeString(s2));
-    exit;
+    Exit;
   end;
   err:=0;
   Result:=u_strCaseCompare(PUnicodeChar(s1), Length(s1), PUnicodeChar(s2), Length(s2), U_COMPARE_CODE_POINT_ORDER, err);
@@ -741,7 +744,7 @@ begin
   begin
     Result:=1;
     if c < $80 then
-      exit; // 1-byte ASCII char
+      Exit; // 1-byte ASCII char
     while c and $C0 = $C0 do begin
       Inc(Result);
       c:=c shl 1;
@@ -897,7 +900,7 @@ begin
   if (hlibICU = 0) or (hlibICUi18n = 0) then begin
     UnloadICU;
     AndroidLog(alWarn, 'Cannot load libicuuc.so or libicui18n.so. WideString conversion will fail for special UTF-8 characters');
-    exit;
+    Exit;
   end;
   // Finding ICU version using known versions table
   for i:=High(ICUver) downto Low(ICUver) do begin
@@ -930,33 +933,48 @@ begin
       // Unable to get ICU version
       UnloadICU;
       AndroidLog(alWarn, 'Cannot use libicuuc.so --- no versioned ucnv_open found, and unversioned ucnv_open not available. . WideString conversion will fail for special UTF-8 characters');
-      exit;
+      Exit;
     end;
   end;
 
-  if not _GetProc('ucnv_open', ucnv_open) then exit;
-  if not _GetProc('ucnv_close', ucnv_close) then exit;
-  if not _GetProc('ucnv_setSubstChars', ucnv_setSubstChars) then exit;
-  if not _GetProc('ucnv_setFallback', ucnv_setFallback) then exit;
-  if not _GetProc('ucnv_fromUChars', ucnv_fromUChars) then exit;
-  if not _GetProc('ucnv_toUChars', ucnv_toUChars) then exit;
-  if not _GetProc('u_strToUpper', u_strToUpper) then exit;
-  if not _GetProc('u_strToLower', u_strToLower) then exit;
-  if not _GetProc('u_strCompare', u_strCompare) then exit;
-  if not _GetProc('u_strCaseCompare', u_strCaseCompare) then exit;
+  if not _GetProc('ucnv_open', ucnv_open) then
+    Exit;
+  if not _GetProc('ucnv_close', ucnv_close) then
+    Exit;
+  if not _GetProc('ucnv_setSubstChars', ucnv_setSubstChars) then
+    Exit;
+  if not _GetProc('ucnv_setFallback', ucnv_setFallback) then
+    Exit;
+  if not _GetProc('ucnv_fromUChars', ucnv_fromUChars) then
+    Exit;
+  if not _GetProc('ucnv_toUChars', ucnv_toUChars) then
+    Exit;
+  if not _GetProc('u_strToUpper', u_strToUpper) then
+    Exit;
+  if not _GetProc('u_strToLower', u_strToLower) then
+    Exit;
+  if not _GetProc('u_strCompare', u_strCompare) then
+    Exit;
+  if not _GetProc('u_strCaseCompare', u_strCaseCompare) then
+    Exit;
 
-  if not _GetProc('u_errorName', u_errorName) then exit;
+  if not _GetProc('u_errorName', u_errorName) then
+    Exit;
 
-  if not _GetProc('ucol_open', ucol_open, hlibICUi18n) then exit;
-  if not _GetProc('ucol_close', ucol_close, hlibICUi18n) then exit;
-  if not _GetProc('ucol_strcoll', ucol_strcoll, hlibICUi18n) then exit;
-  if not _GetProc('ucol_setStrength', ucol_setStrength, hlibICUi18n) then exit;
+  if not _GetProc('ucol_open', ucol_open, hlibICUi18n) then
+    Exit;
+  if not _GetProc('ucol_close', ucol_close, hlibICUi18n) then
+    Exit;
+  if not _GetProc('ucol_strcoll', ucol_strcoll, hlibICUi18n) then
+    Exit;
+  if not _GetProc('ucol_setStrength', ucol_setStrength, hlibICUi18n) then
+    Exit;
 end;
 
 procedure InitializeAndroidCWString;
 begin
-  DefaultSystemCodePage:=GetStandardCodePage(scpAnsi);
-  DefaultUnicodeCodePage:=CP_UTF16;
+  DefaultSystemCodePage := GetStandardCodePage(scpAnsi);
+  DefaultUnicodeCodePage := CP_UTF16;
   LoadICU;
   SetCWideStringManager;
   SetStdIOCodePages;
