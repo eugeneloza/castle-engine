@@ -77,105 +77,124 @@ begin
 end;
 {$include norqcheckend.inc}
 
-function GetClearMem(Size: integer; clearValue: byte{=0}): pointer;
-begin result := GetMem(Size); FillChar(result^,Size, clearvalue) end;
-
-procedure FreeMemNiling(var p: pointer);
+function GetClearMem(Size: integer; ClearValue: byte{=0}): pointer;
 begin
- if p <> nil then begin FreeMem(p); p := nil end;
+  Result := GetMem(Size);
+  FillChar(Result^, Size, ClearValue);
+end;
+
+procedure FreeMemNiling(var P: pointer);
+begin
+  if P <> nil then
+  begin
+    FreeMem(P);
+    P := nil;
+  end;
 end;
 
 function CheckIsMemCharFilled(const Data; Size: Integer; AChar: Char): Integer;
-var i: Integer;
-    p: PChar;
+var I: Integer;
+    P: PChar;
 begin
- { TODO: hmm, taka optymalizacje jak w IsMemCharFilled moznaby tu zrobic,
-   idac po 32 lub 16.}
- p := @Data;
- for i := 0 to Size-1 do
- begin
-  if p^<>AChar then begin result := i; Exit end;
-  Inc(p);
- end;
- result := -1;
+  { TODO: hmm, taka optymalizacje jak w IsMemCharFilled moznaby tu zrobic,
+    idac po 32 lub 16.}
+  P := @Data;
+  for I := 0 to Size - 1 do
+  begin
+    if p^ <> AChar then
+    begin
+      Result := I;
+      Exit;
+    end;
+    Inc(P);
+  end;
+  Result := -1;
 end;
 
 function IsMemCharFilled(const Data; Size: Integer; AChar: Char): boolean;
-var p: Pointer;
-    p32: PLongWord absolute p;
-    p16: PWord absolute p;
-    p8: PChar absolute p;
+var P: Pointer;
+    P32: PLongWord absolute P;
+    P16: PWord absolute P;
+    P8: PChar absolute P;
     Good32: LongWord;
     Good16: Word;
 begin
- { prosto moznaby ta funkcje zrealizowac jako
-   result := CheckIsMemCharFilled(Data, Size, AChar) = -1;
-   Ale jest ona dosc niskopoziomowa i w zwiazku z tym chce zeby dzialala
-   blyskawicznie nawet dla naprawde duzych Size.
-   Patrz time testy w TestCastleUtils - zysk czasowy okolo 4x dla Size
-   rzedu 10^2, 3,4 (naturalnie w pesymistycznym przypadku, dla danych
-   np. losowych kazdy algorytm bardzo szybko znajduje niezgodnosc...) }
+  { prosto moznaby ta funkcje zrealizowac jako
+    Result := CheckIsMemCharFilled(Data, Size, AChar) = -1;
+    Ale jest ona dosc niskopoziomowa i w zwiazku z tym chce zeby dzialala
+    blyskawicznie nawet dla naprawde duzych Size.
+    Patrz time testy w TestCastleUtils - zysk czasowy okolo 4x dla Size
+    rzedu 10^2, 3,4 (naturalnie w pesymistycznym przypadku, dla danych
+    np. losowych kazdy algorytm bardzo szybko znajduje niezgodnosc...) }
 
- p := @Data;
+  P := @Data;
 
- if Size >= 4 then
- begin
-  FillChar(Good32, SizeOf(Good32), AChar);
-  repeat
-   if p32^<>Good32 then begin result := false; Exit end;
-   Dec(Size, 4);
-   Inc(p32);
-  until Size < 4;
- end;
+  if Size >= 4 then
+  begin
+    FillChar(Good32, SizeOf(Good32), AChar);
+    repeat
+      if P32^ <> Good32 then
+      begin
+        Result := false;
+        Exit;
+      end;
+      Dec(Size, 4);
+      Inc(P32);
+    until Size < 4;
+  end;
 
- { teraz Size moze byc tylko 0, 1,2 lub 3. Czyli moze sie tam zmiescic tylko
-   raz liczba 2 bajtowa, Word. }
- if Size >= 2 then
- begin
-  FillChar(Good16, SizeOf(Good16), AChar);
-  if p16^<>Good16 then begin result := false; Exit end;
-  Dec(Size, 2);
-  Inc(p16);
- end;
+  { teraz Size moze byc tylko 0, 1,2 lub 3. Czyli moze sie tam zmiescic tylko
+    raz liczba 2 bajtowa, Word. }
+  if Size >= 2 then
+  begin
+    FillChar(Good16, SizeOf(Good16), AChar);
+    if P16^ <> Good16 then
+    begin
+      Result := false;
+      Exit;
+    end;
+    Dec(Size, 2);
+    Inc(P16);
+  end;
 
- { teraz Size moze byc tylko 0 lub 1 }
- result:=(Size = 0) or (p8^=AChar);
+  { teraz Size moze byc tylko 0 lub 1 }
+  Result := (Size = 0) or (P8^ = AChar);
 end;
 
 function IsMemWordFilled(const Data; Size: Integer; Value: Word): boolean;
-var i: Integer;
+var I: Integer;
     P: PWord;
 begin
- { TODO -- optimize this by using IsMemDWordFilled with
-   Value = Value or (Value shl 16). }
- P := @Data;
- for i := 1 to Size do
- begin
-  if P^ <> Value then
+  { TODO -- optimize this by using IsMemDWordFilled with
+    Value = Value or (Value shl 16). }
+  P := @Data;
+  for I := 1 to Size do
   begin
-   Result := false;
-   Exit;
+    if P^ <> Value then
+    begin
+      Result := false;
+      Exit;
+    end;
+    Inc(P);
   end;
-  Inc(P);
- end;
- Result := true;
+  Result := true;
 end;
 
 function IsMemDWordFilled(const Data; Size: Integer; Value: DWord): boolean;
-var i: Integer;
+var I: Integer;
     P: PDWord;
 begin
- P := @Data;
- for i := 1 to Size do
- begin
-  if P^ <> Value then
+  P := @Data;
+  for I := 1 to Size do
   begin
-   Result := false;
-   Exit;
+    if P^ <> Value then
+    begin
+      Result := false;
+      Exit;
+    end;
+    Inc(P);
   end;
-  Inc(P);
- end;
- Result := true;
+  Result := true;
 end;
 
 function OffsetUInt(var A, B): PtrUInt;

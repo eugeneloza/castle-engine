@@ -67,8 +67,8 @@ function ChangeFilePath(const FileName, NewPath: string): string; deprecated;
   They are just comfortable shorter names for
   IncludeTrailingPathDelimiter and ExcludeTrailingPathDelimiter.
   @groupBegin }
-function InclPathDelim(const s: string): string;
-function ExclPathDelim(const s: string): string;
+function InclPathDelim(const S: string): string;
+function ExclPathDelim(const S: string): string;
 { @groupEnd }
 
 { Check is the given Path absolute.
@@ -120,29 +120,29 @@ end;
 
 function ExtractOnlyFileName(const FileName: string): string;
 begin
- result := DeleteFileExt(ExtractFileName(FileName));
+  Result := DeleteFileExt(ExtractFileName(FileName));
 end;
 
 function ChangeFilePath(const FileName, NewPath: string): string;
 begin
- result := NewPath + ExtractFileName(FileName);
+  Result := NewPath + ExtractFileName(FileName);
 end;
 
-function InclPathDelim(const s: string): string;
+function InclPathDelim(const S: string): string;
 begin
   Result := IncludeTrailingPathDelimiter(S);
 end;
 
-function ExclPathDelim(const s: string): string;
+function ExclPathDelim(const S: string): string;
 begin
   Result := ExcludeTrailingPathDelimiter(S);
 end;
 
 { This is also defined in CastleStringUtils publicly,
   but we don't want to use CastleStringUtils here, to keep our dependencies simple. }
-function SCharIs(const s: string; index: integer; c: char): boolean;
+function SCharIs(const S: string; Index: integer; C: char): boolean;
 begin
-  Result := (index <= Length(s)) and (s[index] = c);
+  Result := (Index <= Length(S)) and (S[Index] = C);
 end;
 
 function IsPathAbsolute(const Path: string): boolean;

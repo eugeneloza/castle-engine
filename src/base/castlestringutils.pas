@@ -2503,7 +2503,7 @@ function Str2ToInt(const S: string): integer;
    case C of
     '0': Result := 0;
     '1': Result := 1;
-    else 
+    else
       raise EConvertError.Create('Invalid Str2ToInt argument, contains invalid chars: ' + S);
    end;
   end;

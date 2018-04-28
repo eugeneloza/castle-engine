@@ -439,30 +439,36 @@ begin
   begin
     // detected Windows with 32-bit GetTickCount, it just wrapped, fix
     SecondTimeMinusDelay := SecondTimeMinusDelay + High(LongWord);
-    result := (FirstTime > SecondTime) and (FirstTime <= SecondTimeMinusDelay);
-  end else
-    result := FirstTime <= SecondTimeMinusDelay;
+    Result := (FirstTime > SecondTime) and (FirstTime <= SecondTimeMinusDelay);
+  end
+  else
+    Result := FirstTime <= SecondTimeMinusDelay;
 end;
 
 function TimeTickDiff(const FirstTime, SecondTime: TMilisecTime): TMilisecTime;
 begin
   {$warnings off} // knowingly using deprecated stuff in another deprecated
-  result := MilisecTimesSubtract(SecondTime, FirstTime);
+  Result := MilisecTimesSubtract(SecondTime, FirstTime);
   {$warnings on}
 {old implementation :
 
  if FirstTime <= SecondTime then
-  result := SecondTime-FirstTime else
-  result := High(LongWord) -FirstTime +SecondTime;
+  Result := SecondTime - FirstTime
+ else
+  Result := High(LongWord) - FirstTime + SecondTime;
 }
 end;
 
 {$I norqcheckbegin.inc}
 function MilisecTimesAdd(const t1, t2: TMilisecTime): TMilisecTime;
-begin result := t1+t2 end;
+begin
+  Result := t1 + t2;
+end;
 
 function MilisecTimesSubtract(const t1, t2: TMilisecTime): TMilisecTime;
-begin result := t1-t2 end;
+begin
+  Result := t1 - t2
+end;
 {$I norqcheckend.inc}
 
 {$ifdef MSWINDOWS}
@@ -484,14 +490,17 @@ var
 begin
 {$IFNDEF WINCE}
   { on Vista and newer there is a GetTickCount64 implementation }
-  if Win32MajorVersion >= 6 then begin
-    if not Assigned(WinGetTickCount64) then begin
+  if Win32MajorVersion >= 6 then
+  begin
+    if not Assigned(WinGetTickCount64) then
+    begin
       lib := LoadLibrary('kernel32.dll');
       WinGetTickCount64 := TGetTickCount64(
                              GetProcAddress(lib, 'GetTickCount64'));
     end;
     Result := WinGetTickCount64();
-  end else
+  end
+  else
 {$ENDIF}
     Result := Windows.GetTickCount;
 end;
@@ -510,16 +519,16 @@ var
 {$I norqcheckbegin.inc}
 function GetTickCount64: TMilisecTime;
 var
-  timeval: TTimeVal;
+  TimeVal: TTimeVal;
 begin
-  FpGettimeofday(@timeval, nil);
+  FpGettimeofday(@TimeVal, nil);
 
   { By doing tv_sec * 1000, we reject 3 most significant digits from tv_sec.
     That's Ok, since these digits change least often.
     And this way we get the 3 least significant digits to fill
     with tv_usec div 1000 (which must be < 1000, because tv_usec must be < 1 million). }
 
-  Result := Int64(timeval.tv_sec) * 1000 + (timeval.tv_usec div 1000);
+  Result := Int64(TimeVal.tv_sec) * 1000 + (TimeVal.tv_usec div 1000);
 
   { We cannot trust some Android systems to return increasing values here
     (Android device "Moto X Play", "XT1562", OS version 5.1.1).
@@ -530,7 +539,8 @@ begin
   begin
     WritelnLog('Time', 'Detected gettimeofday() going backwards on Unix, workarounding. This is known to happen on some Android devices');
     Result := LastGetTickCount64;
-  end else
+  end
+  else
     LastGetTickCount64 := Result;
 end;
 {$I norqcheckend.inc}
@@ -573,12 +583,12 @@ begin
   {$warnings on}
 end;
 
-function ProcessTimerDiff(a, b: TProcessTimerResult): TProcessTimerResult;
+function ProcessTimerDiff(A, B: TProcessTimerResult): TProcessTimerResult;
 begin
   { Deliberately using deprecated GetTickCount64 and friends.
     It should be internal in this unit. }
   {$warnings off}
-  Result.Value := TimeTickDiff(b.Value, a.Value);
+  Result.Value := TimeTickDiff(B.Value, A.Value);
   {$warnings on}
 end;
 {$endif MSWINDOWS}
@@ -588,7 +598,7 @@ begin
   Result := ProcessTimer;
 end;
 
-function ProcessTimerSeconds(const a, b: TProcessTimerResult): TFloatTime;
+function ProcessTimerSeconds(const A, B: TProcessTimerResult): TFloatTime;
 begin
   {$warnings off} // knowingly using deprecated stuff
   Result := ProcessTimerDiff(A, B).Value / ProcessTimersPerSec;
@@ -629,7 +639,8 @@ var
 procedure InitTimer;
 begin
   if QueryPerformanceFrequency(FTimerFrequency) then
-    FTimerState := tsQueryPerformance else
+    FTimerState := tsQueryPerformance
+  else
   begin
     FTimerState := tsGetTickCount64;
     FTimerFrequency := 1000;
@@ -638,14 +649,16 @@ end;
 
 function TimerFrequency: TTimerFrequency;
 begin
-  if FTimerState = tsNotInitialized then InitTimer;
+  if FTimerState = tsNotInitialized then
+    InitTimer;
 
   Result := FTimerFrequency;
 end;
 
 function Timer: TTimerResult;
 begin
-  if FTimerState = tsNotInitialized then InitTimer;
+  if FTimerState = tsNotInitialized then
+    InitTimer;
 
   if FTimerState = tsQueryPerformance then
     QueryPerformanceCounter(Result.Value)
@@ -693,7 +706,8 @@ begin
   begin
     WritelnLog('Time', 'Detected gettimeofday() going backwards on Unix, workarounding. This is known to happen on some Android devices');
     Result.Value := LastTimer.Value;
-  end else
+  end
+  else
     LastTimer.Value := Result.Value;
   {$endif ANDROID}
 
@@ -810,7 +824,8 @@ begin
   begin
     FSecondsPassed := 0.0;
     DoZeroNextSecondsPassed := false;
-  end else
+  end
+  else
   begin
     FSecondsPassed := TimerSeconds(NewUpdateStartTime, FUpdateStartTime);
     if MaxSensibleSecondsPassed > 0 then

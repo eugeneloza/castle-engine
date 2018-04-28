@@ -67,11 +67,11 @@ function ArrayPosText(const A: string; const Arr: array of string;
 { Iff functions ------------------------------------------------------------- }
 
 { }
-function Iff(boolval: boolean; trueval, falseval: string)  : string;   overload;
-function Iff(boolval: boolean; trueval, falseval: Integer) : Integer;  overload;
-function Iff(boolval: boolean; trueval, falseval: Float)   : Float;    overload;
-function Iff(boolval: boolean; trueval, falseval: Cardinal): Cardinal; overload;
-function Iff(boolval: boolean; trueval, falseval: char)    : char;     overload;
+function Iff(BoolVal: boolean; TrueVal, FalseVal: string)  : string;   overload;
+function Iff(BoolVal: boolean; TrueVal, FalseVal: Integer) : Integer;  overload;
+function Iff(BoolVal: boolean; TrueVal, FalseVal: Float)   : Float;    overload;
+function Iff(BoolVal: boolean; TrueVal, FalseVal: Cardinal): Cardinal; overload;
+function Iff(BoolVal: boolean; TrueVal, FalseVal: char)    : char;     overload;
 
 { Some helpful version stuff ------------------------------------------------ }
 
@@ -189,17 +189,52 @@ begin
       if AnsiUpperCase(Arr[Result]) = AA then
         Exit;
     Result := -1;
-  end else
+  end
+  else
     Result := ArrayPosStr(A, Arr);
 end;
 
 { Iff functions ------------------------------------------------------------- }
 
-function Iff(boolval: boolean; trueval, falseval: string)  : string;   begin if boolval then result := trueval else result := falseval end;
-function Iff(boolval: boolean; trueval, falseval: Integer) : Integer;  begin if boolval then result := trueval else result := falseval end;
-function Iff(boolval: boolean; trueval, falseval: Float)   : Float;    begin if boolval then result := trueval else result := falseval end;
-function Iff(boolval: boolean; trueval, falseval: Cardinal): Cardinal; begin if boolval then result := trueval else result := falseval end;
-function Iff(boolval: boolean; trueval, falseval: char)    : char;     begin if boolval then result := trueval else result := falseval end;
+function Iff(BoolVal: boolean; TrueVal, FalseVal: string)  : string;
+begin
+  if BoolVal then
+    Result := TrueVal
+  else
+    Result := FalseVal;
+end;
+
+function Iff(BoolVal: boolean; TrueVal, FalseVal: Integer) : Integer;
+begin
+  if BoolVal then
+    Result := TrueVal
+  else
+    Result := FalseVal;
+end;
+
+function Iff(BoolVal: boolean; TrueVal, FalseVal: Float)   : Float;
+begin
+  if BoolVal then
+    Result := TrueVal
+  else
+    Result := FalseVal;
+end;
+
+function Iff(BoolVal: boolean; TrueVal, FalseVal: Cardinal): Cardinal;
+begin
+  if BoolVal then
+    Result := TrueVal
+  else
+    Result := FalseVal;
+end;
+
+function Iff(BoolVal: boolean; TrueVal, FalseVal: char)    : char;
+begin
+  if BoolVal then
+    Result := TrueVal
+  else
+    Result := FalseVal;
+end;
 
 { Helpful consts ------------------------------------------------------------ }
 
