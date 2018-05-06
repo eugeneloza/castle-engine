@@ -916,7 +916,8 @@ procedure TCasScriptMatrix {$ifndef CASTLE_OBJFPC} <TCasScriptVecXxx,
   AssignValue(Source: TCasScriptValue);
 begin
   if Source is TSelfClass then
-    Value := TSelfClass(Source).Value else
+    Value := TSelfClass(Source).Value
+  else
     raise ECasScriptAssignError.CreateFmt('Assignment from %s to %s not possible', [Source.ClassName, ClassName]);
 end;
 

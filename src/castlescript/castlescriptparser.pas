@@ -198,7 +198,8 @@ const
   function ExpressionInsideFactor: TCasScriptExpression;
   begin
     if AllowFullExpressionInFactor then
-      Result := Expression(Lexer, Environment, Variables) else
+      Result := Expression(Lexer, Environment, Variables)
+    else
       Result := NonAssignmentExpression(Lexer, Environment,
         AllowFullExpressionInFactor, Variables);
   end;
@@ -265,15 +266,23 @@ const
 
                 Lexer.CheckTokenIs(tokRParen);
                 Lexer.NextToken;
-              except FParams.FreeContentsByParentExpression; raise; end;
+              except
+                FParams.FreeContentsByParentExpression;
+                raise;
+              end;
               Result := FC.Create(FParams);
               Result.Environment := Environment;
-            finally FParams.Free end;
+            finally
+              FParams.Free;
+            end;
           end;
         else raise ECasScriptParserError.Create(Lexer, SErrWrongFactor +
           ', but got "' + Lexer.TokenDescription + '"');
       end;
-    except Result.FreeByParentExpression; raise end;
+    except
+      Result.FreeByParentExpression;
+      raise;
+    end;
   end;
 
   function Term: TCasScriptExpression;
@@ -290,7 +299,10 @@ const
         Result := FC.Create([Result, Factor]);
         Result.Environment := Environment;
       end;
-    except Result.FreeByParentExpression; raise end;
+    except
+      Result.FreeByParentExpression;
+      raise;
+    end;
   end;
 
   function ComparisonArgument: TCasScriptExpression;
@@ -307,7 +319,10 @@ const
         Result := FC.Create([Result, Term]);
         Result.Environment := Environment;
       end;
-    except Result.FreeByParentExpression; raise end;
+    except
+      Result.FreeByParentExpression;
+      raise;
+    end;
   end;
 
 var
@@ -323,7 +338,10 @@ begin
       Result := FC.Create([Result, ComparisonArgument]);
       Result.Environment := Environment;
     end;
-  except Result.FreeByParentExpression; raise end;
+  except
+    Result.FreeByParentExpression;
+    raise;
+  end;
 end;
 
 function Expression(
@@ -378,7 +396,10 @@ function Expression(
         Result := TCasScriptAssignment.Create([Operand, AssignedValue]);
         Result.Environment := Environment;
       end;
-    except Result.FreeByParentExpression; raise end;
+    except
+      Result.FreeByParentExpression;
+      raise;
+    end;
   end;
 
 var
@@ -401,13 +422,21 @@ begin
             Lexer.NextToken;
             SequenceArgs.Add(PossiblyAssignmentExpression);
           end;
-        except SequenceArgs.FreeContentsByParentExpression; raise end;
+        except
+          SequenceArgs.FreeContentsByParentExpression;
+          raise;
+        end;
 
         Result := TCasScriptSequence.Create(SequenceArgs);
         Result.Environment := Environment;
-      finally FreeAndNil(SequenceArgs) end;
+      finally
+        FreeAndNil(SequenceArgs);
+      end;
     end;
-  except Result.FreeByParentExpression; raise end;
+  except
+    Result.FreeByParentExpression;
+    raise;
+  end;
 end;
 
 function AProgram(
@@ -445,11 +474,12 @@ var
             Lexer.NextToken;
 
             if Lexer.Token = tokRParen then
-              Break else
-              begin
-                Lexer.CheckTokenIs(tokComma);
-                Lexer.NextToken;
-              end;
+              Break
+            else
+            begin
+              Lexer.CheckTokenIs(tokComma);
+              Lexer.NextToken;
+            end;
           until false;
         end;
 
@@ -461,8 +491,13 @@ var
         BodyVariables.AddRange(GlobalVariables);
 
         Result.Body := Expression(Lexer, Environment, BodyVariables);
-      finally FreeAndNil(BodyVariables); end;
-    except FreeAndNil(Result); raise end;
+      finally
+        FreeAndNil(BodyVariables);
+      end;
+    except
+      FreeAndNil(Result);
+      raise;
+    end;
   end;
 
 begin
@@ -474,7 +509,10 @@ begin
       Lexer.NextToken;
       Result.Functions.Add(AFunction);
     end;
-  except FreeAndNil(Result); raise end;
+  except
+    FreeAndNil(Result);
+    raise;
+  end;
 end;
 
 { ParseXxxExpression ------------------------------------------------------- }
@@ -488,7 +526,7 @@ begin
   for I := 0 to Length(Variables) - 1 do
     Variables[I].OwnedByParentExpression := false;
 
-  Lexer := TCasScriptLexer.Create(s);
+  Lexer := TCasScriptLexer.Create(S);
   try
     Result := nil;
     try
@@ -503,8 +541,13 @@ begin
         on E: ECasScriptFunctionArgumentsError do
           raise ECasScriptParserError.Create(Lexer, E.Message);
       end;
-    except Result.FreeByParentExpression; raise end;
-  finally Lexer.Free end;
+    except
+      Result.FreeByParentExpression;
+      raise;
+    end;
+  finally
+    Lexer.Free;
+  end;
 end;
 
 function ParseFloatExpression(const S: string;
@@ -563,8 +606,13 @@ begin
         on E: ECasScriptFunctionArgumentsError do
           raise ECasScriptParserError.Create(Lexer, E.Message);
       end;
-    except Result.FreeByParentExpression; raise end;
-  finally Lexer.Free end;
+    except
+      Result.FreeByParentExpression;
+      raise;
+    end;
+  finally
+    Lexer.Free;
+  end;
 end;
 
 { ParseConstantFloatExpression ----------------------------------------------- }
@@ -574,7 +622,7 @@ var
   Expr: TCasScriptExpression;
 begin
   try
-    Expr := ParseFloatExpression(s, []);
+    Expr := ParseFloatExpression(S, []);
   except
     on E: ECasScriptSyntaxError do
     begin
@@ -585,7 +633,9 @@ begin
 
   try
     Result := (Expr.Execute as TCasScriptFloat).Value;
-  finally Expr.Free end;
+  finally
+    Expr.Free;
+  end;
 end;
 
 { ParseProgram --------------------------------------------------------------- }
@@ -620,8 +670,13 @@ begin
         on E: ECasScriptFunctionArgumentsError do
           raise ECasScriptParserError.Create(Lexer, E.Message);
       end;
-    except Result.Free; raise end;
-  finally Lexer.Free end;
+    except
+      Result.Free;
+      raise;
+    end;
+  finally
+    Lexer.Free;
+  end;
 end;
 
 end.

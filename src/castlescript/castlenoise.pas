@@ -193,9 +193,9 @@ begin
   { Choose our primes row from Primes table. }
   PPrimes := @Primes[Seed mod (High(Primes)+1)];
 
-  N := LongWord(x) + LongWord(y) * PPrimes[0] + LongWord(z) * PPrimes[1];
+  N := LongWord(X) + LongWord(Y) * PPrimes[0] + LongWord(Z) * PPrimes[1];
   N := N xor (N shl 13);
-  Result := (n * (n * n * PPrimes[2] + PPrimes[3]) + PPrimes[4]);
+  Result := (N * (N * N * PPrimes[2] + PPrimes[3]) + PPrimes[4]);
 end;
 {$I norqcheckend.inc}
 

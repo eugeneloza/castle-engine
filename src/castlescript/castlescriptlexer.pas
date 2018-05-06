@@ -109,9 +109,9 @@ type
       not access it before you Freed it; too troublesome, usually) }
     property LexerTextPos: Integer read FLexerTextPos;
     property LexerText: string read FLexerText;
-    constructor Create(Lexer: TCasScriptLexer; const s: string);
-    constructor CreateFmt(Lexer: TCasScriptLexer; const s: string;
-      const args: array of const);
+    constructor Create(Lexer: TCasScriptLexer; const S: string);
+    constructor CreateFmt(Lexer: TCasScriptLexer; const S: string;
+      const Args: array of const);
   end;
 
   ECasScriptLexerError = class(ECasScriptSyntaxError);
@@ -123,37 +123,39 @@ implementation
 uses StrUtils,
   CastleStringUtils;
 
-function Int64Power(base: Integer; power: Cardinal): Int64;
+function Int64Power(Base: Integer; Power: Cardinal): Int64;
 begin
- result := 1;
- while power > 0 do begin
-  result := result*base;
-  Dec(power);
- end;
+  Result := 1;
+  while Power > 0 do
+  begin
+    Result := Result * Base;
+    Dec(Power);
+  end;
 end;
 
-constructor TCasScriptLexer.Create(const atext: string);
+constructor TCasScriptLexer.Create(const AText: string);
 begin
- inherited Create;
- ftext := atext;
- fTextPos := 1;
- NextToken;
+  inherited Create;
+  FText := AText;
+  FTextPos := 1;
+  NextToken;
 end;
 
 function TCasScriptLexer.NextToken: TToken;
 const
-  whiteChars = [' ', #9, #10, #13];
-  digits = ['0'..'9'];
+  WhiteChars = [' ', #9, #10, #13];
+  Digits = ['0'..'9'];
   Letters = ['a'..'z', 'A'..'Z', '_'];
 
   procedure OmitWhiteSpace;
   begin
-    while SCharIs(text, TextPos, whiteChars) do Inc(fTextPos);
-    if SCharIs(text, TextPos, '{') then
+    while SCharIs(Text, TextPos, whiteChars) do
+      Inc(FTextPos);
+    if SCharIs(Text, TextPos, '{') then
     begin
       while Text[TextPos] <> '}' do
       begin
-        Inc(fTextPos);
+        Inc(FTextPos);
         if TextPos > Length(Text) then
           raise ECasScriptLexerError.Create(Self, 'Unfinished comment');
       end;
@@ -164,22 +166,22 @@ const
 
   function ReadSimpleToken: boolean;
   const
-    { kolejnosc w toks_strs MA znaczenie - pierwszy zostanie dopasowany string dluzszy,
+    { kolejnosc w ToksStrs MA znaczenie - pierwszy zostanie dopasowany string dluzszy,
       wiec aby Lexer pracowal zachlannnie stringi dluzsze musza byc pierwsze. }
-    toks_strs: array [0..18] of string=
+    ToksStrs: array [0..18] of string=
      ('<>', '<=', '>=', '<', '>', '=', '+', '-', '*', '/', ',',
       '(', ')', '^', '[', ']', '%', ';', ':=');
-    toks_tokens: array[0..High(toks_strs)]of TToken =
+    ToksTokens: array[0..High(ToksStrs)] of TToken =
      (tokNotEqual, tokLesserEqual, tokGreaterEqual, tokLesser, tokGreater,
       tokEqual, tokPlus, tokMinus, tokMultiply, tokDivide, tokComma, tokLParen, tokRParen,
       tokPower, tokLQaren, tokRQaren, tokModulo, tokSemicolon, tokAssignment);
   var I: integer;
   begin
-    for I := 0 to High(toks_strs) do
-      if Copy(text, TextPos, Length(toks_strs[I])) = toks_strs[I] then
+    for I := 0 to High(ToksStrs) do
+      if Copy(Text, TextPos, Length(ToksStrs[I])) = ToksStrs[I] then
       begin
-        ftoken := toks_tokens[I];
-        Inc(fTextPos, Length(toks_strs[I]));
+        FToken := ToksTokens[I];
+        Inc(FTextPos, Length(ToksStrs[I]));
         Result := true;
         Exit;
       end;
@@ -188,7 +190,7 @@ const
 
   { Read a string, to a tokString token.
     Read from current TexPos.
-    Update ftoken and fTokenString, and advance TextPos, and return true
+    Update FToken and FTokenString, and advance TextPos, and return true
     if success.
 
     Results in false if we're not standing at an apostrophe now. }
@@ -197,7 +199,8 @@ const
     NextApos: Integer;
   begin
     Result := Text[FTextPos] = '''';
-    if not Result then Exit;
+    if not Result then
+      Exit;
 
     FToken := tokString;
     FTokenString := '';
@@ -218,69 +221,71 @@ const
 
   { Read a number, to a tokFloat or tokInteger token.
     Read from current TexPos.
-    Update ftoken and fTokenFloat, and advance TextPos, and return true
+    Update FToken and FTokenFloat, and advance TextPos, and return true
     if success.
 
     Results in false if we're not standing at a digit now. }
   function ReadNumber: boolean;
   var
-    digitsCount: cardinal;
-    val: Int64;
+    DigitsCount: cardinal;
+    Val: Int64;
   begin
-   result := text[fTextPos] in digits;
-   if not result then exit;
+    Result := Text[FTextPos] in Digits;
+    if not Result then
+      Exit;
 
-   { Assume it's an integer token at first, until we will encounter the dot. }
+    { Assume it's an integer token at first, until we will encounter the dot. }
 
-   Ftoken := tokInteger;
-   FTokenInteger := DigitAsByte(text[fTextPos]);
-   Inc(fTextPos);
-   while SCharIs(text, fTextPos, digits) do
-   begin
-    FTokenInteger := 10 * FTokenInteger + DigitAsByte(text[fTextPos]);
-    Inc(fTextPos);
-   end;
-
-   if SCharIs(text, fTextPos, '.') then
-   begin
-    { So it's a float. Read fractional part. }
-    FToken := tokFloat;
-    FTokenFloat := FTokenInteger;
-
-    Inc(fTextPos);
-    if not SCharIs(text, fTextPos, digits) then
-     raise ECasScriptLexerError.Create(Self, 'Digit expected');
-    digitsCount := 1;
-    val := DigitAsByte(text[fTextPos]);
-    Inc(fTextPos);
-    while SCharIs(text, fTextPos, digits) do
+    Ftoken := TokInteger;
+    FTokenInteger := DigitAsByte(Text[FTextPos]);
+    Inc(FTextPos);
+    while SCharIs(Text, FTextPos, Digits) do
     begin
-     val := 10*val+DigitAsByte(text[fTextPos]);
-     Inc(digitsCount);
-     Inc(fTextPos);
+      FTokenInteger := 10 * FTokenInteger + DigitAsByte(Text[FTextPos]);
+      Inc(FTextPos);
     end;
-    fTokenFloat := fTokenFloat + (val / Int64Power(10, digitsCount));
-   end;
+
+    if SCharIs(Text, FTextPos, '.') then
+    begin
+      { So it's a float. Read fractional part. }
+      FToken := tokFloat;
+      FTokenFloat := FTokenInteger;
+
+      Inc(FTextPos);
+      if not SCharIs(Text, FTextPos, Digits) then
+        raise ECasScriptLexerError.Create(Self, 'Digit expected');
+      DigitsCount := 1;
+      Val := DigitAsByte(Text[FTextPos]);
+      Inc(FTextPos);
+      while SCharIs(Text, FTextPos, Digits) do
+      begin
+        Val := 10 * Val + DigitAsByte(Text[FTextPos]);
+        Inc(DigitsCount);
+        Inc(FTextPos);
+      end;
+      FTokenFloat := FTokenFloat + (Val / Int64Power(10, DigitsCount));
+    end;
   end;
 
   function ReadIdentifier: string;
   { czytaj identyfikator - to znaczy, czytaj nazwe zmiennej co do ktorej nie
     jestesmy pewni czy nie jest przypadkiem nazwa funkcji. Uwaga - powinien
-    zbadac kazdy znak, poczynajac od text[fTextPos], czy rzeczywiscie
-    nalezy do identChars.
+    zbadac kazdy znak, poczynajac od Text[FTextPos], czy rzeczywiscie
+    nalezy do IdentChars.
 
     Always returns non-empty string (length >= 1) }
-  const identStartChars = Letters;
-        identChars = identStartChars + digits;
-  var startPos: integer;
+  const IdentStartChars = Letters;
+        IdentChars = IdentStartChars + Digits;
+  var StartPos: integer;
   begin
-   if not (text[fTextPos] in identStartChars) then
-    raise ECasScriptLexerError.CreateFmt(Self,
-      'Invalid character "%s" not allowed in CastleScript', [text[fTextPos]]);
-   startPos := fTextPos;
-   Inc(fTextPos);
-   while SCharIs(text, fTextPos, identChars) do Inc(fTextPos);
-   result := CopyPos(text, startPos, fTextPos-1);
+    if not (Text[FTextPos] in IdentStartChars) then
+      raise ECasScriptLexerError.CreateFmt(Self,
+        'Invalid character "%s" not allowed in CastleScript', [Text[FTextPos]]);
+    StartPos := FTextPos;
+    Inc(FTextPos);
+    while SCharIs(Text, FTextPos, IdentChars) do
+      Inc(FTextPos);
+    Result := CopyPos(Text, StartPos, FTextPos-1);
   end;
 
 const
@@ -314,78 +319,79 @@ const
     1, 2, 3, 4, 5, 6, 7, 8, 9,10,
    11,12,13,14,15,16,17,18,19,20 );
 var
-  p: integer;
-  fc: TCasScriptFunctionClass;
+  P: integer;
+  FC: TCasScriptFunctionClass;
 begin
- OmitWhiteSpace;
+  OmitWhiteSpace;
 
- if TextPos > Length(text) then
-  ftoken := tokEnd else
- begin
-  if not ReadString then
-  if not ReadNumber then
-  if not ReadSimpleToken then
+  if TextPos > Length(Text) then
+    FToken := tokEnd
+  else
   begin
-   { It's something that *may* be an identifier.
-     Unless it matches some keyword, built-in function or constant. }
-   ftoken := tokIdentifier;
-   fTokenString := ReadIdentifier;
+    if not ReadString then
+      if not ReadNumber then
+        if not ReadSimpleToken then
+        begin
+          { It's something that *may* be an identifier.
+            Unless it matches some keyword, built-in function or constant. }
+          FToken := tokIdentifier;
+          FTokenString := ReadIdentifier;
 
-   { Maybe it's tokFunctionKeyword (the only keyword for now) }
-   if ftoken = tokIdentifier then
-   begin
-     if SameText(fTokenString, 'function') then
-     begin
-       ftoken := tokFunctionKeyword;
-     end;
-   end;
+          { Maybe it's tokFunctionKeyword (the only keyword for now) }
+          if FToken = tokIdentifier then
+          begin
+            if SameText(FTokenString, 'function') then
+            begin
+              FToken := tokFunctionKeyword;
+            end;
+          end;
 
-   { Maybe it's tokFuncName }
-   if ftoken = tokIdentifier then
-   begin
-     fc := FunctionHandlers.SearchFunctionShortName(fTokenString);
-     if fc <> nil then
-     begin
-      ftoken := tokFuncName;
-      fTokenFunctionClass := fc;
-     end;
-   end;
+          { Maybe it's tokFuncName }
+          if FToken = tokIdentifier then
+          begin
+            FC := FunctionHandlers.SearchFunctionShortName(FTokenString);
+            if FC <> nil then
+            begin
+              FToken := tokFuncName;
+              FTokenFunctionClass := FC;
+            end;
+          end;
 
-   { Maybe it's a named constant float }
-   if ftoken = tokIdentifier then
-   begin
-    p := ArrayPosText(fTokenString, FloatConsts);
-    if p >= 0 then
-    begin
-     ftoken := tokFloat;
-     fTokenFloat := FloatConstsValues[p];
-    end;
-   end;
+          { Maybe it's a named constant float }
+          if FToken = tokIdentifier then
+          begin
+            P := ArrayPosText(FTokenString, FloatConsts);
+            if P >= 0 then
+            begin
+              FToken := tokFloat;
+              FTokenFloat := FloatConstsValues[P];
+            end;
+          end;
 
-   { Maybe it's a named constant boolean }
-   if ftoken = tokIdentifier then
-   begin
-    p := ArrayPosText(fTokenString, BooleanConsts);
-    if p >= 0 then
-    begin
-     ftoken := tokBoolean;
-     fTokenBoolean := BooleanConstsValues[p];
-    end;
-   end;
+          { Maybe it's a named constant boolean }
+          if FToken = tokIdentifier then
+          begin
+            P := ArrayPosText(FTokenString, BooleanConsts);
+            if P >= 0 then
+            begin
+              FToken := tokBoolean;
+              FTokenBoolean := BooleanConstsValues[P];
+            end;
+          end;
 
-   { Maybe it's a named constant integer }
-   if ftoken = tokIdentifier then
-   begin
-    p := ArrayPosText(fTokenString, IntConsts);
-    if p >= 0 then
-    begin
-     ftoken := tokInteger;
-     fTokenInteger := IntConstsValues[p];
-    end;
-   end;
-  end;
+          { Maybe it's a named constant integer }
+          if FToken = tokIdentifier then
+          begin
+            P := ArrayPosText(FTokenString, IntConsts);
+            if P >= 0 then
+            begin
+              FToken := tokInteger;
+              FTokenInteger := IntConstsValues[P];
+            end;
+          end;
+        end;
  end;
- result := token;
+ Result := Token;
 end;
 
 const
@@ -428,17 +434,17 @@ end;
 
 { ECasScriptSyntaxError --------------------------------------- }
 
-constructor ECasScriptSyntaxError.Create(Lexer: TCasScriptLexer; const s: string);
+constructor ECasScriptSyntaxError.Create(Lexer: TCasScriptLexer; const S: string);
 begin
- inherited Create(s);
+ inherited Create(S);
  FLexerTextPos := Lexer.TextPos;
  FLexerText := Lexer.Text;
 end;
 
-constructor ECasScriptSyntaxError.CreateFmt(Lexer: TCasScriptLexer; const s: string;
-  const args: array of const);
+constructor ECasScriptSyntaxError.CreateFmt(Lexer: TCasScriptLexer; const S: string;
+  const Args: array of const);
 begin
- Create(Lexer, Format(s, args))
+ Create(Lexer, Format(S, Args))
 end;
 
 end.

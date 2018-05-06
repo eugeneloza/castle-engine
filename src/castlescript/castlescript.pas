@@ -997,7 +997,8 @@ begin
   end;
 
   if Res is TCasScriptFloat then
-    Result := TCasScriptFloat(Res).Value else
+    Result := TCasScriptFloat(Res).Value
+  else
   begin
     WritelnWarning('CastleScript', 'CastleScript expression result is not float');
     Result := ADefaultValue;
@@ -1020,7 +1021,8 @@ begin
   end;
 
   if Res is TCasScriptInteger then
-    Result := TCasScriptInteger(Res).Value else
+    Result := TCasScriptInteger(Res).Value
+  else
   begin
     WritelnWarning('CastleScript', 'CastleScript expression result is not int');
     Result := ADefaultValue;
@@ -1043,7 +1045,8 @@ begin
   end;
 
   if Res is TCasScriptString then
-    Result := TCasScriptString(Res).Value else
+    Result := TCasScriptString(Res).Value
+  else
   begin
     WritelnWarning('CastleScript', 'CastleScript expression result is not string');
     Result := ADefaultValue;
@@ -1066,7 +1069,8 @@ begin
   end;
 
   if Res is TCasScriptBoolean then
-    Result := TCasScriptBoolean(Res).Value else
+    Result := TCasScriptBoolean(Res).Value
+  else
   begin
     WritelnWarning('CastleScript', 'CastleScript expression result is not boolean');
     Result := ADefaultValue;
@@ -1162,7 +1166,8 @@ end;
 function TCasScriptInteger.PromoteToFloat: TCasScriptFloat;
 begin
   if FPromoteToFloat = nil then
-    FPromoteToFloat := TCasScriptFloat.Create(false, Value) else
+    FPromoteToFloat := TCasScriptFloat.Create(false, Value)
+  else
     FPromoteToFloat.Value := Value;
   Result := FPromoteToFloat;
 end;
@@ -1337,7 +1342,8 @@ end;
 class procedure TCasScriptInteger.ConvertFromInt(AFunction: TCasScriptFunction; const Arguments: array of TCasScriptValue; var AResult: TCasScriptValue; var ParentOfResult: boolean);
 begin
   if ParentOfResult then
-    AResult.FreeByParentExpression else
+    AResult.FreeByParentExpression
+  else
     AResult := nil;
 
   AResult := Arguments[0];
@@ -1354,7 +1360,8 @@ begin
 
   F := TCasScriptFloat(Arguments[0]).Value;
   if F >= 0 then
-    TCasScriptInteger(AResult).Value := Floor(F) else
+    TCasScriptInteger(AResult).Value := Floor(F)
+  else
     TCasScriptInteger(AResult).Value := Ceil(F);
 end;
 
@@ -1382,7 +1389,8 @@ end;
 procedure TCasScriptInteger.AssignValue(Source: TCasScriptValue);
 begin
   if Source is TCasScriptInteger then
-    Value := TCasScriptInteger(Source).Value else
+    Value := TCasScriptInteger(Source).Value
+  else
     raise ECasScriptAssignError.CreateFmt('Assignment from %s to %s not possible', [Source.ClassName, ClassName]);
 end;
 
@@ -1715,7 +1723,8 @@ end;
 class procedure TCasScriptFloat.ConvertFromFloat(AFunction: TCasScriptFunction; const Arguments: array of TCasScriptValue; var AResult: TCasScriptValue; var ParentOfResult: boolean);
 begin
   if ParentOfResult then
-    AResult.FreeByParentExpression else
+    AResult.FreeByParentExpression
+  else
     AResult := nil;
 
   AResult := Arguments[0];
@@ -1747,10 +1756,12 @@ end;
 procedure TCasScriptFloat.AssignValue(Source: TCasScriptValue);
 begin
   if Source is TCasScriptFloat then
-    Value := TCasScriptFloat(Source).Value else
+    Value := TCasScriptFloat(Source).Value
+  else
   { This allows for type promotion integer->float at assignment. }
   if Source is TCasScriptInteger then
-    Value := TCasScriptInteger(Source).Value else
+    Value := TCasScriptInteger(Source).Value
+  else
     raise ECasScriptAssignError.CreateFmt('Assignment from %s to %s not possible', [Source.ClassName, ClassName]);
 end;
 
@@ -1864,7 +1875,8 @@ end;
 class procedure TCasScriptBoolean.ConvertFromBool(AFunction: TCasScriptFunction; const Arguments: array of TCasScriptValue; var AResult: TCasScriptValue; var ParentOfResult: boolean);
 begin
   if ParentOfResult then
-    AResult.FreeByParentExpression else
+    AResult.FreeByParentExpression
+  else
     AResult := nil;
 
   AResult := Arguments[0];
@@ -1879,9 +1891,11 @@ begin
   CreateValueIfNeeded(AResult, ParentOfResult, TCasScriptBoolean);
   S := LowerCase(TCasScriptString(Arguments[0]).Value);
   if S = 'false' then
-    TCasScriptBoolean(AResult).Value := false else
+    TCasScriptBoolean(AResult).Value := false
+  else
   if S = 'true' then
-    TCasScriptBoolean(AResult).Value := true else
+    TCasScriptBoolean(AResult).Value := true
+  else
     raise ECasScriptError.CreateFmt('Error when converting string "%s" to boolean: invalid value, must be "false" or "true"',
       [TCasScriptString(Arguments[0]).Value]);
 end;
@@ -1889,7 +1903,8 @@ end;
 procedure TCasScriptBoolean.AssignValue(Source: TCasScriptValue);
 begin
   if Source is TCasScriptBoolean then
-    Value := TCasScriptBoolean(Source).Value else
+    Value := TCasScriptBoolean(Source).Value
+  else
     raise ECasScriptAssignError.CreateFmt('Assignment from %s to %s not possible', [Source.ClassName, ClassName]);
 end;
 
@@ -1997,7 +2012,8 @@ end;
 class procedure TCasScriptString.ConvertFromString(AFunction: TCasScriptFunction; const Arguments: array of TCasScriptValue; var AResult: TCasScriptValue; var ParentOfResult: boolean);
 begin
   if ParentOfResult then
-    AResult.FreeByParentExpression else
+    AResult.FreeByParentExpression
+  else
     AResult := nil;
 
   AResult := Arguments[0];
@@ -2010,7 +2026,8 @@ var
   S: string;
 begin
   if ParentOfResult then
-    AResult.FreeByParentExpression else
+    AResult.FreeByParentExpression
+  else
     AResult := nil;
 
   AResult := Arguments[0];
@@ -2019,7 +2036,8 @@ begin
   S := TCasScriptString(Arguments[0]).Value;
 
   if Assigned(OnScriptMessage) then
-    OnScriptMessage(S) else
+    OnScriptMessage(S)
+  else
     WritelnLog('CastleScript', 'Writeln: '+ S);
 end;
 
@@ -2032,14 +2050,16 @@ begin
   CharCode := TCasScriptInteger(Arguments[0]).Value;
 
   if Between(CharCode, Low(Byte), High(Byte)) then
-    TCasScriptString(AResult).Value := Chr(CharCode) else
+    TCasScriptString(AResult).Value := Chr(CharCode)
+  else
     TCasScriptString(AResult).Value := '';
 end;
 
 procedure TCasScriptString.AssignValue(Source: TCasScriptValue);
 begin
   if Source is TCasScriptString then
-    Value := TCasScriptString(Source).Value else
+    Value := TCasScriptString(Source).Value
+  else
     raise ECasScriptAssignError.CreateFmt('Assignment from %s to %s not possible', [Source.ClassName, ClassName]);
 end;
 
@@ -2231,7 +2251,8 @@ class procedure TCasScriptSequence.HandleSequence(
   AFunction: TCasScriptFunction; const Arguments: array of TCasScriptValue; var AResult: TCasScriptValue; var ParentOfResult: boolean);
 begin
   if ParentOfResult then
-    AResult.FreeByParentExpression else
+    AResult.FreeByParentExpression
+  else
     AResult := nil;
 
   AResult := Arguments[High(Arguments)];
@@ -2259,7 +2280,8 @@ class procedure TCasScriptAssignment.HandleAssignment(
   AFunction: TCasScriptFunction; const Arguments: array of TCasScriptValue; var AResult: TCasScriptValue; var ParentOfResult: boolean);
 begin
   if ParentOfResult then
-    AResult.FreeByParentExpression else
+    AResult.FreeByParentExpression
+  else
     AResult := nil;
 
   (Arguments[0] as TCasScriptValue).AssignValue(Arguments[1]);
@@ -2289,7 +2311,8 @@ begin
   ParentOfResult := false;
 
   if TCasScriptBoolean(Arguments[0]).Value then
-    AResult := AFunction.Args[1].CoreExecute else
+    AResult := AFunction.Args[1].CoreExecute
+  else
     AResult := AFunction.Args[2].CoreExecute;
 end;
 
@@ -2314,7 +2337,8 @@ begin
   ParentOfResult := false;
 
   if TCasScriptBoolean(Arguments[0]).Value then
-    AResult := AFunction.Args[1].CoreExecute else
+    AResult := AFunction.Args[1].CoreExecute
+  else
   begin
     { "when" returns simple const false on "else" condition }
     AResult := TCasScriptBoolean.Create(false);
@@ -2343,7 +2367,8 @@ class procedure TCasScriptWhile.HandleWhile(
   begin
     Condition := AFunction.Args[0].CoreExecute;
     if Condition is TCasScriptBoolean then
-      Result := TCasScriptBoolean(Condition).Value else
+      Result := TCasScriptBoolean(Condition).Value
+    else
       raise ECasScriptError.Create('"if" function "condition" must return a boolean value');
   end;
 
@@ -2502,7 +2527,8 @@ begin
         if ArgumentClasses[J] <> nil then
         begin
           if J < Length(Handler.ArgumentClasses) then
-            Result := ArgumentClasses[J].InheritsFrom(Handler.ArgumentClasses[J]) else
+            Result := ArgumentClasses[J].InheritsFrom(Handler.ArgumentClasses[J])
+          else
             { This is more than required number of arguments.
               Still it's Ok if it matches last argument and function allows variable
               number of arguments. }
@@ -2689,7 +2715,8 @@ begin
   if FuncIndex = -1 then
   begin
     if IgnoreMissingFunction then
-      Exit else
+      Exit
+    else
       raise ECasScriptMissingFunction.CreateFmt('CastleScript function "%s" is not defined', [FunctionName]);
   end;
   Func := Functions[FuncIndex];
@@ -2732,7 +2759,8 @@ begin
   if Value.ClassType <> NeededClass then
   begin
     if ParentOfValue then
-      Value.FreeByParentExpression else
+      Value.FreeByParentExpression
+    else
       Value := nil;
 
     Value := NeededClass.Create(false);
