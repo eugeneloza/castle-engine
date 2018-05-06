@@ -34,9 +34,9 @@ const
     if you use LCL.
 
   @groupBegin }
-procedure ErrorBox  (const Text:string; const caption:string ='Error'      ; parent:HWND =0); deprecated;
-procedure InfoBox   (const Text:string; const caption:string ='Information'; parent:HWND =0); deprecated;
-procedure WarningBox(const Text:string; const caption:string ='Warning'    ; parent:HWND =0); deprecated;
+procedure ErrorBox  (const Text: string; const Caption: string = 'Error'      ; Parent: HWND =0); deprecated;
+procedure InfoBox   (const Text: string; const Caption: string = 'Information'; Parent: HWND =0); deprecated;
+procedure WarningBox(const Text: string; const Caption: string = 'Warning'    ; Parent: HWND =0); deprecated;
 { @groupEnd }
 
 { WinAPI ChangeDisplaySettings declaration. (Was wrong/missing in old
@@ -51,32 +51,32 @@ function DispChangeToStr(L: LongInt): string;
 
 {$ifdef read_implementation}
 
-procedure ErrorBox(const Text:string; const caption:string; parent:HWND);
+procedure ErrorBox(const Text: string; const Caption: string; Parent: HWND);
 begin
- MessageBox(parent,PChar(Text),PChar(caption),MB_OK or MB_ICONERROR or MB_TASKMODAL);
+  MessageBox(Parent, PChar(Text), PChar(caption), MB_OK or MB_ICONERROR or MB_TASKMODAL);
 end;
 
-procedure InfoBox(const Text:string; const caption:string;parent:HWND);
+procedure InfoBox(const Text: string; const Caption: string; Parent: HWND);
 begin
- MessageBox(parent,PChar(Text),PChar(caption),MB_OK or MB_ICONINFORMATION or MB_TASKMODAL);
+  MessageBox(Parent, PChar(Text), PChar(caption), MB_OK or MB_ICONINFORMATION or MB_TASKMODAL);
 end;
 
-procedure WarningBox(const Text:string; const caption:string;parent:HWND);
+procedure WarningBox(const Text: string; const Caption: string; Parent: HWND);
 begin
- MessageBox(parent,PChar(Text),PChar(caption),MB_OK or MB_ICONWARNING or MB_TASKMODAL);
+ MessageBox(Parent, PChar(Text), PChar(caption), MB_OK or MB_ICONWARNING or MB_TASKMODAL);
 end;
 
 function DispChangeToStr(L: LongInt): string;
 begin
- case L of
-  DISP_CHANGE_SUCCESSFUL: Result := 'DISP_CHANGE_SUCCESSFUL';
-  DISP_CHANGE_RESTART: Result := 'DISP_CHANGE_RESTART';
-  DISP_CHANGE_BADFLAGS: Result := 'DISP_CHANGE_BADFLAGS';
-  DISP_CHANGE_FAILED: Result := 'DISP_CHANGE_FAILED';
-  DISP_CHANGE_BADMODE: Result := 'DISP_CHANGE_BADMODE';
-  DISP_CHANGE_NOTUPDATED: Result := 'DISP_CHANGE_NOTUPDATED';
-  else Result := IntToStr(L);
- end;
+  case L of
+    DISP_CHANGE_SUCCESSFUL: Result := 'DISP_CHANGE_SUCCESSFUL';
+    DISP_CHANGE_RESTART: Result := 'DISP_CHANGE_RESTART';
+    DISP_CHANGE_BADFLAGS: Result := 'DISP_CHANGE_BADFLAGS';
+    DISP_CHANGE_FAILED: Result := 'DISP_CHANGE_FAILED';
+    DISP_CHANGE_BADMODE: Result := 'DISP_CHANGE_BADMODE';
+    DISP_CHANGE_NOTUPDATED: Result := 'DISP_CHANGE_NOTUPDATED';
+    else Result := IntToStr(L);
+  end;
 end;
 
 procedure InitializationOSSpecific;

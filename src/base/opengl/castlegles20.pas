@@ -124,20 +124,20 @@ type
      EGL_TRUE = 1;
   { Out-of-band handle values  }
   { was #define dname def_expr }
-  function EGL_DEFAULT_DISPLAY : EGLNativeDisplayType;
+  function EGL_DEFAULT_DISPLAY: EGLNativeDisplayType;
 
   { was #define dname def_expr }
-  function EGL_NO_CONTEXT : EGLContext;
+  function EGL_NO_CONTEXT: EGLContext;
 
   { was #define dname def_expr }
-  function EGL_NO_DISPLAY : EGLDisplay;
+  function EGL_NO_DISPLAY: EGLDisplay;
 
   { was #define dname def_expr }
-  function EGL_NO_SURFACE : EGLSurface;
+  function EGL_NO_SURFACE: EGLSurface;
 
   { Out-of-band attribute value  }
   { was #define dname def_expr }
-  function EGL_DONT_CARE : EGLint;
+  function EGL_DONT_CARE: EGLint;
 
   { Errors / GetError return values  }
 
@@ -277,7 +277,7 @@ type
      EGL_DISPLAY_SCALING = 10000;
   { Unknown display resolution/aspect ratio  }
   { was #define dname def_expr }
-  function EGL_UNKNOWN : EGLint;
+  function EGL_UNKNOWN: EGLint;
 
   { Back buffer swap behaviors  }
   { EGL_SWAP_BEHAVIOR value  }
@@ -320,58 +320,58 @@ type
   { EGL Functions  }
 
   var
-    eglGetError : function:EGLint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglGetDisplay : function(display_id:EGLNativeDisplayType):EGLDisplay;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglInitialize : function(dpy:EGLDisplay; major:pEGLint; minor:pEGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglTerminate : function(dpy:EGLDisplay):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglGetError: function: EGLint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglGetDisplay: function(Display_id: EGLNativeDisplayType): EGLDisplay;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglInitialize: function(Dpy: EGLDisplay; Major: pEGLint; Minor: pEGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglTerminate: function(Dpy: EGLDisplay): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    eglQueryString : function(dpy:EGLDisplay; name:EGLint):pchar;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglGetConfigs : function(dpy:EGLDisplay; configs:pEGLConfig; config_size:EGLint; num_config:pEGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglQueryString: function(Dpy: EGLDisplay; Name: EGLint): PChar;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglGetConfigs: function(Dpy: EGLDisplay; Configs: pEGLConfig; ConfigSize: EGLint; NumConfig: pEGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    eglChooseConfig : function(dpy:EGLDisplay; attrib_list:pEGLint; configs:pEGLConfig; config_size:EGLint; num_config:pEGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglGetConfigAttrib : function(dpy:EGLDisplay; config:EGLConfig; attribute:EGLint; value:pEGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglChooseConfig: function(Dpy: EGLDisplay; attrib_list: pEGLint; Configs: pEGLConfig; ConfigSize: EGLint; NumConfig: pEGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglGetConfigAttrib: function(Dpy: EGLDisplay; Config: EGLConfig; Attribute: EGLint; Value: pEGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    eglCreateWindowSurface : function(dpy:EGLDisplay; config:EGLConfig; win:EGLNativeWindowType; attrib_list:pEGLint):EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglCreateWindowSurface: function(Dpy: EGLDisplay; Config: EGLConfig; Win: EGLNativeWindowType; AttribList: pEGLint): EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    eglCreatePbufferSurface : function(dpy:EGLDisplay; config:EGLConfig; attrib_list:pEGLint):EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglCreatePbufferSurface: function(Dpy: EGLDisplay; Config: EGLConfig; AttribList: pEGLint): EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    eglCreatePixmapSurface : function(dpy:EGLDisplay; config:EGLConfig; pixmap:EGLNativePixmapType; attrib_list:pEGLint):EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglDestroySurface : function(dpy:EGLDisplay; surface:EGLSurface):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglQuerySurface : function(dpy:EGLDisplay; surface:EGLSurface; attribute:EGLint; value:pEGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglBindAPI : function(api:EGLenum):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglQueryAPI : function:EGLenum;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglWaitClient : function:EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglReleaseThread : function:EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglCreatePixmapSurface: function(Dpy: EGLDisplay; Config: EGLConfig; PixMap: EGLNativePixmapType; AttribList: pEGLint): EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglDestroySurface: function(Dpy: EGLDisplay; Surface: EGLSurface): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglQuerySurface: function(Dpy: EGLDisplay; Surface: EGLSurface; Attribute: EGLint; Value: pEGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglBindAPI: function(Api: EGLenum): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglQueryAPI: function: EGLenum;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglWaitClient: function: EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglReleaseThread: function: EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    eglCreatePbufferFromClientBuffer : function(dpy:EGLDisplay; buftype:EGLenum; buffer:EGLClientBuffer; config:EGLConfig; attrib_list:pEGLint):EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglSurfaceAttrib : function(dpy:EGLDisplay; surface:EGLSurface; attribute:EGLint; value:EGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglBindTexImage : function(dpy:EGLDisplay; surface:EGLSurface; buffer:EGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglReleaseTexImage : function(dpy:EGLDisplay; surface:EGLSurface; buffer:EGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglSwapInterval : function(dpy:EGLDisplay; interval:EGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglCreatePbufferFromClientBuffer: function(Dpy: EGLDisplay; BufType: EGLenum; Buffer: EGLClientBuffer; Config: EGLConfig; AttribList: pEGLint): EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglSurfaceAttrib: function(Dpy: EGLDisplay; Surface: EGLSurface; Attribute: EGLint; Value: EGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglBindTexImage: function(Dpy: EGLDisplay; Surface: EGLSurface; Buffer: EGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglReleaseTexImage: function(Dpy: EGLDisplay; Surface: EGLSurface; Buffer: EGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglSwapInterval: function(Dpy: EGLDisplay; Interval: EGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    eglCreateContext : function(dpy:EGLDisplay; config:EGLConfig; share_context:EGLContext; attrib_list:pEGLint):EGLContext;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglDestroyContext : function(dpy:EGLDisplay; ctx:EGLContext):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglMakeCurrent : function(dpy:EGLDisplay; draw:EGLSurface; read:EGLSurface; ctx:EGLContext):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglGetCurrentContext : function:EGLContext;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglGetCurrentSurface : function(readdraw:EGLint):EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglGetCurrentDisplay : function:EGLDisplay;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglQueryContext : function(dpy:EGLDisplay; ctx:EGLContext; attribute:EGLint; value:pEGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglWaitGL : function:EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglWaitNative : function(engine:EGLint):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglSwapBuffers : function(dpy:EGLDisplay; surface:EGLSurface):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    eglCopyBuffers : function(dpy:EGLDisplay; surface:EGLSurface; target:EGLNativePixmapType):EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglCreateContext: function(Dpy: EGLDisplay; Config: EGLConfig; ShareContext: EGLContext; AttribList: pEGLint): EGLContext;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglDestroyContext: function(Dpy: EGLDisplay; Ctx: EGLContext): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglMakeCurrent: function(Dpy: EGLDisplay; Draw: EGLSurface; Read: EGLSurface; Ctx: EGLContext): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglGetCurrentContext: function: EGLContext;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglGetCurrentSurface: function(ReadDraw: EGLint): EGLSurface;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglGetCurrentDisplay: function: EGLDisplay;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglQueryContext: function(Dpy: EGLDisplay; Ctx: EGLContext; Attribute: EGLint; Value: pEGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglWaitGL: function: EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglWaitNative: function(Engine: EGLint): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglSwapBuffers: function(Dpy: EGLDisplay; Surface: EGLSurface): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglCopyBuffers: function(Dpy: EGLDisplay; Surface: EGLSurface; Target: EGLNativePixmapType): EGLBoolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
   { This is a generic function pointer type, whose name indicates it must
    * be cast to the proper type *and calling convention* before use.
     }
 
   type
 
-     __eglMustCastToProperFunctionPointerType = procedure (_para1:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+     __eglMustCastToProperFunctionPointerType = procedure (_para1: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
   { Now, define eglGetProcAddress using the generic function ptr. type  }
 (* Const before type ignored *)
 
   var
-    eglGetProcAddress : function(procname:pchar):__eglMustCastToProperFunctionPointerType;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    eglGetProcAddress: function(ProcName: PChar):__eglMustCastToProperFunctionPointerType;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
   { Header file version number  }
   { Current version at http://www.khronos.org/registry/egl/  }
 
@@ -437,7 +437,7 @@ type
 type
      EGLImageKHR = pointer;
   { was #define dname def_expr }
-  function EGL_NO_IMAGE_KHR : EGLImageKHR;
+  function EGL_NO_IMAGE_KHR: EGLImageKHR;
 
 (* Const before type ignored *)
 
@@ -924,195 +924,195 @@ type
    *----------------------------------------------------------------------- }
 
   var
-    glActiveTexture : procedure(texture:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glAttachShader : procedure(_program:GLuint; shader:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glActiveTexture: procedure(Texture: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glAttachShader: procedure(_Program: GLuint; Shader: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glBindAttribLocation : procedure(_program:GLuint; index:GLuint; name:pchar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBindBuffer : procedure(target:GLenum; buffer:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBindFramebuffer : procedure(target:GLenum; framebuffer:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBindRenderbuffer : procedure(target:GLenum; renderbuffer:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBindTexture : procedure(target:GLenum; texture:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBlendColor : procedure(red:GLclampf; green:GLclampf; blue:GLclampf; alpha:GLclampf);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBlendEquation : procedure(mode:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBlendEquationSeparate : procedure(modeRGB:GLenum; modeAlpha:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBlendFunc : procedure(sfactor:GLenum; dfactor:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBlendFuncSeparate : procedure(srcRGB:GLenum; dstRGB:GLenum; srcAlpha:GLenum; dstAlpha:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBindAttribLocation: procedure(_Program: GLuint; Index: GLuint; Name: PChar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBindBuffer: procedure(Target: GLenum; Buffer: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBindFramebuffer: procedure(Target: GLenum; FrameBuffer: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBindRenderbuffer: procedure(Target: GLenum; RenderBuffer: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBindTexture: procedure(Target: GLenum; Texture: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBlendColor: procedure(Red: GLclampf; Green: GLclampf; Blue: GLclampf; Alpha: GLclampf);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBlendEquation: procedure(Mode: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBlendEquationSeparate: procedure(ModeRGB: GLenum; ModeAlpha: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBlendFunc: procedure(SFactor: GLenum; DFactor: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBlendFuncSeparate: procedure(SrcRGB: GLenum; DstRGB: GLenum; SrcAlpha: GLenum; DstAlpha: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glBufferData : procedure(target:GLenum; size:GLsizeiptr; data:pointer; usage:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBufferData: procedure(Target: GLenum; Size: GLsizeiptr; Data: pointer; Usage: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glBufferSubData : procedure(target:GLenum; offset:GLintptr; size:GLsizeiptr; data:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glCheckFramebufferStatus : function(target:GLenum):GLenum;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glClear : procedure(mask:GLbitfield);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glClearColor : procedure(red:GLclampf; green:GLclampf; blue:GLclampf; alpha:GLclampf);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glClearDepthf : procedure(depth:GLclampf);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glClearStencil : procedure(s:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glColorMask : procedure(red:GLboolean; green:GLboolean; blue:GLboolean; alpha:GLboolean);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glCompileShader : procedure(shader:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBufferSubData: procedure(Target: GLenum; Offset: GLintptr; Size: GLsizeiptr; Data: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCheckFramebufferStatus: function(Target: GLenum): GLenum;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glClear: procedure(Mask: GLbitfield);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glClearColor: procedure(Red: GLclampf; Green: GLclampf; Blue: GLclampf; Alpha: GLclampf);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glClearDepthf: procedure(Depth: GLclampf);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glClearStencil: procedure(S: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glColorMask: procedure(Red: GLboolean; Green: GLboolean; Blue: GLboolean; Alpha: GLboolean);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCompileShader: procedure(Shader: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glCompressedTexImage2D : procedure(target:GLenum; level:GLint; internalformat:GLenum; width:GLsizei; height:GLsizei;
-      border:GLint; imageSize:GLsizei; data:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCompressedTexImage2D: procedure(Target: GLenum; Level: GLint; InternalFormat: GLenum; Width: GLsizei; Height: GLsizei;
+      Border: GLint; ImageSize: GLsizei; Data: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glCompressedTexSubImage2D : procedure(target:GLenum; level:GLint; xoffset:GLint; yoffset:GLint; width:GLsizei;
-      height:GLsizei; format:GLenum; imageSize:GLsizei; data:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glCopyTexImage2D : procedure(target:GLenum; level:GLint; internalformat:GLenum; x:GLint; y:GLint;
-      width:GLsizei; height:GLsizei; border:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glCopyTexSubImage2D : procedure(target:GLenum; level:GLint; xoffset:GLint; yoffset:GLint; x:GLint;
-      y:GLint; width:GLsizei; height:GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glCreateProgram : function:GLuint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glCreateShader : function(_type:GLenum):GLuint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glCullFace : procedure(mode:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCompressedTexSubImage2D: procedure(Target: GLenum; Level: GLint; XOffset: GLint; YOffset:GLint; Width: GLsizei;
+      Height: GLsizei; Format: GLenum; ImageSize: GLsizei; Data: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCopyTexImage2D: procedure(Target: GLenum; Level: GLint; InternalFormat: GLenum; X: GLint; Y: GLint;
+      Width: GLsizei; Height: GLsizei; Border: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCopyTexSubImage2D: procedure(Target: GLenum; Level: GLint; XOffset: GLint; YOffset:GLint; X: GLint;
+      Y: GLint; Width: GLsizei; Height: GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCreateProgram: function: GLuint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCreateShader: function(_Type: GLenum): GLuint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCullFace: procedure(Mode: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glDeleteBuffers : procedure(n:GLsizei; buffers:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDeleteBuffers: procedure(N: GLsizei; Buffers: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glDeleteFramebuffers : procedure(n:GLsizei; framebuffers:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDeleteProgram : procedure(_program:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDeleteFramebuffers: procedure(N: GLsizei; FrameBuffers: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDeleteProgram: procedure(_Program: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glDeleteRenderbuffers : procedure(n:GLsizei; renderbuffers:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDeleteShader : procedure(shader:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDeleteRenderbuffers: procedure(N: GLsizei; RenderBuffers: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDeleteShader: procedure(Shader: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glDeleteTextures : procedure(n:GLsizei; textures:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDepthFunc : procedure(func:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDepthMask : procedure(flag:GLboolean);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDepthRangef : procedure(zNear:GLclampf; zFar:GLclampf);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDetachShader : procedure(_program:GLuint; shader:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDisable : procedure(cap:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDisableVertexAttribArray : procedure(index:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDrawArrays : procedure(mode:GLenum; first:GLint; count:GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDeleteTextures: procedure(N: GLsizei; Textures: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDepthFunc: procedure(Func: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDepthMask: procedure(Flag: GLboolean);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDepthRangef: procedure(zNear: GLclampf; zFar: GLclampf);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDetachShader: procedure(_Program: GLuint; Shader: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDisable: procedure(Cap: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDisableVertexAttribArray: procedure(Index: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDrawArrays: procedure(Mode: GLenum; First: GLint; Count: GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glDrawElements : procedure(mode:GLenum; count:GLsizei; _type:GLenum; indices:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glEnable : procedure(cap:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glEnableVertexAttribArray : procedure(index:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glFinish : procedure;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glFlush : procedure;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glFramebufferRenderbuffer : procedure(target:GLenum; attachment:GLenum; renderbuffertarget:GLenum; renderbuffer:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glFramebufferTexture2D : procedure(target:GLenum; attachment:GLenum; textarget:GLenum; texture:GLuint; level:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glFrontFace : procedure(mode:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGenBuffers : procedure(n:GLsizei; buffers:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGenerateMipmap : procedure(target:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGenFramebuffers : procedure(n:GLsizei; framebuffers:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGenRenderbuffers : procedure(n:GLsizei; renderbuffers:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGenTextures : procedure(n:GLsizei; textures:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetActiveAttrib : procedure(_program:GLuint; index:GLuint; bufsize:GLsizei; length:pGLsizei; size:pGLint;
-      _type:pGLenum; name:pchar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetActiveUniform : procedure(_program:GLuint; index:GLuint; bufsize:GLsizei; length:pGLsizei; size:pGLint;
-      _type:pGLenum; name:pchar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetAttachedShaders : procedure(_program:GLuint; maxcount:GLsizei; count:pGLsizei; shaders:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDrawElements: procedure(Mode: GLenum; Count: GLsizei; _Type: GLenum; Indices: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glEnable: procedure(Cap: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glEnableVertexAttribArray: procedure(Index: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glFinish: procedure;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glFlush: procedure;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glFramebufferRenderbuffer: procedure(Target: GLenum; Attachment: GLenum; RenderBufferTarget: GLenum; RenderBuffer: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glFramebufferTexture2D: procedure(Target: GLenum; Attachment: GLenum; texTarget: GLenum; Texture: GLuint; Level: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glFrontFace: procedure(Mode: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGenBuffers: procedure(N: GLsizei; Buffers: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGenerateMipmap: procedure(Target: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGenFramebuffers: procedure(N: GLsizei; FrameBuffers: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGenRenderbuffers: procedure(N: GLsizei; RenderBuffers: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGenTextures: procedure(N: GLsizei; Textures: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetActiveAttrib: procedure(_Program: GLuint; Index: GLuint; BufSize: GLsizei; Length: pGLsizei; Size: pGLint;
+      _Type: pGLenum; Name: PChar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetActiveUniform: procedure(_Program: GLuint; Index: GLuint; BufSize: GLsizei; Length: pGLsizei; Size: pGLint;
+      _Type: pGLenum; Name: PChar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetAttachedShaders: procedure(_Program: GLuint; MaxCount: GLsizei; Count: pGLsizei; Shaders: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glGetAttribLocation : function(_program:GLuint; name:pchar):longint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetBooleanv : procedure(pname:GLenum; params:pGLboolean);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetBufferParameteriv : procedure(target:GLenum; pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetError : function:GLenum;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetFloatv : procedure(pname:GLenum; params:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetFramebufferAttachmentParameteriv : procedure(target:GLenum; attachment:GLenum; pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetIntegerv : procedure(pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetProgramiv : procedure(_program:GLuint; pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetProgramInfoLog : procedure(_program:GLuint; bufsize:GLsizei; length:pGLsizei; infolog:pchar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetRenderbufferParameteriv : procedure(target:GLenum; pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetShaderiv : procedure(shader:GLuint; pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetShaderInfoLog : procedure(shader:GLuint; bufsize:GLsizei; length:pGLsizei; infolog:pchar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetShaderPrecisionFormat : procedure(shadertype:GLenum; precisiontype:GLenum; range:pGLint; precision:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetShaderSource : procedure(shader:GLuint; bufsize:GLsizei; length:pGLsizei; source:pchar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetAttribLocation: function(_Program: GLuint; Name: PChar): longint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetBooleanv: procedure(PName: GLenum; Params: pGLboolean);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetBufferParameteriv: procedure(Target: GLenum; PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetError: function: GLenum;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetFloatv: procedure(PName: GLenum; Params: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetFramebufferAttachmentParameteriv: procedure(Target: GLenum; Attachment: GLenum; PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetIntegerv: procedure(PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetProgramiv: procedure(_Program: GLuint; PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetProgramInfoLog: procedure(_Program: GLuint; BufSize: GLsizei; Length: pGLsizei; InfoLog: PChar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetRenderbufferParameteriv: procedure(Target: GLenum; PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetShaderiv: procedure(Shader: GLuint; PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetShaderInfoLog: procedure(Shader: GLuint; BufSize: GLsizei; Length: pGLsizei; InfoLog: PChar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetShaderPrecisionFormat: procedure(ShaderType: GLenum; PrecisionType: GLenum; Range: pGLint; Precision: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetShaderSource: procedure(Shader: GLuint; BufSize: GLsizei; Length: pGLsizei; Source: PChar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glGetString : function(name:GLenum):PGLubyte;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetTexParameterfv : procedure(target:GLenum; pname:GLenum; params:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetTexParameteriv : procedure(target:GLenum; pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetUniformfv : procedure(_program:GLuint; location:GLint; params:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetUniformiv : procedure(_program:GLuint; location:GLint; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetString: function(Name: GLenum): PGLubyte;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetTexParameterfv: procedure(Target: GLenum; PName: GLenum; Params: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetTexParameteriv: procedure(Target: GLenum; PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetUniformfv: procedure(_Program: GLuint; Location: GLint; Params: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetUniformiv: procedure(_Program: GLuint; Location: GLint; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glGetUniformLocation : function(_program:GLuint; name:pchar):longint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetVertexAttribfv : procedure(index:GLuint; pname:GLenum; params:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetVertexAttribiv : procedure(index:GLuint; pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetVertexAttribPointerv : procedure(index:GLuint; pname:GLenum; pointer:Ppointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glHint : procedure(target:GLenum; mode:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glIsBuffer : function(buffer:GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glIsEnabled : function(cap:GLenum):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glIsFramebuffer : function(framebuffer:GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glIsProgram : function(_program:GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glIsRenderbuffer : function(renderbuffer:GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glIsShader : function(shader:GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glIsTexture : function(texture:GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glLineWidth : procedure(width:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glLinkProgram : procedure(_program:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glPixelStorei : procedure(pname:GLenum; param:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glPolygonOffset : procedure(factor:GLfloat; units:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glReadPixels : procedure(x:GLint; y:GLint; width:GLsizei; height:GLsizei; format:GLenum;
-      _type:GLenum; pixels:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glReleaseShaderCompiler : procedure;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glRenderbufferStorage : procedure(target:GLenum; internalformat:GLenum; width:GLsizei; height:GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glSampleCoverage : procedure(value:GLclampf; invert:GLboolean);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glScissor : procedure(x:GLint; y:GLint; width:GLsizei; height:GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-(* Const before type ignored *)
-(* Const before type ignored *)
-    glShaderBinary : procedure(n:GLsizei; shaders:pGLuint; binaryformat:GLenum; binary:pointer; length:GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetUniformLocation: function(_Program: GLuint; Name: PChar): longint;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetVertexAttribfv: procedure(Index: GLuint; PName: GLenum; Params: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetVertexAttribiv: procedure(Index: GLuint; PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetVertexAttribPointerv: procedure(Index: GLuint; PName: GLenum; Pointer: Ppointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glHint: procedure(Target: GLenum; Mode: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glIsBuffer: function(Buffer: GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glIsEnabled: function(Cap: GLenum):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glIsFramebuffer: function(FrameBuffer: GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glIsProgram: function(_Program: GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glIsRenderbuffer: function(RenderBuffer: GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glIsShader: function(Shader: GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glIsTexture: function(Texture: GLuint):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glLineWidth: procedure(Width: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glLinkProgram: procedure(_Program: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glPixelStorei: procedure(PName: GLenum; Param: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glPolygonOffset: procedure(Factor: GLfloat; Units: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glReadPixels: procedure(X: GLint; Y: GLint; Width: GLsizei; Height: GLsizei; Format: GLenum;
+      _Type: GLenum; Pixels: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glReleaseShaderCompiler: procedure;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glRenderbufferStorage: procedure(Target: GLenum; InternalFormat: GLenum; Width: GLsizei; Height: GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glSampleCoverage: procedure(Value: GLclampf; Invert: GLboolean);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glScissor: procedure(X: GLint; Y: GLint; Width: GLsizei; Height: GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
 (* Const before type ignored *)
-    glShaderSource : procedure(shader:GLuint; count:GLsizei; _string:Ppchar; length:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glStencilFunc : procedure(func:GLenum; ref:GLint; mask:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glStencilFuncSeparate : procedure(face:GLenum; func:GLenum; ref:GLint; mask:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glStencilMask : procedure(mask:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glStencilMaskSeparate : procedure(face:GLenum; mask:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glStencilOp : procedure(fail:GLenum; zfail:GLenum; zpass:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glStencilOpSeparate : procedure(face:GLenum; fail:GLenum; zfail:GLenum; zpass:GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glShaderBinary: procedure(N: GLsizei; Shaders: pGLuint; BinaryFormat: GLenum; Binary: pointer; Length: GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glTexImage2D : procedure(target:GLenum; level:GLint; internalformat:GLenum; width:GLsizei; height:GLsizei;
-      border:GLint; format:GLenum; _type:GLenum; pixels:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glTexParameterf : procedure(target:GLenum; pname:GLenum; param:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glTexParameterfv : procedure(target:GLenum; pname:GLenum; params:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glTexParameteri : procedure(target:GLenum; pname:GLenum; param:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glShaderSource: procedure(Shader: GLuint; Count: GLsizei; _String: PPChar; Length: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glStencilFunc: procedure(Func: GLenum; Ref: GLint; Mask: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glStencilFuncSeparate: procedure(Face: GLenum; Func: GLenum; Ref: GLint; Mask: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glStencilMask: procedure(Mask: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glStencilMaskSeparate: procedure(Face: GLenum; Mask: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glStencilOp: procedure(Fail: GLenum; zFail: GLenum; zPass: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glStencilOpSeparate: procedure(Face: GLenum; Fail: GLenum; zFail: GLenum; zPass: GLenum);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glTexParameteriv : procedure(target:GLenum; pname:GLenum; params:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glTexImage2D: procedure(Target: GLenum; Level: GLint; InternalFormat: GLenum; Width: GLsizei; Height: GLsizei;
+      Border: GLint; Format: GLenum; _Type: GLenum; Pixels: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glTexParameterf: procedure(Target: GLenum; PName: GLenum; Param: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glTexSubImage2D : procedure(target:GLenum; level:GLint; xoffset:GLint; yoffset:GLint; width:GLsizei;
-      height:GLsizei; format:GLenum; _type:GLenum; pixels:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUniform1f : procedure(location:GLint; x:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glTexParameterfv: procedure(Target: GLenum; PName: GLenum; Params: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glTexParameteri: procedure(Target: GLenum; PName: GLenum; Param: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniform1fv : procedure(location:GLint; count:GLsizei; v:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUniform1i : procedure(location:GLint; x:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glTexParameteriv: procedure(Target: GLenum; PName: GLenum; Params: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniform1iv : procedure(location:GLint; count:GLsizei; v:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUniform2f : procedure(location:GLint; x:GLfloat; y:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glTexSubImage2D: procedure(Target: GLenum; Level: GLint; XOffset: GLint; YOffset: GLint; Width: GLsizei;
+      Height: GLsizei; Format: GLenum; _Type: GLenum; Pixels: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform1f: procedure(Location: GLint; X: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniform2fv : procedure(location:GLint; count:GLsizei; v:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUniform2i : procedure(location:GLint; x:GLint; y:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform1fv: procedure(Location: GLint; Count: GLsizei; V: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform1i: procedure(Location: GLint; X: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniform2iv : procedure(location:GLint; count:GLsizei; v:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUniform3f : procedure(location:GLint; x:GLfloat; y:GLfloat; z:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform1iv: procedure(Location: GLint; Count: GLsizei; V: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform2f: procedure(Location: GLint; X: GLfloat; Y: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniform3fv : procedure(location:GLint; count:GLsizei; v:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUniform3i : procedure(location:GLint; x:GLint; y:GLint; z:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform2fv: procedure(Location: GLint; Count: GLsizei; V: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform2i: procedure(Location: GLint; X: GLint; Y: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniform3iv : procedure(location:GLint; count:GLsizei; v:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUniform4f : procedure(location:GLint; x:GLfloat; y:GLfloat; z:GLfloat; w:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform2iv: procedure(Location: GLint; Count: GLsizei; V: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform3f: procedure(Location: GLint; X: GLfloat; Y: GLfloat; Z: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniform4fv : procedure(location:GLint; count:GLsizei; v:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUniform4i : procedure(location:GLint; x:GLint; y:GLint; z:GLint; w:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform3fv: procedure(Location: GLint; Count: GLsizei; V: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform3i: procedure(Location: GLint; X: GLint; Y: GLint; Z: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniform4iv : procedure(location:GLint; count:GLsizei; v:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform3iv: procedure(Location: GLint; Count: GLsizei; V: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform4f: procedure(Location: GLint; X: GLfloat; Y: GLfloat; Z: GLfloat; W: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniformMatrix2fv : procedure(location:GLint; count:GLsizei; transpose:GLboolean; value:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform4fv: procedure(Location: GLint; Count: GLsizei; V: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform4i: procedure(Location: GLint; X: GLint; Y: GLint; Z: GLint; W: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniformMatrix3fv : procedure(location:GLint; count:GLsizei; transpose:GLboolean; value:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniform4iv: procedure(Location: GLint; Count: GLsizei; V: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glUniformMatrix4fv : procedure(location:GLint; count:GLsizei; transpose:GLboolean; value:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUseProgram : procedure(_program:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glValidateProgram : procedure(_program:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glVertexAttrib1f : procedure(indx:GLuint; x:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniformMatrix2fv: procedure(Location: GLint; Count: GLsizei; Transpose: GLboolean; Value: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glVertexAttrib1fv : procedure(indx:GLuint; values:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glVertexAttrib2f : procedure(indx:GLuint; x:GLfloat; y:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniformMatrix3fv: procedure(Location: GLint; Count: GLsizei; Transpose: GLboolean; Value: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glVertexAttrib2fv : procedure(indx:GLuint; values:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glVertexAttrib3f : procedure(indx:GLuint; x:GLfloat; y:GLfloat; z:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUniformMatrix4fv: procedure(Location: GLint; Count: GLsizei; Transpose: GLboolean; Value: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUseProgram: procedure(_Program: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glValidateProgram: procedure(_Program: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glVertexAttrib1f: procedure(Indx: GLuint; X: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glVertexAttrib3fv : procedure(indx:GLuint; values:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glVertexAttrib4f : procedure(indx:GLuint; x:GLfloat; y:GLfloat; z:GLfloat; w:GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glVertexAttrib1fv: procedure(Indx: GLuint; Values: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glVertexAttrib2f: procedure(Indx: GLuint; X: GLfloat; Y: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glVertexAttrib4fv : procedure(indx:GLuint; values:pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glVertexAttrib2fv: procedure(Indx: GLuint; Values: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glVertexAttrib3f: procedure(Indx: GLuint; X: GLfloat; Y: GLfloat; Z: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glVertexAttribPointer : procedure(indx:GLuint; size:GLint; _type:GLenum; normalized:GLboolean; stride:GLsizei;
-      ptr:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glViewport : procedure(x:GLint; y:GLint; width:GLsizei; height:GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glVertexAttrib3fv: procedure(Indx: GLuint; Values: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glVertexAttrib4f: procedure(Indx: GLuint; X: GLfloat; Y: GLfloat; Z: GLfloat; W: GLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+(* Const before type ignored *)
+    glVertexAttrib4fv: procedure(Indx: GLuint; Values: pGLfloat);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+(* Const before type ignored *)
+    glVertexAttribPointer: procedure(Indx: GLuint; Size:GLint; _Type: GLenum; Normalized: GLboolean; Stride: GLsizei;
+      Ptr: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glViewport: procedure(X: GLint; Y: GLint; Width: GLsizei; Height: GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
   {------------------------------------------------------------------------*
    * IMG extension tokens
    *------------------------------------------------------------------------ }
@@ -1241,8 +1241,8 @@ type
   { GL_OES_EGL_image  }
 
   var
-    glEGLImageTargetTexture2DOES : procedure(target:GLenum; image:GLeglImageOES);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glEGLImageTargetRenderbufferStorageOES : procedure(target:GLenum; image:GLeglImageOES);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glEGLImageTargetTexture2DOES: procedure(Target: GLenum; image:GLeglImageOES);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glEGLImageTargetRenderbufferStorageOES: procedure(Target: GLenum; image:GLeglImageOES);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 
   { GL_OES_depth24  }
 
@@ -1261,9 +1261,9 @@ type
   { GL_OES_get_program_binary  }
 
   var
-    glGetProgramBinaryOES : procedure(_program:GLuint; bufSize:GLsizei; length:pGLsizei; binaryFormat:pGLenum; binary:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetProgramBinaryOES: procedure(_Program: GLuint; BufSize: GLsizei; Length: pGLsizei; BinaryFormat: pGLenum; Binary: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glProgramBinaryOES : procedure(_program:GLuint; binaryFormat:GLenum; binary:pointer; length:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glProgramBinaryOES: procedure(_Program: GLuint; BinaryFormat: GLenum; Binary: pointer; length:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 
 (* Const before type ignored *)
   { GL_OES_mapbuffer  }
@@ -1272,9 +1272,9 @@ type
      GL_OES_mapbuffer = 1;
 
   var
-    glMapBufferOES : function(target:GLenum; access:GLenum):pointer;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glUnmapBufferOES : function(target:GLenum):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetBufferPointervOES : procedure(target:GLenum; pname:GLenum; params:Ppointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glMapBufferOES: function(Target: GLenum; access: GLenum): pointer;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glUnmapBufferOES: function(Target: GLenum):GLboolean;{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetBufferPointervOES: procedure(Target: GLenum; PName: GLenum; Params: Ppointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 
   type
 
@@ -1296,23 +1296,23 @@ type
 (* Const before type ignored *)
 
   var
-    glTexImage3DOES : procedure(target:GLenum; level:GLint; internalformat:GLenum; width:GLsizei; height:GLsizei;
-      depth:GLsizei; border:GLint; format:GLenum; _type:GLenum; pixels:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glTexImage3DOES: procedure(Target: GLenum; Level: GLint; InternalFormat: GLenum; Width: GLsizei; Height: GLsizei;
+      Depth: GLsizei; Border: GLint; Format: GLenum; _Type: GLenum; Pixels: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glTexSubImage3DOES : procedure(target:GLenum; level:GLint; xoffset:GLint; yoffset:GLint; zoffset:GLint;
-      width:GLsizei; height:GLsizei; depth:GLsizei; format:GLenum; _type:GLenum;
-      pixels:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glCopyTexSubImage3DOES : procedure(target:GLenum; level:GLint; xoffset:GLint; yoffset:GLint; zoffset:GLint;
-      x:GLint; y:GLint; width:GLsizei; height:GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glTexSubImage3DOES: procedure(Target: GLenum; Level: GLint; XOffset: GLint; YOffset:GLint; ZOffset: GLint;
+      Width: GLsizei; Height: GLsizei; Depth: GLsizei; Format: GLenum; _Type: GLenum;
+      Pixels: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCopyTexSubImage3DOES: procedure(Target: GLenum; Level: GLint; XOffset: GLint; YOffset:GLint; ZOffset: GLint;
+      X: GLint; Y: GLint; Width: GLsizei; Height: GLsizei);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glCompressedTexImage3DOES : procedure(target:GLenum; level:GLint; internalformat:GLenum; width:GLsizei; height:GLsizei;
-      depth:GLsizei; border:GLint; imageSize:GLsizei; data:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCompressedTexImage3DOES: procedure(Target: GLenum; Level: GLint; InternalFormat: GLenum; Width: GLsizei; Height: GLsizei;
+      Depth: GLsizei; Border: GLint; ImageSize: GLsizei; Data: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
-    glCompressedTexSubImage3DOES : procedure(target:GLenum; level:GLint; xoffset:GLint; yoffset:GLint; zoffset:GLint;
-      width:GLsizei; height:GLsizei; depth:GLsizei; format:GLenum; imageSize:GLsizei;
-      data:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glFramebufferTexture3DOES : procedure(target:GLenum; attachment:GLenum; textarget:GLenum; texture:GLuint; level:GLint;
-      zoffset:GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glCompressedTexSubImage3DOES: procedure(Target: GLenum; Level: GLint; XOffset: GLint; YOffset: GLint; ZOffset: GLint;
+      Width: GLsizei; Height: GLsizei; Depth: GLsizei; Format: GLenum; ImageSize: GLsizei;
+      Data: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glFramebufferTexture3DOES: procedure(Target: GLenum; Attachment: GLenum; texTarget: GLenum; Texture: GLuint; Level: GLint;
+      ZOffset: GLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 (* Const before type ignored *)
 
 (* Const before type ignored *)
@@ -1347,17 +1347,17 @@ type
      GL_AMD_performance_monitor = 1;
 
   var
-    glGetPerfMonitorGroupsAMD : procedure(numGroups:pGLint; groupsSize:GLsizei; groups:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetPerfMonitorCountersAMD : procedure(group:GLuint; numCounters:pGLint; maxActiveCounters:pGLint; counterSize:GLsizei; counters:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetPerfMonitorGroupStringAMD : procedure(group:GLuint; bufSize:GLsizei; length:pGLsizei; groupString:pchar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetPerfMonitorCounterStringAMD : procedure(group:GLuint; counter:GLuint; bufSize:GLsizei; length:pGLsizei; counterString:pchar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetPerfMonitorCounterInfoAMD : procedure(group:GLuint; counter:GLuint; pname:GLenum; data:pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGenPerfMonitorsAMD : procedure(n:GLsizei; monitors:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glDeletePerfMonitorsAMD : procedure(n:GLsizei; monitors:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glSelectPerfMonitorCountersAMD : procedure(monitor:GLuint; enable:GLboolean; group:GLuint; numCounters:GLint; countersList:pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glBeginPerfMonitorAMD : procedure(monitor:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glEndPerfMonitorAMD : procedure(monitor:GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
-    glGetPerfMonitorCounterDataAMD : procedure(monitor:GLuint; pname:GLenum; dataSize:GLsizei; data:pGLuint; bytesWritten:pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetPerfMonitorGroupsAMD: procedure(NumGroups: pGLint; GroupsSize: GLsizei; Groups: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetPerfMonitorCountersAMD: procedure(Group: GLuint; NumCounters: pGLint; MaxActiveCounters: pGLint; CounterSize: GLsizei; Counters: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetPerfMonitorGroupStringAMD: procedure(Group: GLuint; BufSize: GLsizei; Length: pGLsizei; GroupString: PChar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetPerfMonitorCounterStringAMD: procedure(Group: GLuint; counter: GLuint; BufSize: GLsizei; Length: pGLsizei; CounterString: PChar);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetPerfMonitorCounterInfoAMD: procedure(Group: GLuint; counter: GLuint; PName: GLenum; Data: pointer);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGenPerfMonitorsAMD: procedure(N: GLsizei; Monitors: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glDeletePerfMonitorsAMD: procedure(N: GLsizei; Monitors: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glSelectPerfMonitorCountersAMD: procedure(Monitor: GLuint; Enable: GLboolean; Group: GLuint; NumCounterS: GLint; CountersList: pGLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glBeginPerfMonitorAMD: procedure(Monitor: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glEndPerfMonitorAMD: procedure(Monitor: GLuint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
+    glGetPerfMonitorCounterDataAMD: procedure(Monitor: GLuint; PName: GLenum; DataSize: GLsizei; Data: pGLuint; BytesWritten: pGLint);{$ifdef windows}stdcall;{$else}cdecl;{$endif}
 
   {------------------------------------------------------------------------*
    * EXT extension functions
@@ -1369,108 +1369,108 @@ type
   { GL_EXT_texture_type_2_10_10_10_REV  }
      GL_EXT_texture_type_2_10_10_10_REV = 1;
 
-function glGetProcAddress(ahlib:tlibhandle;ProcName:pchar):pointer;
+function glGetProcAddress(ahlib: TLibhandle; ProcName: PChar): pointer;
 
 procedure GLES20Initialization;
 
 implementation
 
-  function glGetProcAddress(ahlib:tlibhandle;ProcName:pchar):pointer;
+  function glGetProcAddress(ahlib: TLibhandle; ProcName: PChar): pointer;
     begin
-      result:=dynlibs.GetProcAddress(ahlib,ProcName);
+      Result := dynlibs.GetProcAddress(ahlib, ProcName);
 {$ifdef EGL}
-      if assigned(eglGetProcAddress) and not assigned(result) then
-        result:=eglGetProcAddress(ProcName);
+      if Assigned(eglGetProcAddress) and not assigned(Result) then
+        Result := eglGetProcAddress(ProcName);
 {$endif}
     end;
 
 {$ifdef EGL}
   { was #define dname def_expr }
-  function EGL_DEFAULT_DISPLAY : EGLNativeDisplayType;
+  function EGL_DEFAULT_DISPLAY: EGLNativeDisplayType;
       begin
-         EGL_DEFAULT_DISPLAY:=EGLNativeDisplayType(0);
+         EGL_DEFAULT_DISPLAY := EGLNativeDisplayType(0);
       end;
 
   { was #define dname def_expr }
-  function EGL_NO_CONTEXT : EGLContext;
+  function EGL_NO_CONTEXT: EGLContext;
       begin
-         EGL_NO_CONTEXT:=EGLContext(0);
+         EGL_NO_CONTEXT := EGLContext(0);
       end;
 
   { was #define dname def_expr }
-  function EGL_NO_DISPLAY : EGLDisplay;
+  function EGL_NO_DISPLAY: EGLDisplay;
       begin
-         EGL_NO_DISPLAY:=EGLDisplay(0);
+         EGL_NO_DISPLAY := EGLDisplay(0);
       end;
 
   { was #define dname def_expr }
-  function EGL_NO_SURFACE : EGLSurface;
+  function EGL_NO_SURFACE: EGLSurface;
       begin
-         EGL_NO_SURFACE:=EGLSurface(0);
+         EGL_NO_SURFACE := EGLSurface(0);
       end;
 
   { was #define dname def_expr }
-  function EGL_DONT_CARE : EGLint;
+  function EGL_DONT_CARE: EGLint;
       begin
-         EGL_DONT_CARE:=EGLint(-(1));
+         EGL_DONT_CARE := EGLint(-(1));
       end;
 
   { was #define dname def_expr }
-  function EGL_UNKNOWN : EGLint;
+  function EGL_UNKNOWN: EGLint;
       begin
-         EGL_UNKNOWN:=EGLint(-(1));
+         EGL_UNKNOWN := EGLint(-(1));
       end;
 
   { was #define dname def_expr }
-  function EGL_NO_IMAGE_KHR : EGLImageKHR;
+  function EGL_NO_IMAGE_KHR: EGLImageKHR;
       begin
-         EGL_NO_IMAGE_KHR:=EGLImageKHR(0);
+         EGL_NO_IMAGE_KHR := EGLImageKHR(0);
       end;
 
 
   var
-    EGLLib : tlibhandle;
+    EGLLib: TLibhandle;
 
 
   procedure FreeEGL;
     begin
-      if EGLLib<>0 then
+      if EGLLib <> 0 then
         FreeLibrary(EGLLib);
 
-      eglGetError:=nil;
-      eglGetDisplay:=nil;
-      eglInitialize:=nil;
-      eglTerminate:=nil;
-      eglQueryString:=nil;
-      eglGetConfigs:=nil;
-      eglChooseConfig:=nil;
-      eglGetConfigAttrib:=nil;
-      eglCreateWindowSurface:=nil;
-      eglCreatePbufferSurface:=nil;
-      eglCreatePixmapSurface:=nil;
-      eglDestroySurface:=nil;
-      eglQuerySurface:=nil;
-      eglBindAPI:=nil;
-      eglQueryAPI:=nil;
-      eglWaitClient:=nil;
-      eglReleaseThread:=nil;
-      eglCreatePbufferFromClientBuffer:=nil;
-      eglSurfaceAttrib:=nil;
-      eglBindTexImage:=nil;
-      eglReleaseTexImage:=nil;
-      eglSwapInterval:=nil;
-      eglCreateContext:=nil;
-      eglDestroyContext:=nil;
-      eglMakeCurrent:=nil;
-      eglGetCurrentContext:=nil;
-      eglGetCurrentSurface:=nil;
-      eglGetCurrentDisplay:=nil;
-      eglQueryContext:=nil;
-      eglWaitGL:=nil;
-      eglWaitNative:=nil;
-      eglSwapBuffers:=nil;
-      eglCopyBuffers:=nil;
-      eglGetProcAddress:=nil;
+      eglGetError := nil;
+      eglGetDisplay := nil;
+      eglInitialize := nil;
+      eglTerminate := nil;
+      eglQueryString := nil;
+      eglGetConfigs := nil;
+      eglChooseConfig := nil;
+      eglGetConfigAttrib := nil;
+      eglCreateWindowSurface := nil;
+      eglCreatePbufferSurface := nil;
+      eglCreatePixmapSurface := nil;
+      eglDestroySurface := nil;
+      eglQuerySurface := nil;
+      eglBindAPI := nil;
+      eglQueryAPI := nil;
+      eglWaitClient := nil;
+      eglReleaseThread := nil;
+      eglCreatePbufferFromClientBuffer := nil;
+      eglSurfaceAttrib := nil;
+      eglBindTexImage := nil;
+      eglReleaseTexImage := nil;
+      eglSwapInterval := nil;
+      eglCreateContext := nil;
+      eglDestroyContext := nil;
+      eglMakeCurrent := nil;
+      eglGetCurrentContext := nil;
+      eglGetCurrentSurface := nil;
+      eglGetCurrentDisplay := nil;
+      eglQueryContext := nil;
+      eglWaitGL := nil;
+      eglWaitNative := nil;
+      eglSwapBuffers := nil;
+      eglCopyBuffers := nil;
+      eglGetProcAddress := nil;
     end;
 
 
@@ -1478,227 +1478,227 @@ implementation
     begin
       FreeEGL;
 {$ifdef OpenGLES}
-      EGLLib:=dynlibs.LoadLibrary(Lib);
-      if (EGLLib=0) and (AltLibName <> '') then
-        EGLLib:=dynlibs.LoadLibrary(AltLibName);
-      if EGLLib=0 then
+      EGLLib := dynlibs.LoadLibrary(Lib);
+      if (EGLLib = 0) and (AltLibName <> '') then
+        EGLLib := dynlibs.LoadLibrary(AltLibName);
+      if EGLLib = 0 then
         raise Exception.Create(format('Could not load library: %s',[lib]));
 {$else}
       Exit;
 {$endif}
 
-      pointer(eglGetProcAddress):=GetProcAddress(EGLLib,'glGetProcAddress');
+      pointer(eglGetProcAddress) := GetProcAddress(EGLLib, 'glGetProcAddress');
 
-      pointer(eglGetError):=glGetProcAddress(EGLLib,'eglGetError');
-      pointer(eglGetDisplay):=glGetProcAddress(EGLLib,'eglGetDisplay');
-      pointer(eglInitialize):=glGetProcAddress(EGLLib,'eglInitialize');
-      pointer(eglTerminate):=glGetProcAddress(EGLLib,'eglTerminate');
-      pointer(eglQueryString):=glGetProcAddress(EGLLib,'eglQueryString');
-      pointer(eglGetConfigs):=glGetProcAddress(EGLLib,'eglGetConfigs');
-      pointer(eglChooseConfig):=glGetProcAddress(EGLLib,'eglChooseConfig');
-      pointer(eglGetConfigAttrib):=glGetProcAddress(EGLLib,'eglGetConfigAttrib');
-      pointer(eglCreateWindowSurface):=glGetProcAddress(EGLLib,'eglCreateWindowSurface');
-      pointer(eglCreatePbufferSurface):=glGetProcAddress(EGLLib,'eglCreatePbufferSurface');
-      pointer(eglCreatePixmapSurface):=glGetProcAddress(EGLLib,'eglCreatePixmapSurface');
-      pointer(eglDestroySurface):=glGetProcAddress(EGLLib,'eglDestroySurface');
-      pointer(eglQuerySurface):=glGetProcAddress(EGLLib,'eglQuerySurface');
-      pointer(eglBindAPI):=glGetProcAddress(EGLLib,'eglBindAPI');
-      pointer(eglQueryAPI):=glGetProcAddress(EGLLib,'eglQueryAPI');
-      pointer(eglWaitClient):=glGetProcAddress(EGLLib,'eglWaitClient');
-      pointer(eglReleaseThread):=glGetProcAddress(EGLLib,'eglReleaseThread');
-      pointer(eglCreatePbufferFromClientBuffer):=glGetProcAddress(EGLLib,'eglCreatePbufferFromClientBuffer');
-      pointer(eglSurfaceAttrib):=glGetProcAddress(EGLLib,'eglSurfaceAttrib');
-      pointer(eglBindTexImage):=glGetProcAddress(EGLLib,'eglBindTexImage');
-      pointer(eglReleaseTexImage):=glGetProcAddress(EGLLib,'eglReleaseTexImage');
-      pointer(eglSwapInterval):=glGetProcAddress(EGLLib,'eglSwapInterval');
-      pointer(eglCreateContext):=glGetProcAddress(EGLLib,'eglCreateContext');
-      pointer(eglDestroyContext):=glGetProcAddress(EGLLib,'eglDestroyContext');
-      pointer(eglMakeCurrent):=glGetProcAddress(EGLLib,'eglMakeCurrent');
-      pointer(eglGetCurrentContext):=glGetProcAddress(EGLLib,'eglGetCurrentContext');
-      pointer(eglGetCurrentSurface):=glGetProcAddress(EGLLib,'eglGetCurrentSurface');
-      pointer(eglGetCurrentDisplay):=glGetProcAddress(EGLLib,'eglGetCurrentDisplay');
-      pointer(eglQueryContext):=glGetProcAddress(EGLLib,'eglQueryContext');
-      pointer(eglWaitGL):=glGetProcAddress(EGLLib,'eglWaitGL');
-      pointer(eglWaitNative):=glGetProcAddress(EGLLib,'eglWaitNative');
-      pointer(eglSwapBuffers):=glGetProcAddress(EGLLib,'eglSwapBuffers');
-      pointer(eglCopyBuffers):=glGetProcAddress(EGLLib,'eglCopyBuffers');
+      pointer(eglGetError) := glGetProcAddress(EGLLib, 'eglGetError');
+      pointer(eglGetDisplay) := glGetProcAddress(EGLLib, 'eglGetDisplay');
+      pointer(eglInitialize) := glGetProcAddress(EGLLib, 'eglInitialize');
+      pointer(eglTerminate) := glGetProcAddress(EGLLib, 'eglTerminate');
+      pointer(eglQueryString) := glGetProcAddress(EGLLib, 'eglQueryString');
+      pointer(eglGetConfigs) := glGetProcAddress(EGLLib, 'eglGetConfigs');
+      pointer(eglChooseConfig) := glGetProcAddress(EGLLib, 'eglChooseConfig');
+      pointer(eglGetConfigAttrib) := glGetProcAddress(EGLLib, 'eglGetConfigAttrib');
+      pointer(eglCreateWindowSurface) := glGetProcAddress(EGLLib, 'eglCreateWindowSurface');
+      pointer(eglCreatePbufferSurface) := glGetProcAddress(EGLLib, 'eglCreatePbufferSurface');
+      pointer(eglCreatePixmapSurface) := glGetProcAddress(EGLLib, 'eglCreatePixmapSurface');
+      pointer(eglDestroySurface) := glGetProcAddress(EGLLib, 'eglDestroySurface');
+      pointer(eglQuerySurface) := glGetProcAddress(EGLLib, 'eglQuerySurface');
+      pointer(eglBindAPI) := glGetProcAddress(EGLLib, 'eglBindAPI');
+      pointer(eglQueryAPI) := glGetProcAddress(EGLLib, 'eglQueryAPI');
+      pointer(eglWaitClient) := glGetProcAddress(EGLLib, 'eglWaitClient');
+      pointer(eglReleaseThread) := glGetProcAddress(EGLLib, 'eglReleaseThread');
+      pointer(eglCreatePbufferFromClientBuffer) := glGetProcAddress(EGLLib, 'eglCreatePbufferFromClientBuffer');
+      pointer(eglSurfaceAttrib) := glGetProcAddress(EGLLib, 'eglSurfaceAttrib');
+      pointer(eglBindTexImage) := glGetProcAddress(EGLLib, 'eglBindTexImage');
+      pointer(eglReleaseTexImage) := glGetProcAddress(EGLLib, 'eglReleaseTexImage');
+      pointer(eglSwapInterval) := glGetProcAddress(EGLLib, 'eglSwapInterval');
+      pointer(eglCreateContext) := glGetProcAddress(EGLLib, 'eglCreateContext');
+      pointer(eglDestroyContext) := glGetProcAddress(EGLLib, 'eglDestroyContext');
+      pointer(eglMakeCurrent) := glGetProcAddress(EGLLib, 'eglMakeCurrent');
+      pointer(eglGetCurrentContext) := glGetProcAddress(EGLLib, 'eglGetCurrentContext');
+      pointer(eglGetCurrentSurface) := glGetProcAddress(EGLLib, 'eglGetCurrentSurface');
+      pointer(eglGetCurrentDisplay) := glGetProcAddress(EGLLib, 'eglGetCurrentDisplay');
+      pointer(eglQueryContext) := glGetProcAddress(EGLLib, 'eglQueryContext');
+      pointer(eglWaitGL) := glGetProcAddress(EGLLib, 'eglWaitGL');
+      pointer(eglWaitNative) := glGetProcAddress(EGLLib, 'eglWaitNative');
+      pointer(eglSwapBuffers) := glGetProcAddress(EGLLib, 'eglSwapBuffers');
+      pointer(eglCopyBuffers) := glGetProcAddress(EGLLib, 'eglCopyBuffers');
     end;
 {$endif EGL}
 
   var
-    GLESv2Lib : tlibhandle;
+    GLESv2Lib: TLibhandle;
 
   procedure FreeGLESv2;
     begin
-      if GLESv2Lib<>0 then
+      if GLESv2Lib <> 0 then
         FreeLibrary(GLESv2Lib);
 
-      glActiveTexture:=nil;
-      glAttachShader:=nil;
-      glBindAttribLocation:=nil;
-      glBindBuffer:=nil;
-      glBindFramebuffer:=nil;
-      glBindRenderbuffer:=nil;
-      glBindTexture:=nil;
-      glBlendColor:=nil;
-      glBlendEquation:=nil;
-      glBlendEquationSeparate:=nil;
-      glBlendFunc:=nil;
-      glBlendFuncSeparate:=nil;
-      glBufferData:=nil;
-      glBufferSubData:=nil;
-      glCheckFramebufferStatus:=nil;
-      glClear:=nil;
-      glClearColor:=nil;
-      glClearDepthf:=nil;
-      glClearStencil:=nil;
-      glColorMask:=nil;
-      glCompileShader:=nil;
-      glCompressedTexImage2D:=nil;
-      glCompressedTexSubImage2D:=nil;
-      glCopyTexImage2D:=nil;
-      glCopyTexSubImage2D:=nil;
-      glCreateProgram:=nil;
-      glCreateShader:=nil;
-      glCullFace:=nil;
-      glDeleteBuffers:=nil;
-      glDeleteFramebuffers:=nil;
-      glDeleteProgram:=nil;
-      glDeleteRenderbuffers:=nil;
-      glDeleteShader:=nil;
-      glDeleteTextures:=nil;
-      glDepthFunc:=nil;
-      glDepthMask:=nil;
-      glDepthRangef:=nil;
-      glDetachShader:=nil;
-      glDisable:=nil;
-      glDisableVertexAttribArray:=nil;
-      glDrawArrays:=nil;
-      glDrawElements:=nil;
-      glEnable:=nil;
-      glEnableVertexAttribArray:=nil;
-      glFinish:=nil;
-      glFlush:=nil;
-      glFramebufferRenderbuffer:=nil;
-      glFramebufferTexture2D:=nil;
-      glFrontFace:=nil;
-      glGenBuffers:=nil;
-      glGenerateMipmap:=nil;
-      glGenFramebuffers:=nil;
-      glGenRenderbuffers:=nil;
-      glGenTextures:=nil;
-      glGetActiveAttrib:=nil;
-      glGetActiveUniform:=nil;
-      glGetAttachedShaders:=nil;
-      glGetAttribLocation:=nil;
-      glGetBooleanv:=nil;
-      glGetBufferParameteriv:=nil;
-      glGetError:=nil;
-      glGetFloatv:=nil;
-      glGetFramebufferAttachmentParameteriv:=nil;
-      glGetIntegerv:=nil;
-      glGetProgramiv:=nil;
-      glGetProgramInfoLog:=nil;
-      glGetRenderbufferParameteriv:=nil;
-      glGetShaderiv:=nil;
-      glGetShaderInfoLog:=nil;
-      glGetShaderPrecisionFormat:=nil;
-      glGetShaderSource:=nil;
-      glGetString:=nil;
-      glGetTexParameterfv:=nil;
-      glGetTexParameteriv:=nil;
-      glGetUniformfv:=nil;
-      glGetUniformiv:=nil;
-      glGetUniformLocation:=nil;
-      glGetVertexAttribfv:=nil;
-      glGetVertexAttribiv:=nil;
-      glGetVertexAttribPointerv:=nil;
-      glHint:=nil;
-      glIsBuffer:=nil;
-      glIsEnabled:=nil;
-      glIsFramebuffer:=nil;
-      glIsProgram:=nil;
-      glIsRenderbuffer:=nil;
-      glIsShader:=nil;
-      glIsTexture:=nil;
-      glLineWidth:=nil;
-      glLinkProgram:=nil;
-      glPixelStorei:=nil;
-      glPolygonOffset:=nil;
-      glReadPixels:=nil;
-      glReleaseShaderCompiler:=nil;
-      glRenderbufferStorage:=nil;
-      glSampleCoverage:=nil;
-      glScissor:=nil;
-      glShaderBinary:=nil;
-      glShaderSource:=nil;
-      glStencilFunc:=nil;
-      glStencilFuncSeparate:=nil;
-      glStencilMask:=nil;
-      glStencilMaskSeparate:=nil;
-      glStencilOp:=nil;
-      glStencilOpSeparate:=nil;
-      glTexImage2D:=nil;
-      glTexParameterf:=nil;
-      glTexParameterfv:=nil;
-      glTexParameteri:=nil;
-      glTexParameteriv:=nil;
-      glTexSubImage2D:=nil;
-      glUniform1f:=nil;
-      glUniform1fv:=nil;
-      glUniform1i:=nil;
-      glUniform1iv:=nil;
-      glUniform2f:=nil;
-      glUniform2fv:=nil;
-      glUniform2i:=nil;
-      glUniform2iv:=nil;
-      glUniform3f:=nil;
-      glUniform3fv:=nil;
-      glUniform3i:=nil;
-      glUniform3iv:=nil;
-      glUniform4f:=nil;
-      glUniform4fv:=nil;
-      glUniform4i:=nil;
-      glUniform4iv:=nil;
-      glUniformMatrix2fv:=nil;
-      glUniformMatrix3fv:=nil;
-      glUniformMatrix4fv:=nil;
-      glUseProgram:=nil;
-      glValidateProgram:=nil;
-      glVertexAttrib1f:=nil;
-      glVertexAttrib1fv:=nil;
-      glVertexAttrib2f:=nil;
-      glVertexAttrib2fv:=nil;
-      glVertexAttrib3f:=nil;
-      glVertexAttrib3fv:=nil;
-      glVertexAttrib4f:=nil;
-      glVertexAttrib4fv:=nil;
-      glVertexAttribPointer:=nil;
-      glViewport:=nil;
-      glEGLImageTargetTexture2DOES:=nil;
-      glEGLImageTargetRenderbufferStorageOES:=nil;
-      glGetProgramBinaryOES:=nil;
-      glProgramBinaryOES:=nil;
-      glMapBufferOES:=nil;
-      glUnmapBufferOES:=nil;
-      glGetBufferPointervOES:=nil;
-      glTexImage3DOES:=nil;
-      glTexSubImage3DOES:=nil;
-      glCopyTexSubImage3DOES:=nil;
-      glCompressedTexImage3DOES:=nil;
-      glCompressedTexSubImage3DOES:=nil;
-      glFramebufferTexture3DOES:=nil;
-      glGetPerfMonitorGroupsAMD:=nil;
-      glGetPerfMonitorCountersAMD:=nil;
-      glGetPerfMonitorGroupStringAMD:=nil;
-      glGetPerfMonitorCounterStringAMD:=nil;
-      glGetPerfMonitorCounterInfoAMD:=nil;
-      glGenPerfMonitorsAMD:=nil;
-      glDeletePerfMonitorsAMD:=nil;
-      glSelectPerfMonitorCountersAMD:=nil;
-      glBeginPerfMonitorAMD:=nil;
-      glEndPerfMonitorAMD:=nil;
-      glGetPerfMonitorCounterDataAMD:=nil;
+      glActiveTexture := nil;
+      glAttachShader := nil;
+      glBindAttribLocation := nil;
+      glBindBuffer := nil;
+      glBindFramebuffer := nil;
+      glBindRenderbuffer := nil;
+      glBindTexture := nil;
+      glBlendColor := nil;
+      glBlendEquation := nil;
+      glBlendEquationSeparate := nil;
+      glBlendFunc := nil;
+      glBlendFuncSeparate := nil;
+      glBufferData := nil;
+      glBufferSubData := nil;
+      glCheckFramebufferStatus := nil;
+      glClear := nil;
+      glClearColor := nil;
+      glClearDepthf := nil;
+      glClearStencil := nil;
+      glColorMask := nil;
+      glCompileShader := nil;
+      glCompressedTexImage2D := nil;
+      glCompressedTexSubImage2D := nil;
+      glCopyTexImage2D := nil;
+      glCopyTexSubImage2D := nil;
+      glCreateProgram := nil;
+      glCreateShader := nil;
+      glCullFace := nil;
+      glDeleteBuffers := nil;
+      glDeleteFramebuffers := nil;
+      glDeleteProgram := nil;
+      glDeleteRenderbuffers := nil;
+      glDeleteShader := nil;
+      glDeleteTextures := nil;
+      glDepthFunc := nil;
+      glDepthMask := nil;
+      glDepthRangef := nil;
+      glDetachShader := nil;
+      glDisable := nil;
+      glDisableVertexAttribArray := nil;
+      glDrawArrays := nil;
+      glDrawElements := nil;
+      glEnable := nil;
+      glEnableVertexAttribArray := nil;
+      glFinish := nil;
+      glFlush := nil;
+      glFramebufferRenderbuffer := nil;
+      glFramebufferTexture2D := nil;
+      glFrontFace := nil;
+      glGenBuffers := nil;
+      glGenerateMipmap := nil;
+      glGenFramebuffers := nil;
+      glGenRenderbuffers := nil;
+      glGenTextures := nil;
+      glGetActiveAttrib := nil;
+      glGetActiveUniform := nil;
+      glGetAttachedShaders := nil;
+      glGetAttribLocation := nil;
+      glGetBooleanv := nil;
+      glGetBufferParameteriv := nil;
+      glGetError := nil;
+      glGetFloatv := nil;
+      glGetFramebufferAttachmentParameteriv := nil;
+      glGetIntegerv := nil;
+      glGetProgramiv := nil;
+      glGetProgramInfoLog := nil;
+      glGetRenderbufferParameteriv := nil;
+      glGetShaderiv := nil;
+      glGetShaderInfoLog := nil;
+      glGetShaderPrecisionFormat := nil;
+      glGetShaderSource := nil;
+      glGetString := nil;
+      glGetTexParameterfv := nil;
+      glGetTexParameteriv := nil;
+      glGetUniformfv := nil;
+      glGetUniformiv := nil;
+      glGetUniformLocation := nil;
+      glGetVertexAttribfv := nil;
+      glGetVertexAttribiv := nil;
+      glGetVertexAttribPointerv := nil;
+      glHint := nil;
+      glIsBuffer := nil;
+      glIsEnabled := nil;
+      glIsFramebuffer := nil;
+      glIsProgram := nil;
+      glIsRenderbuffer := nil;
+      glIsShader := nil;
+      glIsTexture := nil;
+      glLineWidth := nil;
+      glLinkProgram := nil;
+      glPixelStorei := nil;
+      glPolygonOffset := nil;
+      glReadPixels := nil;
+      glReleaseShaderCompiler := nil;
+      glRenderbufferStorage := nil;
+      glSampleCoverage := nil;
+      glScissor := nil;
+      glShaderBinary := nil;
+      glShaderSource := nil;
+      glStencilFunc := nil;
+      glStencilFuncSeparate := nil;
+      glStencilMask := nil;
+      glStencilMaskSeparate := nil;
+      glStencilOp := nil;
+      glStencilOpSeparate := nil;
+      glTexImage2D := nil;
+      glTexParameterf := nil;
+      glTexParameterfv := nil;
+      glTexParameteri := nil;
+      glTexParameteriv := nil;
+      glTexSubImage2D := nil;
+      glUniform1f := nil;
+      glUniform1fv := nil;
+      glUniform1i := nil;
+      glUniform1iv := nil;
+      glUniform2f := nil;
+      glUniform2fv := nil;
+      glUniform2i := nil;
+      glUniform2iv := nil;
+      glUniform3f := nil;
+      glUniform3fv := nil;
+      glUniform3i := nil;
+      glUniform3iv := nil;
+      glUniform4f := nil;
+      glUniform4fv := nil;
+      glUniform4i := nil;
+      glUniform4iv := nil;
+      glUniformMatrix2fv := nil;
+      glUniformMatrix3fv := nil;
+      glUniformMatrix4fv := nil;
+      glUseProgram := nil;
+      glValidateProgram := nil;
+      glVertexAttrib1f := nil;
+      glVertexAttrib1fv := nil;
+      glVertexAttrib2f := nil;
+      glVertexAttrib2fv := nil;
+      glVertexAttrib3f := nil;
+      glVertexAttrib3fv := nil;
+      glVertexAttrib4f := nil;
+      glVertexAttrib4fv := nil;
+      glVertexAttribPointer := nil;
+      glViewport := nil;
+      glEGLImageTargetTexture2DOES := nil;
+      glEGLImageTargetRenderbufferStorageOES := nil;
+      glGetProgramBinaryOES := nil;
+      glProgramBinaryOES := nil;
+      glMapBufferOES := nil;
+      glUnmapBufferOES := nil;
+      glGetBufferPointervOES := nil;
+      glTexImage3DOES := nil;
+      glTexSubImage3DOES := nil;
+      glCopyTexSubImage3DOES := nil;
+      glCompressedTexImage3DOES := nil;
+      glCompressedTexSubImage3DOES := nil;
+      glFramebufferTexture3DOES := nil;
+      glGetPerfMonitorGroupsAMD := nil;
+      glGetPerfMonitorCountersAMD := nil;
+      glGetPerfMonitorGroupStringAMD := nil;
+      glGetPerfMonitorCounterStringAMD := nil;
+      glGetPerfMonitorCounterInfoAMD := nil;
+      glGenPerfMonitorsAMD := nil;
+      glDeletePerfMonitorsAMD := nil;
+      glSelectPerfMonitorCountersAMD := nil;
+      glBeginPerfMonitorAMD := nil;
+      glEndPerfMonitorAMD := nil;
+      glGetPerfMonitorCounterDataAMD := nil;
     end;
 
 
@@ -1706,181 +1706,181 @@ implementation
     begin
       FreeGLESv2;
 {$ifdef OpenGLES}
-      GLESv2Lib:=dynlibs.LoadLibrary(Lib);
-      if (GLESv2Lib=0) and (AltLibName <> '') then
-        GLESv2Lib:=dynlibs.LoadLibrary(AltLibName);
-      if GLESv2Lib=0 then
-        raise Exception.Create(format('Could not load library: %s',[Lib]));
+      GLESv2Lib := dynlibs.LoadLibrary(Lib);
+      if (GLESv2Lib = 0) and (AltLibName <> '') then
+        GLESv2Lib := dynlibs.LoadLibrary(AltLibName);
+      if GLESv2Lib = 0 then
+        raise Exception.Create(Format('Could not load library: %s',[Lib]));
 {$else}
       Exit;
 {$endif}
 
-      pointer(glActiveTexture):=glGetProcAddress(GLESv2Lib,'glActiveTexture');
-      pointer(glAttachShader):=glGetProcAddress(GLESv2Lib,'glAttachShader');
-      pointer(glBindAttribLocation):=glGetProcAddress(GLESv2Lib,'glBindAttribLocation');
-      pointer(glBindBuffer):=glGetProcAddress(GLESv2Lib,'glBindBuffer');
-      pointer(glBindFramebuffer):=glGetProcAddress(GLESv2Lib,'glBindFramebuffer');
-      pointer(glBindRenderbuffer):=glGetProcAddress(GLESv2Lib,'glBindRenderbuffer');
-      pointer(glBindTexture):=glGetProcAddress(GLESv2Lib,'glBindTexture');
-      pointer(glBlendColor):=glGetProcAddress(GLESv2Lib,'glBlendColor');
-      pointer(glBlendEquation):=glGetProcAddress(GLESv2Lib,'glBlendEquation');
-      pointer(glBlendEquationSeparate):=glGetProcAddress(GLESv2Lib,'glBlendEquationSeparate');
-      pointer(glBlendFunc):=glGetProcAddress(GLESv2Lib,'glBlendFunc');
-      pointer(glBlendFuncSeparate):=glGetProcAddress(GLESv2Lib,'glBlendFuncSeparate');
-      pointer(glBufferData):=glGetProcAddress(GLESv2Lib,'glBufferData');
-      pointer(glBufferSubData):=glGetProcAddress(GLESv2Lib,'glBufferSubData');
-      pointer(glCheckFramebufferStatus):=glGetProcAddress(GLESv2Lib,'glCheckFramebufferStatus');
-      pointer(glClear):=glGetProcAddress(GLESv2Lib,'glClear');
-      pointer(glClearColor):=glGetProcAddress(GLESv2Lib,'glClearColor');
-      pointer(glClearDepthf):=glGetProcAddress(GLESv2Lib,'glClearDepthf');
-      pointer(glClearStencil):=glGetProcAddress(GLESv2Lib,'glClearStencil');
-      pointer(glColorMask):=glGetProcAddress(GLESv2Lib,'glColorMask');
-      pointer(glCompileShader):=glGetProcAddress(GLESv2Lib,'glCompileShader');
-      pointer(glCompressedTexImage2D):=glGetProcAddress(GLESv2Lib,'glCompressedTexImage2D');
-      pointer(glCompressedTexSubImage2D):=glGetProcAddress(GLESv2Lib,'glCompressedTexSubImage2D');
-      pointer(glCopyTexImage2D):=glGetProcAddress(GLESv2Lib,'glCopyTexImage2D');
-      pointer(glCopyTexSubImage2D):=glGetProcAddress(GLESv2Lib,'glCopyTexSubImage2D');
-      pointer(glCreateProgram):=glGetProcAddress(GLESv2Lib,'glCreateProgram');
-      pointer(glCreateShader):=glGetProcAddress(GLESv2Lib,'glCreateShader');
-      pointer(glCullFace):=glGetProcAddress(GLESv2Lib,'glCullFace');
-      pointer(glDeleteBuffers):=glGetProcAddress(GLESv2Lib,'glDeleteBuffers');
-      pointer(glDeleteFramebuffers):=glGetProcAddress(GLESv2Lib,'glDeleteFramebuffers');
-      pointer(glDeleteProgram):=glGetProcAddress(GLESv2Lib,'glDeleteProgram');
-      pointer(glDeleteRenderbuffers):=glGetProcAddress(GLESv2Lib,'glDeleteRenderbuffers');
-      pointer(glDeleteShader):=glGetProcAddress(GLESv2Lib,'glDeleteShader');
-      pointer(glDeleteTextures):=glGetProcAddress(GLESv2Lib,'glDeleteTextures');
-      pointer(glDepthFunc):=glGetProcAddress(GLESv2Lib,'glDepthFunc');
-      pointer(glDepthMask):=glGetProcAddress(GLESv2Lib,'glDepthMask');
-      pointer(glDepthRangef):=glGetProcAddress(GLESv2Lib,'glDepthRangef');
-      pointer(glDetachShader):=glGetProcAddress(GLESv2Lib,'glDetachShader');
-      pointer(glDisable):=glGetProcAddress(GLESv2Lib,'glDisable');
-      pointer(glDisableVertexAttribArray):=glGetProcAddress(GLESv2Lib,'glDisableVertexAttribArray');
-      pointer(glDrawArrays):=glGetProcAddress(GLESv2Lib,'glDrawArrays');
-      pointer(glDrawElements):=glGetProcAddress(GLESv2Lib,'glDrawElements');
-      pointer(glEnable):=glGetProcAddress(GLESv2Lib,'glEnable');
-      pointer(glEnableVertexAttribArray):=glGetProcAddress(GLESv2Lib,'glEnableVertexAttribArray');
-      pointer(glFinish):=glGetProcAddress(GLESv2Lib,'glFinish');
-      pointer(glFlush):=glGetProcAddress(GLESv2Lib,'glFlush');
-      pointer(glFramebufferRenderbuffer):=glGetProcAddress(GLESv2Lib,'glFramebufferRenderbuffer');
-      pointer(glFramebufferTexture2D):=glGetProcAddress(GLESv2Lib,'glFramebufferTexture2D');
-      pointer(glFrontFace):=glGetProcAddress(GLESv2Lib,'glFrontFace');
-      pointer(glGenBuffers):=glGetProcAddress(GLESv2Lib,'glGenBuffers');
-      pointer(glGenerateMipmap):=glGetProcAddress(GLESv2Lib,'glGenerateMipmap');
-      pointer(glGenFramebuffers):=glGetProcAddress(GLESv2Lib,'glGenFramebuffers');
-      pointer(glGenRenderbuffers):=glGetProcAddress(GLESv2Lib,'glGenRenderbuffers');
-      pointer(glGenTextures):=glGetProcAddress(GLESv2Lib,'glGenTextures');
-      pointer(glGetActiveAttrib):=glGetProcAddress(GLESv2Lib,'glGetActiveAttrib');
-      pointer(glGetActiveUniform):=glGetProcAddress(GLESv2Lib,'glGetActiveUniform');
-      pointer(glGetAttachedShaders):=glGetProcAddress(GLESv2Lib,'glGetAttachedShaders');
-      pointer(glGetAttribLocation):=glGetProcAddress(GLESv2Lib,'glGetAttribLocation');
-      pointer(glGetBooleanv):=glGetProcAddress(GLESv2Lib,'glGetBooleanv');
-      pointer(glGetBufferParameteriv):=glGetProcAddress(GLESv2Lib,'glGetBufferParameteriv');
-      pointer(glGetError):=glGetProcAddress(GLESv2Lib,'glGetError');
-      pointer(glGetFloatv):=glGetProcAddress(GLESv2Lib,'glGetFloatv');
-      pointer(glGetFramebufferAttachmentParameteriv):=glGetProcAddress(GLESv2Lib,'glGetFramebufferAttachmentParameteriv');
-      pointer(glGetIntegerv):=glGetProcAddress(GLESv2Lib,'glGetIntegerv');
-      pointer(glGetProgramiv):=glGetProcAddress(GLESv2Lib,'glGetProgramiv');
-      pointer(glGetProgramInfoLog):=glGetProcAddress(GLESv2Lib,'glGetProgramInfoLog');
-      pointer(glGetRenderbufferParameteriv):=glGetProcAddress(GLESv2Lib,'glGetRenderbufferParameteriv');
-      pointer(glGetShaderiv):=glGetProcAddress(GLESv2Lib,'glGetShaderiv');
-      pointer(glGetShaderInfoLog):=glGetProcAddress(GLESv2Lib,'glGetShaderInfoLog');
-      pointer(glGetShaderPrecisionFormat):=glGetProcAddress(GLESv2Lib,'glGetShaderPrecisionFormat');
-      pointer(glGetShaderSource):=glGetProcAddress(GLESv2Lib,'glGetShaderSource');
-      pointer(glGetString):=glGetProcAddress(GLESv2Lib,'glGetString');
-      pointer(glGetTexParameterfv):=glGetProcAddress(GLESv2Lib,'glGetTexParameterfv');
-      pointer(glGetTexParameteriv):=glGetProcAddress(GLESv2Lib,'glGetTexParameteriv');
-      pointer(glGetUniformfv):=glGetProcAddress(GLESv2Lib,'glGetUniformfv');
-      pointer(glGetUniformiv):=glGetProcAddress(GLESv2Lib,'glGetUniformiv');
-      pointer(glGetUniformLocation):=glGetProcAddress(GLESv2Lib,'glGetUniformLocation');
-      pointer(glGetVertexAttribfv):=glGetProcAddress(GLESv2Lib,'glGetVertexAttribfv');
-      pointer(glGetVertexAttribiv):=glGetProcAddress(GLESv2Lib,'glGetVertexAttribiv');
-      pointer(glGetVertexAttribPointerv):=glGetProcAddress(GLESv2Lib,'glGetVertexAttribPointerv');
-      pointer(glHint):=glGetProcAddress(GLESv2Lib,'glHint');
-      pointer(glIsBuffer):=glGetProcAddress(GLESv2Lib,'glIsBuffer');
-      pointer(glIsEnabled):=glGetProcAddress(GLESv2Lib,'glIsEnabled');
-      pointer(glIsFramebuffer):=glGetProcAddress(GLESv2Lib,'glIsFramebuffer');
-      pointer(glIsProgram):=glGetProcAddress(GLESv2Lib,'glIsProgram');
-      pointer(glIsRenderbuffer):=glGetProcAddress(GLESv2Lib,'glIsRenderbuffer');
-      pointer(glIsShader):=glGetProcAddress(GLESv2Lib,'glIsShader');
-      pointer(glIsTexture):=glGetProcAddress(GLESv2Lib,'glIsTexture');
-      pointer(glLineWidth):=glGetProcAddress(GLESv2Lib,'glLineWidth');
-      pointer(glLinkProgram):=glGetProcAddress(GLESv2Lib,'glLinkProgram');
-      pointer(glPixelStorei):=glGetProcAddress(GLESv2Lib,'glPixelStorei');
-      pointer(glPolygonOffset):=glGetProcAddress(GLESv2Lib,'glPolygonOffset');
-      pointer(glReadPixels):=glGetProcAddress(GLESv2Lib,'glReadPixels');
-      pointer(glReleaseShaderCompiler):=glGetProcAddress(GLESv2Lib,'glReleaseShaderCompiler');
-      pointer(glRenderbufferStorage):=glGetProcAddress(GLESv2Lib,'glRenderbufferStorage');
-      pointer(glSampleCoverage):=glGetProcAddress(GLESv2Lib,'glSampleCoverage');
-      pointer(glScissor):=glGetProcAddress(GLESv2Lib,'glScissor');
-      pointer(glShaderBinary):=glGetProcAddress(GLESv2Lib,'glShaderBinary');
-      pointer(glShaderSource):=glGetProcAddress(GLESv2Lib,'glShaderSource');
-      pointer(glStencilFunc):=glGetProcAddress(GLESv2Lib,'glStencilFunc');
-      pointer(glStencilFuncSeparate):=glGetProcAddress(GLESv2Lib,'glStencilFuncSeparate');
-      pointer(glStencilMask):=glGetProcAddress(GLESv2Lib,'glStencilMask');
-      pointer(glStencilMaskSeparate):=glGetProcAddress(GLESv2Lib,'glStencilMaskSeparate');
-      pointer(glStencilOp):=glGetProcAddress(GLESv2Lib,'glStencilOp');
-      pointer(glStencilOpSeparate):=glGetProcAddress(GLESv2Lib,'glStencilOpSeparate');
-      pointer(glTexImage2D):=glGetProcAddress(GLESv2Lib,'glTexImage2D');
-      pointer(glTexParameterf):=glGetProcAddress(GLESv2Lib,'glTexParameterf');
-      pointer(glTexParameterfv):=glGetProcAddress(GLESv2Lib,'glTexParameterfv');
-      pointer(glTexParameteri):=glGetProcAddress(GLESv2Lib,'glTexParameteri');
-      pointer(glTexParameteriv):=glGetProcAddress(GLESv2Lib,'glTexParameteriv');
-      pointer(glTexSubImage2D):=glGetProcAddress(GLESv2Lib,'glTexSubImage2D');
-      pointer(glUniform1f):=glGetProcAddress(GLESv2Lib,'glUniform1f');
-      pointer(glUniform1fv):=glGetProcAddress(GLESv2Lib,'glUniform1fv');
-      pointer(glUniform1i):=glGetProcAddress(GLESv2Lib,'glUniform1i');
-      pointer(glUniform1iv):=glGetProcAddress(GLESv2Lib,'glUniform1iv');
-      pointer(glUniform2f):=glGetProcAddress(GLESv2Lib,'glUniform2f');
-      pointer(glUniform2fv):=glGetProcAddress(GLESv2Lib,'glUniform2fv');
-      pointer(glUniform2i):=glGetProcAddress(GLESv2Lib,'glUniform2i');
-      pointer(glUniform2iv):=glGetProcAddress(GLESv2Lib,'glUniform2iv');
-      pointer(glUniform3f):=glGetProcAddress(GLESv2Lib,'glUniform3f');
-      pointer(glUniform3fv):=glGetProcAddress(GLESv2Lib,'glUniform3fv');
-      pointer(glUniform3i):=glGetProcAddress(GLESv2Lib,'glUniform3i');
-      pointer(glUniform3iv):=glGetProcAddress(GLESv2Lib,'glUniform3iv');
-      pointer(glUniform4f):=glGetProcAddress(GLESv2Lib,'glUniform4f');
-      pointer(glUniform4fv):=glGetProcAddress(GLESv2Lib,'glUniform4fv');
-      pointer(glUniform4i):=glGetProcAddress(GLESv2Lib,'glUniform4i');
-      pointer(glUniform4iv):=glGetProcAddress(GLESv2Lib,'glUniform4iv');
-      pointer(glUniformMatrix2fv):=glGetProcAddress(GLESv2Lib,'glUniformMatrix2fv');
-      pointer(glUniformMatrix3fv):=glGetProcAddress(GLESv2Lib,'glUniformMatrix3fv');
-      pointer(glUniformMatrix4fv):=glGetProcAddress(GLESv2Lib,'glUniformMatrix4fv');
-      pointer(glUseProgram):=glGetProcAddress(GLESv2Lib,'glUseProgram');
-      pointer(glValidateProgram):=glGetProcAddress(GLESv2Lib,'glValidateProgram');
-      pointer(glVertexAttrib1f):=glGetProcAddress(GLESv2Lib,'glVertexAttrib1f');
-      pointer(glVertexAttrib1fv):=glGetProcAddress(GLESv2Lib,'glVertexAttrib1fv');
-      pointer(glVertexAttrib2f):=glGetProcAddress(GLESv2Lib,'glVertexAttrib2f');
-      pointer(glVertexAttrib2fv):=glGetProcAddress(GLESv2Lib,'glVertexAttrib2fv');
-      pointer(glVertexAttrib3f):=glGetProcAddress(GLESv2Lib,'glVertexAttrib3f');
-      pointer(glVertexAttrib3fv):=glGetProcAddress(GLESv2Lib,'glVertexAttrib3fv');
-      pointer(glVertexAttrib4f):=glGetProcAddress(GLESv2Lib,'glVertexAttrib4f');
-      pointer(glVertexAttrib4fv):=glGetProcAddress(GLESv2Lib,'glVertexAttrib4fv');
-      pointer(glVertexAttribPointer):=glGetProcAddress(GLESv2Lib,'glVertexAttribPointer');
-      pointer(glViewport):=glGetProcAddress(GLESv2Lib,'glViewport');
-      pointer(glEGLImageTargetTexture2DOES):=glGetProcAddress(GLESv2Lib,'glEGLImageTargetTexture2DOES');
-      pointer(glEGLImageTargetRenderbufferStorageOES):=glGetProcAddress(GLESv2Lib,'glEGLImageTargetRenderbufferStorageOES');
-      pointer(glGetProgramBinaryOES):=glGetProcAddress(GLESv2Lib,'glGetProgramBinaryOES');
-      pointer(glProgramBinaryOES):=glGetProcAddress(GLESv2Lib,'glProgramBinaryOES');
-      pointer(glMapBufferOES):=glGetProcAddress(GLESv2Lib,'glMapBufferOES');
-      pointer(glUnmapBufferOES):=glGetProcAddress(GLESv2Lib,'glUnmapBufferOES');
-      pointer(glGetBufferPointervOES):=glGetProcAddress(GLESv2Lib,'glGetBufferPointervOES');
-      pointer(glTexImage3DOES):=glGetProcAddress(GLESv2Lib,'glTexImage3DOES');
-      pointer(glTexSubImage3DOES):=glGetProcAddress(GLESv2Lib,'glTexSubImage3DOES');
-      pointer(glCopyTexSubImage3DOES):=glGetProcAddress(GLESv2Lib,'glCopyTexSubImage3DOES');
-      pointer(glCompressedTexImage3DOES):=glGetProcAddress(GLESv2Lib,'glCompressedTexImage3DOES');
-      pointer(glCompressedTexSubImage3DOES):=glGetProcAddress(GLESv2Lib,'glCompressedTexSubImage3DOES');
-      pointer(glFramebufferTexture3DOES):=glGetProcAddress(GLESv2Lib,'glFramebufferTexture3DOES');
-      pointer(glGetPerfMonitorGroupsAMD):=glGetProcAddress(GLESv2Lib,'glGetPerfMonitorGroupsAMD');
-      pointer(glGetPerfMonitorCountersAMD):=glGetProcAddress(GLESv2Lib,'glGetPerfMonitorCountersAMD');
-      pointer(glGetPerfMonitorGroupStringAMD):=glGetProcAddress(GLESv2Lib,'glGetPerfMonitorGroupStringAMD');
-      pointer(glGetPerfMonitorCounterStringAMD):=glGetProcAddress(GLESv2Lib,'glGetPerfMonitorCounterStringAMD');
-      pointer(glGetPerfMonitorCounterInfoAMD):=glGetProcAddress(GLESv2Lib,'glGetPerfMonitorCounterInfoAMD');
-      pointer(glGenPerfMonitorsAMD):=glGetProcAddress(GLESv2Lib,'glGenPerfMonitorsAMD');
-      pointer(glDeletePerfMonitorsAMD):=glGetProcAddress(GLESv2Lib,'glDeletePerfMonitorsAMD');
-      pointer(glSelectPerfMonitorCountersAMD):=glGetProcAddress(GLESv2Lib,'glSelectPerfMonitorCountersAMD');
-      pointer(glBeginPerfMonitorAMD):=glGetProcAddress(GLESv2Lib,'glBeginPerfMonitorAMD');
-      pointer(glEndPerfMonitorAMD):=glGetProcAddress(GLESv2Lib,'glEndPerfMonitorAMD');
-      pointer(glGetPerfMonitorCounterDataAMD):=glGetProcAddress(GLESv2Lib,'glGetPerfMonitorCounterDataAMD');
+      pointer(glActiveTexture) := glGetProcAddress(GLESv2Lib, 'glActiveTexture');
+      pointer(glAttachShader) := glGetProcAddress(GLESv2Lib, 'glAttachShader');
+      pointer(glBindAttribLocation) := glGetProcAddress(GLESv2Lib, 'glBindAttribLocation');
+      pointer(glBindBuffer) := glGetProcAddress(GLESv2Lib, 'glBindBuffer');
+      pointer(glBindFramebuffer) := glGetProcAddress(GLESv2Lib, 'glBindFramebuffer');
+      pointer(glBindRenderbuffer) := glGetProcAddress(GLESv2Lib, 'glBindRenderbuffer');
+      pointer(glBindTexture) := glGetProcAddress(GLESv2Lib, 'glBindTexture');
+      pointer(glBlendColor) := glGetProcAddress(GLESv2Lib, 'glBlendColor');
+      pointer(glBlendEquation) := glGetProcAddress(GLESv2Lib, 'glBlendEquation');
+      pointer(glBlendEquationSeparate) := glGetProcAddress(GLESv2Lib, 'glBlendEquationSeparate');
+      pointer(glBlendFunc) := glGetProcAddress(GLESv2Lib, 'glBlendFunc');
+      pointer(glBlendFuncSeparate) := glGetProcAddress(GLESv2Lib, 'glBlendFuncSeparate');
+      pointer(glBufferData) := glGetProcAddress(GLESv2Lib, 'glBufferData');
+      pointer(glBufferSubData) := glGetProcAddress(GLESv2Lib, 'glBufferSubData');
+      pointer(glCheckFramebufferStatus) := glGetProcAddress(GLESv2Lib, 'glCheckFramebufferStatus');
+      pointer(glClear) := glGetProcAddress(GLESv2Lib, 'glClear');
+      pointer(glClearColor) := glGetProcAddress(GLESv2Lib, 'glClearColor');
+      pointer(glClearDepthf) := glGetProcAddress(GLESv2Lib, 'glClearDepthf');
+      pointer(glClearStencil) := glGetProcAddress(GLESv2Lib, 'glClearStencil');
+      pointer(glColorMask) := glGetProcAddress(GLESv2Lib, 'glColorMask');
+      pointer(glCompileShader) := glGetProcAddress(GLESv2Lib, 'glCompileShader');
+      pointer(glCompressedTexImage2D) := glGetProcAddress(GLESv2Lib, 'glCompressedTexImage2D');
+      pointer(glCompressedTexSubImage2D) := glGetProcAddress(GLESv2Lib, 'glCompressedTexSubImage2D');
+      pointer(glCopyTexImage2D) := glGetProcAddress(GLESv2Lib, 'glCopyTexImage2D');
+      pointer(glCopyTexSubImage2D) := glGetProcAddress(GLESv2Lib, 'glCopyTexSubImage2D');
+      pointer(glCreateProgram) := glGetProcAddress(GLESv2Lib, 'glCreateProgram');
+      pointer(glCreateShader) := glGetProcAddress(GLESv2Lib, 'glCreateShader');
+      pointer(glCullFace) := glGetProcAddress(GLESv2Lib, 'glCullFace');
+      pointer(glDeleteBuffers) := glGetProcAddress(GLESv2Lib, 'glDeleteBuffers');
+      pointer(glDeleteFramebuffers) := glGetProcAddress(GLESv2Lib, 'glDeleteFramebuffers');
+      pointer(glDeleteProgram) := glGetProcAddress(GLESv2Lib, 'glDeleteProgram');
+      pointer(glDeleteRenderbuffers) := glGetProcAddress(GLESv2Lib, 'glDeleteRenderbuffers');
+      pointer(glDeleteShader) := glGetProcAddress(GLESv2Lib, 'glDeleteShader');
+      pointer(glDeleteTextures) := glGetProcAddress(GLESv2Lib, 'glDeleteTextures');
+      pointer(glDepthFunc) := glGetProcAddress(GLESv2Lib, 'glDepthFunc');
+      pointer(glDepthMask) := glGetProcAddress(GLESv2Lib, 'glDepthMask');
+      pointer(glDepthRangef) := glGetProcAddress(GLESv2Lib, 'glDepthRangef');
+      pointer(glDetachShader) := glGetProcAddress(GLESv2Lib, 'glDetachShader');
+      pointer(glDisable) := glGetProcAddress(GLESv2Lib, 'glDisable');
+      pointer(glDisableVertexAttribArray) := glGetProcAddress(GLESv2Lib, 'glDisableVertexAttribArray');
+      pointer(glDrawArrays) := glGetProcAddress(GLESv2Lib, 'glDrawArrays');
+      pointer(glDrawElements) := glGetProcAddress(GLESv2Lib, 'glDrawElements');
+      pointer(glEnable) := glGetProcAddress(GLESv2Lib, 'glEnable');
+      pointer(glEnableVertexAttribArray) := glGetProcAddress(GLESv2Lib, 'glEnableVertexAttribArray');
+      pointer(glFinish) := glGetProcAddress(GLESv2Lib, 'glFinish');
+      pointer(glFlush) := glGetProcAddress(GLESv2Lib, 'glFlush');
+      pointer(glFramebufferRenderbuffer) := glGetProcAddress(GLESv2Lib, 'glFramebufferRenderbuffer');
+      pointer(glFramebufferTexture2D) := glGetProcAddress(GLESv2Lib, 'glFramebufferTexture2D');
+      pointer(glFrontFace) := glGetProcAddress(GLESv2Lib, 'glFrontFace');
+      pointer(glGenBuffers) := glGetProcAddress(GLESv2Lib, 'glGenBuffers');
+      pointer(glGenerateMipmap) := glGetProcAddress(GLESv2Lib, 'glGenerateMipmap');
+      pointer(glGenFramebuffers) := glGetProcAddress(GLESv2Lib, 'glGenFramebuffers');
+      pointer(glGenRenderbuffers) := glGetProcAddress(GLESv2Lib, 'glGenRenderbuffers');
+      pointer(glGenTextures) := glGetProcAddress(GLESv2Lib, 'glGenTextures');
+      pointer(glGetActiveAttrib) := glGetProcAddress(GLESv2Lib, 'glGetActiveAttrib');
+      pointer(glGetActiveUniform) := glGetProcAddress(GLESv2Lib, 'glGetActiveUniform');
+      pointer(glGetAttachedShaders) := glGetProcAddress(GLESv2Lib, 'glGetAttachedShaders');
+      pointer(glGetAttribLocation) := glGetProcAddress(GLESv2Lib, 'glGetAttribLocation');
+      pointer(glGetBooleanv) := glGetProcAddress(GLESv2Lib, 'glGetBooleanv');
+      pointer(glGetBufferParameteriv) := glGetProcAddress(GLESv2Lib, 'glGetBufferParameteriv');
+      pointer(glGetError) := glGetProcAddress(GLESv2Lib, 'glGetError');
+      pointer(glGetFloatv) := glGetProcAddress(GLESv2Lib, 'glGetFloatv');
+      pointer(glGetFramebufferAttachmentParameteriv) := glGetProcAddress(GLESv2Lib, 'glGetFramebufferAttachmentParameteriv');
+      pointer(glGetIntegerv) := glGetProcAddress(GLESv2Lib, 'glGetIntegerv');
+      pointer(glGetProgramiv) := glGetProcAddress(GLESv2Lib, 'glGetProgramiv');
+      pointer(glGetProgramInfoLog) := glGetProcAddress(GLESv2Lib, 'glGetProgramInfoLog');
+      pointer(glGetRenderbufferParameteriv) := glGetProcAddress(GLESv2Lib, 'glGetRenderbufferParameteriv');
+      pointer(glGetShaderiv) := glGetProcAddress(GLESv2Lib, 'glGetShaderiv');
+      pointer(glGetShaderInfoLog) := glGetProcAddress(GLESv2Lib, 'glGetShaderInfoLog');
+      pointer(glGetShaderPrecisionFormat) := glGetProcAddress(GLESv2Lib, 'glGetShaderPrecisionFormat');
+      pointer(glGetShaderSource) := glGetProcAddress(GLESv2Lib, 'glGetShaderSource');
+      pointer(glGetString) := glGetProcAddress(GLESv2Lib, 'glGetString');
+      pointer(glGetTexParameterfv) := glGetProcAddress(GLESv2Lib, 'glGetTexParameterfv');
+      pointer(glGetTexParameteriv) := glGetProcAddress(GLESv2Lib, 'glGetTexParameteriv');
+      pointer(glGetUniformfv) := glGetProcAddress(GLESv2Lib, 'glGetUniformfv');
+      pointer(glGetUniformiv) := glGetProcAddress(GLESv2Lib, 'glGetUniformiv');
+      pointer(glGetUniformLocation) := glGetProcAddress(GLESv2Lib, 'glGetUniformLocation');
+      pointer(glGetVertexAttribfv) := glGetProcAddress(GLESv2Lib, 'glGetVertexAttribfv');
+      pointer(glGetVertexAttribiv) := glGetProcAddress(GLESv2Lib, 'glGetVertexAttribiv');
+      pointer(glGetVertexAttribPointerv) := glGetProcAddress(GLESv2Lib, 'glGetVertexAttribPointerv');
+      pointer(glHint) := glGetProcAddress(GLESv2Lib, 'glHint');
+      pointer(glIsBuffer) := glGetProcAddress(GLESv2Lib, 'glIsBuffer');
+      pointer(glIsEnabled) := glGetProcAddress(GLESv2Lib, 'glIsEnabled');
+      pointer(glIsFramebuffer) := glGetProcAddress(GLESv2Lib, 'glIsFramebuffer');
+      pointer(glIsProgram) := glGetProcAddress(GLESv2Lib, 'glIsProgram');
+      pointer(glIsRenderbuffer) := glGetProcAddress(GLESv2Lib, 'glIsRenderbuffer');
+      pointer(glIsShader) := glGetProcAddress(GLESv2Lib, 'glIsShader');
+      pointer(glIsTexture) := glGetProcAddress(GLESv2Lib, 'glIsTexture');
+      pointer(glLineWidth) := glGetProcAddress(GLESv2Lib, 'glLineWidth');
+      pointer(glLinkProgram) := glGetProcAddress(GLESv2Lib, 'glLinkProgram');
+      pointer(glPixelStorei) := glGetProcAddress(GLESv2Lib, 'glPixelStorei');
+      pointer(glPolygonOffset) := glGetProcAddress(GLESv2Lib, 'glPolygonOffset');
+      pointer(glReadPixels) := glGetProcAddress(GLESv2Lib, 'glReadPixels');
+      pointer(glReleaseShaderCompiler) := glGetProcAddress(GLESv2Lib, 'glReleaseShaderCompiler');
+      pointer(glRenderbufferStorage) := glGetProcAddress(GLESv2Lib, 'glRenderbufferStorage');
+      pointer(glSampleCoverage) := glGetProcAddress(GLESv2Lib, 'glSampleCoverage');
+      pointer(glScissor) := glGetProcAddress(GLESv2Lib, 'glScissor');
+      pointer(glShaderBinary) := glGetProcAddress(GLESv2Lib, 'glShaderBinary');
+      pointer(glShaderSource) := glGetProcAddress(GLESv2Lib, 'glShaderSource');
+      pointer(glStencilFunc) := glGetProcAddress(GLESv2Lib, 'glStencilFunc');
+      pointer(glStencilFuncSeparate) := glGetProcAddress(GLESv2Lib, 'glStencilFuncSeparate');
+      pointer(glStencilMask) := glGetProcAddress(GLESv2Lib, 'glStencilMask');
+      pointer(glStencilMaskSeparate) := glGetProcAddress(GLESv2Lib, 'glStencilMaskSeparate');
+      pointer(glStencilOp) := glGetProcAddress(GLESv2Lib, 'glStencilOp');
+      pointer(glStencilOpSeparate) := glGetProcAddress(GLESv2Lib, 'glStencilOpSeparate');
+      pointer(glTexImage2D) := glGetProcAddress(GLESv2Lib, 'glTexImage2D');
+      pointer(glTexParameterf) := glGetProcAddress(GLESv2Lib, 'glTexParameterf');
+      pointer(glTexParameterfv) := glGetProcAddress(GLESv2Lib, 'glTexParameterfv');
+      pointer(glTexParameteri) := glGetProcAddress(GLESv2Lib, 'glTexParameteri');
+      pointer(glTexParameteriv) := glGetProcAddress(GLESv2Lib, 'glTexParameteriv');
+      pointer(glTexSubImage2D) := glGetProcAddress(GLESv2Lib, 'glTexSubImage2D');
+      pointer(glUniform1f) := glGetProcAddress(GLESv2Lib, 'glUniform1f');
+      pointer(glUniform1fv) := glGetProcAddress(GLESv2Lib, 'glUniform1fv');
+      pointer(glUniform1i) := glGetProcAddress(GLESv2Lib, 'glUniform1i');
+      pointer(glUniform1iv) := glGetProcAddress(GLESv2Lib, 'glUniform1iv');
+      pointer(glUniform2f) := glGetProcAddress(GLESv2Lib, 'glUniform2f');
+      pointer(glUniform2fv) := glGetProcAddress(GLESv2Lib, 'glUniform2fv');
+      pointer(glUniform2i) := glGetProcAddress(GLESv2Lib, 'glUniform2i');
+      pointer(glUniform2iv) := glGetProcAddress(GLESv2Lib, 'glUniform2iv');
+      pointer(glUniform3f) := glGetProcAddress(GLESv2Lib, 'glUniform3f');
+      pointer(glUniform3fv) := glGetProcAddress(GLESv2Lib, 'glUniform3fv');
+      pointer(glUniform3i) := glGetProcAddress(GLESv2Lib, 'glUniform3i');
+      pointer(glUniform3iv) := glGetProcAddress(GLESv2Lib, 'glUniform3iv');
+      pointer(glUniform4f) := glGetProcAddress(GLESv2Lib, 'glUniform4f');
+      pointer(glUniform4fv) := glGetProcAddress(GLESv2Lib, 'glUniform4fv');
+      pointer(glUniform4i) := glGetProcAddress(GLESv2Lib, 'glUniform4i');
+      pointer(glUniform4iv) := glGetProcAddress(GLESv2Lib, 'glUniform4iv');
+      pointer(glUniformMatrix2fv) := glGetProcAddress(GLESv2Lib, 'glUniformMatrix2fv');
+      pointer(glUniformMatrix3fv) := glGetProcAddress(GLESv2Lib, 'glUniformMatrix3fv');
+      pointer(glUniformMatrix4fv) := glGetProcAddress(GLESv2Lib, 'glUniformMatrix4fv');
+      pointer(glUseProgram) := glGetProcAddress(GLESv2Lib, 'glUseProgram');
+      pointer(glValidateProgram) := glGetProcAddress(GLESv2Lib, 'glValidateProgram');
+      pointer(glVertexAttrib1f) := glGetProcAddress(GLESv2Lib, 'glVertexAttrib1f');
+      pointer(glVertexAttrib1fv) := glGetProcAddress(GLESv2Lib, 'glVertexAttrib1fv');
+      pointer(glVertexAttrib2f) := glGetProcAddress(GLESv2Lib, 'glVertexAttrib2f');
+      pointer(glVertexAttrib2fv) := glGetProcAddress(GLESv2Lib, 'glVertexAttrib2fv');
+      pointer(glVertexAttrib3f) := glGetProcAddress(GLESv2Lib, 'glVertexAttrib3f');
+      pointer(glVertexAttrib3fv) := glGetProcAddress(GLESv2Lib, 'glVertexAttrib3fv');
+      pointer(glVertexAttrib4f) := glGetProcAddress(GLESv2Lib, 'glVertexAttrib4f');
+      pointer(glVertexAttrib4fv) := glGetProcAddress(GLESv2Lib, 'glVertexAttrib4fv');
+      pointer(glVertexAttribPointer) := glGetProcAddress(GLESv2Lib, 'glVertexAttribPointer');
+      pointer(glViewport) := glGetProcAddress(GLESv2Lib, 'glViewport');
+      pointer(glEGLImageTargetTexture2DOES) := glGetProcAddress(GLESv2Lib, 'glEGLImageTargetTexture2DOES');
+      pointer(glEGLImageTargetRenderbufferStorageOES) := glGetProcAddress(GLESv2Lib, 'glEGLImageTargetRenderbufferStorageOES');
+      pointer(glGetProgramBinaryOES) := glGetProcAddress(GLESv2Lib, 'glGetProgramBinaryOES');
+      pointer(glProgramBinaryOES) := glGetProcAddress(GLESv2Lib, 'glProgramBinaryOES');
+      pointer(glMapBufferOES) := glGetProcAddress(GLESv2Lib, 'glMapBufferOES');
+      pointer(glUnmapBufferOES) := glGetProcAddress(GLESv2Lib, 'glUnmapBufferOES');
+      pointer(glGetBufferPointervOES) := glGetProcAddress(GLESv2Lib, 'glGetBufferPointervOES');
+      pointer(glTexImage3DOES) := glGetProcAddress(GLESv2Lib, 'glTexImage3DOES');
+      pointer(glTexSubImage3DOES) := glGetProcAddress(GLESv2Lib, 'glTexSubImage3DOES');
+      pointer(glCopyTexSubImage3DOES) := glGetProcAddress(GLESv2Lib, 'glCopyTexSubImage3DOES');
+      pointer(glCompressedTexImage3DOES) := glGetProcAddress(GLESv2Lib, 'glCompressedTexImage3DOES');
+      pointer(glCompressedTexSubImage3DOES) := glGetProcAddress(GLESv2Lib, 'glCompressedTexSubImage3DOES');
+      pointer(glFramebufferTexture3DOES) := glGetProcAddress(GLESv2Lib, 'glFramebufferTexture3DOES');
+      pointer(glGetPerfMonitorGroupsAMD) := glGetProcAddress(GLESv2Lib, 'glGetPerfMonitorGroupsAMD');
+      pointer(glGetPerfMonitorCountersAMD) := glGetProcAddress(GLESv2Lib, 'glGetPerfMonitorCountersAMD');
+      pointer(glGetPerfMonitorGroupStringAMD) := glGetProcAddress(GLESv2Lib, 'glGetPerfMonitorGroupStringAMD');
+      pointer(glGetPerfMonitorCounterStringAMD) := glGetProcAddress(GLESv2Lib, 'glGetPerfMonitorCounterStringAMD');
+      pointer(glGetPerfMonitorCounterInfoAMD) := glGetProcAddress(GLESv2Lib, 'glGetPerfMonitorCounterInfoAMD');
+      pointer(glGenPerfMonitorsAMD) := glGetProcAddress(GLESv2Lib, 'glGenPerfMonitorsAMD');
+      pointer(glDeletePerfMonitorsAMD) := glGetProcAddress(GLESv2Lib, 'glDeletePerfMonitorsAMD');
+      pointer(glSelectPerfMonitorCountersAMD) := glGetProcAddress(GLESv2Lib, 'glSelectPerfMonitorCountersAMD');
+      pointer(glBeginPerfMonitorAMD) := glGetProcAddress(GLESv2Lib, 'glBeginPerfMonitorAMD');
+      pointer(glEndPerfMonitorAMD) := glGetProcAddress(GLESv2Lib, 'glEndPerfMonitorAMD');
+      pointer(glGetPerfMonitorCounterDataAMD) := glGetProcAddress(GLESv2Lib, 'glGetPerfMonitorCounterDataAMD');
     end;
 
 procedure GLES20Initialization;
@@ -1907,9 +1907,9 @@ end;
 
 initialization
   {$ifdef EGL}
-  EGLLib:=0;
+  EGLLib := 0;
   {$endif}
-  GLESv2Lib:=0;
+  GLESv2Lib := 0;
   {$ifdef ALLOW_DLOPEN_FROM_UNIT_INITIALIZATION}
   GLES20Initialization;
   {$endif}
