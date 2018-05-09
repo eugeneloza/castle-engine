@@ -411,7 +411,8 @@ type
 function TProgressMemoryStream.Write(const Buffer; Count: Longint): Longint;
 begin
   Result := inherited;
-  if UseProgress then Progress.Position := Max(Size, 0);
+  if UseProgress then
+    Progress.Position := Max(Size, 0);
 end;
 
 { TCastleHTTPClient ---------------------------------------------------------- }
@@ -490,7 +491,8 @@ end;
 
 procedure TCastleHTTPClient.DisconnectFromServer;
 begin
-  if UseProgress then Progress.Step;
+  if UseProgress then
+    Progress.Step;
   inherited;
   FinishProgress;
 end;
@@ -748,7 +750,8 @@ begin
     try
       if soGzip in Options then
         Result := ReadGzipped(TStream(NetworkResult),
-          soForceMemoryStream in Options) else
+          soForceMemoryStream in Options)
+      else
         Result := NetworkResult;
     except
       FreeAndNil(NetworkResult); raise;
@@ -770,9 +773,10 @@ begin
       FileStream := TFileStream.Create(FileName, fmOpenRead);
       Result := ReadGzipped(TStream(FileStream), soForceMemoryStream in Options);
     end else
-    if soForceMemoryStream in Options then
-      Result := CreateMemoryStream(FileName) else
-      Result := TFileStream.Create(FileName, fmOpenRead);
+      if soForceMemoryStream in Options then
+        Result := CreateMemoryStream(FileName)
+      else
+        Result := TFileStream.Create(FileName, fmOpenRead);
     MimeType := URIMimeType(URL);
   end else
 
@@ -784,12 +788,15 @@ begin
     AssetStream := TReadAssetStream.Create(URIToAssetPath(URL));
     try
       if soGzip in Options then
-        Result := ReadGzipped(TStream(AssetStream), soForceMemoryStream in Options) else
-      if soForceMemoryStream in Options then
-        Result := CreateMemoryStream(TStream(AssetStream)) else
-        Result := AssetStream;
+        Result := ReadGzipped(TStream(AssetStream), soForceMemoryStream in Options)
+      else
+        if soForceMemoryStream in Options then
+          Result := CreateMemoryStream(TStream(AssetStream))
+        else
+          Result := AssetStream;
     except
-      FreeAndNil(AssetStream); raise;
+      FreeAndNil(AssetStream);
+      raise;
     end;
     MimeType := URIMimeType(URL);
     {$else}
@@ -798,47 +805,49 @@ begin
     {$endif}
   end else
 
-  { data: URI scheme }
-  if P = 'data' then
-  begin
-    DataURI := TDataURI.Create;
-    try
-      DataURI.URI := URL;
-      DataURI.ForceMemoryStream := soForceMemoryStream in Options;
-      if not DataURI.Valid then
-        raise EDownloadError.Create('Invalid data: URI scheme');
-      Result := DataURI.ExtractStream;
-      MimeType := DataURI.MimeType;
-      Assert(Result <> nil, 'DataURI.ExtractStream must be non-nil when DataURI.Valid is true');
-    finally FreeAndNil(DataURI) end;
+    { data: URI scheme }
+    if P = 'data' then
+    begin
+      DataURI := TDataURI.Create;
+      try
+        DataURI.URI := URL;
+        DataURI.ForceMemoryStream := soForceMemoryStream in Options;
+        if not DataURI.Valid then
+          raise EDownloadError.Create('Invalid data: URI scheme');
+        Result := DataURI.ExtractStream;
+        MimeType := DataURI.MimeType;
+        Assert(Result <> nil, 'DataURI.ExtractStream must be non-nil when DataURI.Valid is true');
+      finally
+        FreeAndNil(DataURI);
+      end;
   end else
 
-  if (P = 'ecmascript') or
-     (P = 'javascript') then
-  begin
-    { This ignores soGzip in Options, as it's not used by anything. }
-    MimeType := 'application/javascript';
-    Result := MemoryStreamLoadFromString(URIDeleteProtocol(URL));
-  end else
+    if (P = 'ecmascript') or
+       (P = 'javascript') then
+    begin
+      { This ignores soGzip in Options, as it's not used by anything. }
+      MimeType := 'application/javascript';
+      Result := MemoryStreamLoadFromString(URIDeleteProtocol(URL));
+    end else
 
-  if (P = 'castlescript') or
-     (P = 'kambiscript') then
-  begin
-    { This ignores soGzip in Options, as it's not used by anything. }
-    MimeType := 'text/x-castlescript';
-    Result := MemoryStreamLoadFromString(URIDeleteProtocol(URL));
-  end else
+      if (P = 'castlescript') or
+         (P = 'kambiscript') then
+      begin
+        { This ignores soGzip in Options, as it's not used by anything. }
+        MimeType := 'text/x-castlescript';
+        Result := MemoryStreamLoadFromString(URIDeleteProtocol(URL));
+      end else
 
-  if P = 'compiled' then
-  begin
-    { This ignores soGzip in Options, as it's not used by anything. }
-    MimeType := 'text/x-castle-compiled';
-    Result := MemoryStreamLoadFromString(URIDeleteProtocol(URL));
-  end else
+        if P = 'compiled' then
+        begin
+          { This ignores soGzip in Options, as it's not used by anything. }
+          MimeType := 'text/x-castle-compiled';
+          Result := MemoryStreamLoadFromString(URIDeleteProtocol(URL));
+        end else
 
-  begin
-    raise EDownloadError.CreateFmt('Downloading from protocol "%s" is not supported', [P]);
-  end;
+        begin
+          raise EDownloadError.CreateFmt('Downloading from protocol "%s" is not supported', [P]);
+        end;
 end;
 
 function Download(const URL: string; const Options: TStreamOptions): TStream;
@@ -861,14 +870,15 @@ var
 begin
   P := URIProtocol(URL);
   if P = '' then
-    FileName := URL else
-  if P = 'file' then
-  begin
-    FileName := URIToFilenameSafe(URL);
-    if FileName = '' then
-      raise ESaveError.CreateFmt('Cannot convert URL to a filename: "%s"', [URL]);
-  end else
-    raise ESaveError.CreateFmt('Saving of URL with protocol "%s" not possible', [P]);
+    FileName := URL
+  else
+    if P = 'file' then
+    begin
+      FileName := URIToFilenameSafe(URL);
+      if FileName = '' then
+        raise ESaveError.CreateFmt('Cannot convert URL to a filename: "%s"', [URL]);
+    end else
+      raise ESaveError.CreateFmt('Saving of URL with protocol "%s" not possible', [P]);
   if ssoGzip in Options then
   begin
     Result := TGZFileStream.Create(TFileStream.Create(FileName, fmCreate), true);
@@ -898,13 +908,16 @@ begin
       repeat
         ReadCount := Stream.Read(Buffer^, BufSize);
         if ReadCount = 0 then
-          Break else
+          Break
+        else
           S.WriteBuffer(Buffer^, ReadCount);
       until false;
     finally
       S.free;
     end;
-  finally FreeMem(Buffer) end;
+  finally
+    FreeMem(Buffer);
+  end;
 end;
 
 { TTextReaderWriter ---------------------------------------------------------- }
@@ -918,7 +931,8 @@ end;
 
 destructor TTextReaderWriter.Destroy;
 begin
-  if FOwnsStream then FStream.Free;
+  if FOwnsStream then
+    FStream.Free;
   inherited;
 end;
 
@@ -1076,7 +1090,9 @@ begin
   Stream := Download(URL);
   try
     LoadFromStream(Stream);
-  finally FreeAndNil(Stream) end;
+  finally
+    FreeAndNil(Stream);
+  end;
 end;
 
 procedure TStringsHelper.SaveToURL(const URL: string);
@@ -1086,7 +1102,9 @@ begin
   Stream := URLSaveStream(URL);
   try
     SaveToStream(Stream);
-  finally FreeAndNil(Stream) end;
+  finally
+    FreeAndNil(Stream);
+  end;
 end;
 
 end.

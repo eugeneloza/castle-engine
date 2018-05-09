@@ -465,20 +465,21 @@ end;
 
 function NormalFileExists(const FileName: string): boolean;
 {$ifdef MSWINDOWS}
-var s: string;
+var
+  S: string;
 begin
- { Don't warn about deprecation of ExtractOnlyFileName,
-   since NormalFileExists is deprecated too... }
- {$warnings off}
- s := UpperCase(ExtractOnlyFileName(fileName));
- {$warnings on}
- result :=  FileExists(fileName) and
-    (not( (s='CON') or (s='PRN') or (s='NUL') or
-          (s='LPT1') or (s='LPT2') or (s='LPT3') or (s='LPT4') or
-          (s='COM1') or (s='COM2') or (s='COM3') or (s='COM4') ) );
+  { Don't warn about deprecation of ExtractOnlyFileName,
+    since NormalFileExists is deprecated too... }
+  {$warnings off}
+  S := UpperCase(ExtractOnlyFileName(FileName));
+  {$warnings on}
+  Result :=  FileExists(FileName) and
+     (not( (S = 'CON') or (S = 'PRN') or (S = 'NUL') or
+           (S = 'LPT1') or (S = 'LPT2') or (S = 'LPT3') or (S = 'LPT4') or
+           (S = 'COM1') or (S = 'COM2') or (S = 'COM3') or (S = 'COM4') ) );
 {$else}
 begin
- result := FileExists(filename);
+  Result := FileExists(FileName);
 {$endif}
 end;
 
@@ -503,7 +504,7 @@ begin
     (on Android, it's not reliable before activity started)
     and ApplicationConfigOverride is set (on iOS, it's not set before CGEApp_Open called). }
   if not ApplicationProperties._FileAccessSafe then
-    WritelnWarning('Using ApplicationConfig(''%s'') before the Application.OnInitialize was called. This is not reliable on mobile platforms (Android, iOS). This usually happens if you open a file from the "initialization" section of a unit. You should do it in Application.OnInitialize instead.',
+    WriteLnWarning('Using ApplicationConfig(''%s'') before the Application.OnInitialize was called. This is not reliable on mobile platforms (Android, iOS). This usually happens if you open a file from the "initialization" section of a unit. You should do it in Application.OnInitialize instead.',
       [Path]);
 
   ConfigDir := InclPathDelim(GetAppConfigDir(false));
@@ -538,7 +539,8 @@ function ApplicationData(const Path: string): string;
     {$pop}
 
     Result := ExePath + 'data' + PathDelim;
-    if DirectoryExists(Result) then Exit;
+    if DirectoryExists(Result) then
+      Exit;
 
     Result := ExePath;
   {$endif MSWINDOWS}
@@ -554,26 +556,32 @@ function ApplicationData(const Path: string): string;
       {$else}
       Result := BundlePath + 'Contents/Resources/data/';
       {$endif}
-      if DirectoryExists(Result) then Exit;
+      if DirectoryExists(Result) then
+        Exit;
     end;
     {$endif DARWIN}
 
     Result := HomePath + '.local/share/' + ApplicationName + '/';
-    if DirectoryExists(Result) then Exit;
+    if DirectoryExists(Result) then
+      Exit;
 
     Result := HomePath + '.' + ApplicationName + '.data/';
-    if DirectoryExists(Result) then Exit;
+    if DirectoryExists(Result) then
+      Exit;
 
     Result := '/usr/local/share/' + ApplicationName + '/';
-    if DirectoryExists(Result) then Exit;
+    if DirectoryExists(Result) then
+      Exit;
 
     Result := '/usr/share/' + ApplicationName + '/';
-    if DirectoryExists(Result) then Exit;
+    if DirectoryExists(Result) then
+      Exit;
 
     CurPath := InclPathDelim(GetCurrentDir);
 
     Result := CurPath + 'data/';
-    if DirectoryExists(Result) then Exit;
+    if DirectoryExists(Result) then
+      Exit;
 
     Result := CurPath;
   {$endif UNIX}
@@ -605,7 +613,7 @@ begin
       {$endif}
     ;
     if Log then
-      WritelnLog('Path', Format('Program data path detected as "%s"', [ApplicationDataCache]));
+      WriteLnLog('Path', Format('Program data path detected as "%s"', [ApplicationDataCache]));
     ApplicationDataIsCache := true;
   end;
 
@@ -617,32 +625,32 @@ end;
 {$ifdef UNIX}
 function HomePath:  string;
 begin
- { home dir jest dla mnie zmienna $HOME a nie tym co moglbym uzyskac z libc
-   pytajac o uzytkownika real uid i jego home dir zapisany w /etc/passwd.
+  { home dir jest dla mnie zmienna $HOME a nie tym co moglbym uzyskac z libc
+    pytajac o uzytkownika real uid i jego home dir zapisany w /etc/passwd.
 
-   Jest to zgodne z tym co mi radza w info libc, ze zdrowym rozsadkiem
-   (bo, jak napisali w info libc, konfigurowac $HOME jest userowi duzo
-   latwiej) i zgodne z tym co robi np. bash. Co wiecej, sprawdzilem i
-   bash rozwija $HOME nawet gdy jest zle (np. rowne 'gowno' lub '').
+    Jest to zgodne z tym co mi radza w info libc, ze zdrowym rozsadkiem
+    (bo, jak napisali w info libc, konfigurowac $HOME jest userowi duzo
+    latwiej) i zgodne z tym co robi np. bash. Co wiecej, sprawdzilem i
+    bash rozwija $HOME nawet gdy jest zle (np. rowne 'gowno' lub '').
 
-   Gdy HOME jest niezdefiniowane lub nieprawidlowe to dopiero bash zwraca
-   homedir z user database, chociaz np. w prompt nie wyswietla ~. }
+    Gdy HOME jest niezdefiniowane lub nieprawidlowe to dopiero bash zwraca
+    homedir z user database, chociaz np. w prompt nie wyswietla ~. }
 
- result := GetEnvironmentVariable('HOME');
+  Result := GetEnvironmentVariable('HOME');
 
- { TODO: with Libc we could take home dir from user-database looking for real-uid
+  { TODO: with Libc we could take home dir from user-database looking for real-uid
 
- if (result='') or (not DirectoryExists(result)) then
- begin
-  alloc := 0;
-  Buffer := nil;
-  repeat
-   alloc := alloc+200;
-   Buffer := Libc.Realloc(Buffer,alloc);
-  until getpwuid_r(getuid, ResultBuf, Buffer, alloc, dummy)=0;
-  SetString(result, ResultBuf.pw_dir, strlen(ResultBuf.pw_dir));
-  Libc.free(Buffer);
- end;
+  if (Result = '') or (not DirectoryExists(Result)) then
+  begin
+    Alloc := 0;
+    Buffer := nil;
+    repeat
+      Alloc := Alloc + 200;
+      Buffer := Libc.Realloc(Buffer, Alloc);
+    until getpwuid_r(GetUid, ResultBuf, Buffer, Alloc, Dummy) = 0;
+    SetString(Result, ResultBuf.pw_dir, strlen(ResultBuf.pw_dir));
+    Libc.free(Buffer);
+  end;
 
  }
 
@@ -653,19 +661,21 @@ end;
 function ExpandHomePath(const FileName: string): string;
 {$ifdef UNIX}
 begin
- { Rozwin '~' w nazwe home dir. Rozwin '~/xxx' w homedir+'/xxx'. }
- if Length(FileName) = 1 then
- begin
-  if FileName[1] = '~' then
-   Result := ExclPathDelim(HomePath) else
-   Result := FileName;
- end else
- if (Length(FileName) > 0) and (FileName[1] = '~') then
-  Result := HomePath + SEnding(FileName, 3) else
-  Result := FileName;
+  { Rozwin '~' w nazwe home dir. Rozwin '~/xxx' w homedir+'/xxx'. }
+  if Length(FileName) = 1 then
+  begin
+    if FileName[1] = '~' then
+      Result := ExclPathDelim(HomePath)
+    else
+      Result := FileName;
+  end else
+    if (Length(FileName) > 0) and (FileName[1] = '~') then
+      Result := HomePath + SEnding(FileName, 3)
+    else
+      Result := FileName;
 {$else}
 begin
- result := FileName;
+  Result := FileName;
 {$endif}
 end;
 
@@ -676,7 +686,8 @@ begin
   if not SysUtils.DeleteFile(FileName) then
   begin
     if Warn then
-      WritelnWarning('File', Format('Cannot delete file "%s"', [FileName])) else
+      WriteLnWarning('File', Format('Cannot delete file "%s"', [FileName]))
+    else
       raise ERemoveFailed.Create(Format('Cannot delete file "%s"', [FileName]));
   end;
 end;
@@ -686,7 +697,8 @@ begin
   if not RemoveDir(DirFileName) then
   begin
     if Warn then
-      WritelnWarning('File', Format('Cannot remove directory "%s"', [DirFileName])) else
+      WriteLnWarning('File', Format('Cannot remove directory "%s"', [DirFileName]))
+    else
       raise ERemoveFailed.Create(Format('Cannot remove directory "%s"', [DirFileName]));
   end;
 end;
@@ -706,8 +718,12 @@ begin
     DestFile := TFileStream.Create(Dest, fmCreate);
     try
       DestFile.CopyFrom(SourceFile, SourceFile.Size);
-    finally FreeAndNil(DestFile) end;
-  finally FreeAndNil(SourceFile) end;
+    finally
+      FreeAndNil(DestFile);
+    end;
+  finally
+    FreeAndNil(SourceFile);
+  end;
 end;
 
 procedure CheckRenameFile(const Source, Dest: string);
@@ -733,12 +749,14 @@ procedure RemoveNonEmptyDir_Internal(const FileInfo: TFileInfo; Data: Pointer; v
 var
   Warn: boolean;
 begin
-  if SpecialDirName(FileInfo.Name) then Exit;
+  if SpecialDirName(FileInfo.Name) then
+    Exit;
 
   Warn := PBoolean(Data)^;
 
   if FileInfo.Directory then
-    CheckRemoveDir(FileInfo.AbsoluteName, Warn) else
+    CheckRemoveDir(FileInfo.AbsoluteName, Warn)
+  else
     CheckDeleteFile(FileInfo.AbsoluteName, Warn);
 end;
 
@@ -752,14 +770,16 @@ end;
 { dir handling -------------------------------------------------------- }
 
 function FileNameAutoInc(const FileNamePattern: string): string;
-var i: integer;
+var
+  I: integer;
 begin
- i := 0;
- repeat
-  result := Format(FileNamePattern,[i]);
-  if not URIFileExists(result) then exit;
-  Inc(i);
- until false;
+  I := 0;
+  repeat
+    Result := Format(FileNamePattern, [I]);
+    if not URIFileExists(Result) then
+      Exit;
+    Inc(I);
+  until false;
 end;
 
 function FnameAutoInc(const FileNamePattern: string): string;
@@ -772,52 +792,59 @@ end;
   using ExpandFileName. }
 
 function ParentPath(DirName: string; DoExpandDirName: boolean): string;
-var p: integer;
+var
+  P: integer;
 begin
 {$ifdef MSWINDOWS}
- { if it's only drive name - return(dirname) }
- if (DirName[2]=DriveDelim) and
-    ( (Length(DirName)=2) or
-      ((Length(DirName)=3) and (DirName[3]=PathDelim)) ) then
- begin
-  Result := InclPathDelim(DirName);
-  Exit;
- end;
+  { if it's only drive name - return(dirname) }
+  if (DirName[2] = DriveDelim) and
+     ( (Length(DirName) = 2) or
+      ((Length(DirName) = 3) and (DirName[3] = PathDelim)) ) then
+  begin
+    Result := InclPathDelim(DirName);
+    Exit;
+  end;
 {$endif}
- if DoExpandDirName then
-  DirName := ExpandFileName(DirName);
- DirName := ExclPathDelim(DirName);
- p := LastDelimiter(PathDelim, DirName);
- if p>0 then Result := Copy(DirName,1,p) else Result := RootDir;
+  if DoExpandDirName then
+    DirName := ExpandFileName(DirName);
+  DirName := ExclPathDelim(DirName);
+  P := LastDelimiter(PathDelim, DirName);
+  if P > 0 then
+    Result := Copy(DirName, 1, P)
+  else
+    Result := RootDir;
 end;
 
 function CombinePaths(BasePath, RelPath: string): string;
 begin
   if IsPathAbsolute(RelPath) then
-    result := RelPath else
-  {$ifdef MSWINDOWS}
-  if IsPathAbsoluteOnDrive(RelPath) then
-    result := BasePath[1] +DriveDelim +RelPath else
-  {$endif}
-  begin
-    repeat
-      if (Copy(RelPath, 1, 2) = './')
-        {$ifdef MSWINDOWS} or (Copy(RelPath, 1, 2) = '.\') {$endif} then
-        RelPath := SEnding(RelPath, 3) else
-      if (Copy(RelPath, 1, 3) = '../')
-        {$ifdef MSWINDOWS} or (Copy(RelPath, 1, 3) = '..\') {$endif} then
-      begin
-        BasePath := ExtractFileDir(ExclPathDelim(BasePath));
-        RelPath := SEnding(RelPath, 4);
-      end else
-        Break;
-    until false;
+    Result := RelPath
+  else
+    {$ifdef MSWINDOWS}
+    if IsPathAbsoluteOnDrive(RelPath) then
+      Result := BasePath[1] + DriveDelim + RelPath
+    else
+    {$endif}
+    begin
+      repeat
+        if (Copy(RelPath, 1, 2) = './')
+          {$ifdef MSWINDOWS} or (Copy(RelPath, 1, 2) = '.\') {$endif} then
+          RelPath := SEnding(RelPath, 3)
+        else
+          if (Copy(RelPath, 1, 3) = '../')
+            {$ifdef MSWINDOWS} or (Copy(RelPath, 1, 3) = '..\') {$endif} then
+          begin
+            BasePath := ExtractFileDir(ExclPathDelim(BasePath));
+            RelPath := SEnding(RelPath, 4);
+          end else
+            Break;
+      until false;
 
-    result := InclPathDelim(BasePath) + RelPath;
-  end;
+      Result := InclPathDelim(BasePath) + RelPath;
+    end;
 end;
 
-Function PathFileSearch(Const Name : String; ImplicitCurrentDir : Boolean = True) : String;
+Function PathFileSearch(Const Name: String; ImplicitCurrentDir: Boolean = True): String;
 
 { This is identical to FileSearch, except on Windows each $PATH component
   is stripped from surrounding double quotes.
@@ -826,30 +853,30 @@ Function PathFileSearch(Const Name : String; ImplicitCurrentDir : Boolean = True
   at least with FPC 2.6.4 and 2.7.1 FileExists is true for directories. }
 
 Var
-  I : longint;
-  Temp : String;
+  I: longint;
+  Temp: String;
 
 begin
-  Result:=Name;
-  temp:=SetDirSeparators(GetEnvironmentVariable('PATH'));
+  Result := Name;
+  Temp := SetDirSeparators(GetEnvironmentVariable('PATH'));
   // Start with checking the file in the current directory
-  If ImplicitCurrentDir and (Result <> '') and FileExists(Result) and not DirectoryExists(Result) Then
-    exit;
-  while True do begin
+  if ImplicitCurrentDir and (Result <> '') and FileExists(Result) and not DirectoryExists(Result) Then
+    Exit;
+  while True do
+  begin
     If Temp = '' then
       Break; // No more directories to search - fail
-    I:=pos(PathSeparator,Temp);
-    If I<>0 then
-      begin
-        Result:=Copy (Temp,1,i-1);
-        system.Delete(Temp,1,I);
-      end
-    else
-      begin
-        Result:=Temp;
-        Temp:='';
-      end;
-    If Result<>'' then
+    I := pos(PathSeparator, Temp);
+    if I <> 0 then
+    begin
+      Result := Copy (Temp, 1, I - 1);
+      System.Delete(Temp, 1, I);
+    end else
+    begin
+      Result := Temp;
+      Temp := '';
+    end;
+    if Result <> '' then
     begin
       { On Windows, each path on the list may be surrounded by quotes. }
       {$ifdef MSWINDOWS}
@@ -858,12 +885,12 @@ begin
          (Result[Length(Result)] = '"') then
         Result := Copy(Result, 2, Length(Result) - 2);
       {$endif}
-      Result:=IncludeTrailingPathDelimiter(Result)+name;
+      Result := IncludeTrailingPathDelimiter(Result) + Name;
     end;
     If (Result <> '') and FileExists(Result) and not DirectoryExists(Result) Then
-      exit;
+      Exit;
   end;
-  result:='';
+  Result := '';
 end;
 
 function FindExe(const ExeName: string): string;
@@ -889,13 +916,17 @@ begin
   { The default order of extensions is .com, .exe, .bat, .cmd,
     see http://stackoverflow.com/questions/605101/order-in-which-command-prompt-executes-files-with-the-same-name-a-bat-vs-a-cmd }
   if FileExists(ExePath + '.com') then
-    Result := ExePath + '.com' else
-  if FileExists(ExePath + '.exe' { ExeExtension }) then
-    Result := ExePath + '.exe' { ExeExtension } else
-  if FileExists(ExePath + '.bat') then
-    Result := ExePath + '.bat' else
-  if FileExists(ExePath + '.cmd') then
-    Result := ExePath + '.cmd' else
+    Result := ExePath + '.com'
+  else
+    if FileExists(ExePath + '.exe' { ExeExtension }) then
+      Result := ExePath + '.exe' { ExeExtension }
+    else
+      if FileExists(ExePath + '.bat') then
+        Result := ExePath + '.bat'
+      else
+        if FileExists(ExePath + '.cmd') then
+          Result := ExePath + '.cmd'
+        else
   {$else}
     Result := ExePath + ExeExtension;
   {$endif}
@@ -937,23 +968,24 @@ function BundlePath: string;
 { Based on
   http://wiki.freepascal.org/OS_X_Programming_Tips#How_to_obtain_the_path_to_the_Bundle }
 var
-  bundle: CFBundleRef;
-  pathRef: CFURLRef;
-  pathCFStr: CFStringRef;
-  pathStr: shortstring;
+  Bundle: CFBundleRef;
+  PathRef: CFURLRef;
+  PathCFStr: CFStringRef;
+  PathStr: shortstring;
 begin
   if not BundlePathCached then
   begin
-    bundle := CFBundleGetMainBundle();
-    if bundle = nil then
-      BundlePathCache := '' else
+    Bundle := CFBundleGetMainBundle();
+    if Bundle = nil then
+      BundlePathCache := ''
+    else
     begin
-      pathRef := CFBundleCopyBundleURL(bundle);
-      pathCFStr := CFURLCopyFileSystemPath(pathRef, kCFURLPOSIXPathStyle);
-      CFStringGetPascalString(pathCFStr, @pathStr, 255, CFStringGetSystemEncoding());
-      CFRelease(pathRef);
-      CFRelease(pathCFStr);
-      BundlePathCache := pathStr;
+      PathRef := CFBundleCopyBundleURL(Bundle);
+      PathCFStr := CFURLCopyFileSystemPath(PathRef, kCFURLPOSIXPathStyle);
+      CFStringGetPascalString(PathCFStr, @PathStr, 255, CFStringGetSystemEncoding());
+      CFRelease(PathRef);
+      CFRelease(PathCFStr);
+      BundlePathCache := PathStr;
       BundlePathCache := InclPathDelim(BundlePathCache);
     end;
     BundlePathCached := true;
@@ -984,7 +1016,9 @@ begin
           F.ReadBuffer(Result[1], Length(Result));
       end else
         Result := ReadGrowingStreamToString(F);
-    finally FreeAndNil(F) end;
+    finally
+      FreeAndNil(F);
+    end;
   end;
 end;
 
@@ -1003,7 +1037,9 @@ begin
   try
     if Length(Contents) <> 0 then
       F.WriteBuffer(Contents[1], Length(Contents));
-  finally FreeAndNil(F) end;
+  finally
+    FreeAndNil(F);
+  end;
 end;
 
 procedure DoInitialization;

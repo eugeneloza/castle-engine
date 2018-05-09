@@ -866,14 +866,15 @@ end;
 procedure TCastleControlCustom.SetAutoRedisplay(const Value: boolean);
 begin
   FAutoRedisplay := value;
-  if Value then Invalidate;
+  if Value then
+    Invalidate;
 end;
 
 { Initial idea was to do
 
 procedure TCastleControlCustom.CreateHandle;
 begin
-  Writeln('TCastleControlCustom.CreateHandle ', GLInitialized,
+  WriteLn('TCastleControlCustom.CreateHandle ', GLInitialized,
     ' ', OnGLContextOpen <> nil);
   inherited CreateHandle;
   if not GLInitialized then
@@ -881,7 +882,7 @@ begin
     GLInitialized := true;
     Container.EventOpen;
   end;
-  Writeln('TCastleControlCustom.CreateHandle end');
+  WriteLn('TCastleControlCustom.CreateHandle end');
 end;
 
 Reasoning: looking at implementation of OpenGLContext,
@@ -1146,7 +1147,8 @@ procedure TCastleControlCustom.MouseMove(Shift: TShiftState; NewX, NewY: Integer
     if TimerSeconds(Timer, Fps.UpdateStartTime) > 1 / DesiredFPS then
     begin
       DoUpdate;
-      if Invalidated then Paint;
+      if Invalidated then
+        Paint;
     end;
   end;
 
@@ -1173,8 +1175,9 @@ end;
 function TCastleControlCustom.DoMouseWheel(Shift: TShiftState; WheelDelta: Integer;
   MousePos: TPoint): Boolean;
 begin
-  Result := Container.EventPress(InputMouseWheel(MousePosition, WheelDelta/120, true));
-  if Result then Exit;
+  Result := Container.EventPress(InputMouseWheel(MousePosition, WheelDelta / 120, true));
+  if Result then
+    Exit;
 
   Result := inherited DoMouseWheel(Shift, WheelDelta, MousePos);
 end;
@@ -1209,14 +1212,17 @@ begin
       // it seems calling Invalidate from Paint doesn't work, so we'll
       // have to do it elsewhere
       // if AutoRedisplay then Invalidate;
-    finally Fps._RenderEnd end;
+    finally
+      Fps._RenderEnd;
+    end;
   end;
 end;
 
 function TCastleControlCustom.SaveScreenBuffer: TColorBuffer;
 begin
   if DoubleBuffered then
-    Result := cbBack else
+    Result := cbBack
+  else
     Result := cbFront;
 end;
 

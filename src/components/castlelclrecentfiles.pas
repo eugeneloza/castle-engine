@@ -92,10 +92,12 @@ begin
   FURL := AURL;
 
   if Number <= 9 then
-    S := '&' + IntToStr(Number) else
-  if Number = 10 then
-    S := '1&0' else
-    S := IntToStr(Number);
+    S := '&' + IntToStr(Number)
+  else
+    if Number = 10 then
+      S := '1&0'
+    else
+      S := IntToStr(Number);
   S += '. ' + SQuoteLCLCaption(URICaption(URL));
 
   inherited Create(AOwner);
@@ -134,7 +136,7 @@ begin
     ParentMenu.Insert(Position, FirstSeparator);
     for I := 0 to URLs.Count - 1 do
     begin
-      MenuRecentOpen := TMenuRecentItem.Create(nil, I+1, URLs[I]);
+      MenuRecentOpen := TMenuRecentItem.Create(nil, I + 1, URLs[I]);
       MenuRecentOpen.OnOpenRecent := OnOpenRecent;
       ParentMenu.Insert(Position + Cardinal(I) + 1, MenuRecentOpen);
     end;
