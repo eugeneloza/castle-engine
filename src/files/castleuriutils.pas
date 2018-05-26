@@ -141,28 +141,28 @@ function AbsoluteURI(const URI: string): string;
 function AbsoluteFileURI(const URI: string): boolean;
 
 { Convert URI (or filename) to a filename.
-  This is an improved URIToFilename from URIParser.
-  When URI is already a filename, this does a better job than URIToFilename,
+  This is an improved URIToFileName from URIParser.
+  When URI is already a filename, this does a better job than URIToFileName,
   as it handles also Windows absolute filenames (see URIProtocol).
   Returns empty string in case of problems, for example when this is not
   a file URI.
 
-  Just like URIParser.URIToFilename, this percent-decodes the parameter.
+  Just like URIParser.URIToFileName, this percent-decodes the parameter.
   For example, @code(%4d) in URI will turn into letter @code(M) in result. }
-function URIToFilenameSafe(const URI: string): string;
+function URIToFileNameSafe(const URI: string): string;
 
 { Convert filename to URI.
 
-  This is a fixed version of URIParser.FilenameToURI, that correctly
+  This is a fixed version of URIParser.FileNameToURI, that correctly
   percent-encodes the parameter, making it truly a reverse of
-  URIToFilenameSafe. In FPC > 2.6.2 URIParser.FilenameToURI will also
+  URIToFileNameSafe. In FPC > 2.6.2 URIParser.FileNameToURI will also
   do this (after Michalis' patch, see
   http://svn.freepascal.org/cgi-bin/viewvc.cgi?view=revision&revision=24321 ).
 
   It also makes sure the filename is absolute (it uses ExpandFileName,
   so if the FileName is relative --- it will be expanded, treating it
   as relative to the current directory). }
-function FilenameToURISafe(FileName: string): string;
+function FileNameToURISafe(FileName: string): string;
 
 { Get MIME type for content of the URI @italic(without downloading the file).
   For local and remote files (file, http, and similar protocols)
@@ -310,11 +310,13 @@ function RawURIDecode(const S: string): string;
     function HexDigit(const C: char): Byte;
     begin
       if C in ['0'..'9'] then
-        Result := Ord(C) - Ord('0') else
-      if C in ['a'..'f'] then
-        Result := 10 + Ord(C) - Ord('a') else
-      if C in ['A'..'F'] then
-        Result := 10 + Ord(C) - Ord('A');
+        Result := Ord(C) - Ord('0')
+      else
+        if C in ['a'..'f'] then
+          Result := 10 + Ord(C) - Ord('a')
+        else
+          if C in ['A'..'F'] then
+            Result := 10 + Ord(C) - Ord('A');
     end;
 
   begin
@@ -323,7 +325,7 @@ function RawURIDecode(const S: string): string;
     begin
       if Position + 2 > Length(S) then
       begin
-        WritelnWarning('URI', Format(
+        WriteLnWarning('URI', Format(
           'URI "%s" incorrectly encoded, %%xx sequence ends unexpectedly', [S]));
         Exit(false);
       end;
@@ -421,7 +423,8 @@ var
   FirstCharacter, Colon: Integer;
 begin
   if URIProtocolIndex(URI, FirstCharacter, Colon) then
-    Result := LowerCase(CopyPos(URI, FirstCharacter, Colon - 1)) else
+    Result := LowerCase(CopyPos(URI, FirstCharacter, Colon - 1))
+  else
     Result := '';
 end;
 
@@ -446,7 +449,8 @@ var
 begin
   if URIProtocolIndex(S, FirstCharacter, Colon) then
     { Cut off also whitespace before FirstCharacter }
-    Result := SEnding(S, Colon + 1) else
+    Result := SEnding(S, Colon + 1)
+  else
     Result := S;
 end;
 
@@ -478,7 +482,7 @@ begin
       https://sourceforge.net/p/castle-engine/tickets/35/ }
     on E: EConvertError do
     begin
-      WritelnWarning('URL', Format('Error when parsing URL. This usually indicates an incorrect Windows "file:" URL (it should have *three* slashes, like "file:///c:/blah..."): "%s"',
+      WriteLnWarning('URL', Format('Error when parsing URL. This usually indicates an incorrect Windows "file:" URL (it should have *three* slashes, like "file:///c:/blah..."): "%s"',
         [Relative]));
       Result := Relative;
     end;
@@ -488,7 +492,8 @@ end;
 function AbsoluteURI(const URI: string): string;
 begin
   if URIProtocol(URI) = '' then
-    Result := FilenameToURISafe(URI) else
+    Result := FileNameToURISafe(URI)
+  else
     Result := URI;
 end;
 
@@ -497,43 +502,44 @@ begin
   Result := (URIProtocol(URI) = '') and IsPathAbsoluteOnDrive(URI);
 end;
 
-function URIToFilenameSafe(const URI: string): string;
+function URIToFileNameSafe(const URI: string): string;
 var
   P: string;
 begin
-  { Use our URIProtocol instead of depending that URIToFilename will detect
+  { Use our URIProtocol instead of depending that URIToFileName will detect
     empty protocol case correctly. This allows to handle Windows absolute
     filenames like "c:\foo" as filenames. }
   P := URIProtocol(URI);
   if P = '' then
-    Result := URI else
-  if P = 'file' then
-  begin
-    try
-      if not URIToFilename(URI, Result) then Result := '';
-    except
-      { workaround http://bugs.freepascal.org/view.php?id=28496 , see also
-        https://sourceforge.net/p/castle-engine/tickets/35/ }
-      on E: EConvertError do
-      begin
-        WritelnWarning('URL', Format('Error when parsing URL. This usually indicates an incorrect Windows "file:" URL (it should have *three* slashes, like "file:///c:/blah..."): "%s"',
-          [URI]));
-        Result := '';
+    Result := URI
+  else
+    if P = 'file' then
+    begin
+      try
+        if not URIToFileName(URI, Result) then Result := '';
+      except
+        { workaround http://bugs.freepascal.org/view.php?id=28496 , see also
+          https://sourceforge.net/p/castle-engine/tickets/35/ }
+        on E: EConvertError do
+        begin
+          WritelnWarning('URL', Format('Error when parsing URL. This usually indicates an incorrect Windows "file:" URL (it should have *three* slashes, like "file:///c:/blah..."): "%s"',
+            [URI]));
+          Result := '';
+        end;
       end;
-    end;
-  end else
-    Result := '';
+    end else
+      Result := '';
 end;
 
-function FilenameToURISafe(FileName: string): string;
+function FileNameToURISafe(FileName: string): string;
 
-{ Code adjusted from FPC FilenameToURI (same license as our engine,
+{ Code adjusted from FPC FileNameToURI (same license as our engine,
   so it's Ok to share code). Adjusted to call Escape on FileName.
-  See http://bugs.freepascal.org/view.php?id=24324 : FPC FilenameToURI
+  See http://bugs.freepascal.org/view.php?id=24324 : FPC FileNameToURI
   should be fixed in the future to follow this.
 
   We also make sure to call ExpandFileName,
-  and so we don't need checks for IsAbsFilename. }
+  and so we don't need checks for IsAbsFileName. }
 
 const
   SubDelims = ['!', '$', '&', '''', '(', ')', '*', '+', ',', ';', '='];
@@ -542,31 +548,33 @@ const
   Unreserved = ALPHA + DIGIT + ['-', '.', '_', '~'];
   ValidPathChars = Unreserved + SubDelims + ['@', ':', '/'];
 
-  function Escape(const s: String; const Allowed: TSysCharSet): String;
+  function Escape(const S: String; const Allowed: TSysCharSet): String;
   var
-    i, L: Integer;
+    I, L: Integer;
     P: PChar;
   begin
-    L := Length(s);
-    for i := 1 to Length(s) do
-      if not (s[i] in Allowed) then Inc(L,2);
-    if L = Length(s) then
+    L := Length(S);
+    for I := 1 to Length(A) do
+      if not (S[I] in Allowed) then
+        Inc(L,2);
+    if L = Length(S) then
     begin
-      Result := s;
+      Result := S;
       Exit;
     end;
 
     SetLength(Result, L);
     P := @Result[1];
-    for i := 1 to Length(s) do
+    for I := 1 to Length(S) do
     begin
-      if not (s[i] in Allowed) then
+      if not (S[I] in Allowed) then
       begin
-        P^ := '%'; Inc(P);
-        StrFmt(P, '%.2x', [ord(s[i])]); Inc(P);
-      end
-      else
-        P^ := s[i];
+        P^ := '%';
+        Inc(P);
+        StrFmt(P, '%.2x', [Ord(S[I])]);
+        Inc(P);
+      end else
+        P^ := S[I];
       Inc(P);
     end;
   end;
@@ -574,33 +582,33 @@ const
 
 var
   I: Integer;
-  FilenamePart: string;
+  FileNamePart: string;
 begin
   FileName := ExpandFileName(FileName);
 
   Result := 'file:';
 
-  if Filename[1] <> PathDelim then
+  if FileName[1] <> PathDelim then
     Result := Result + '///'
   else
     Result := Result + '//';
 
-  FilenamePart := Filename;
+  FileNamePart := FileName;
   { unreachable code warning is ok here }
   {$warnings off}
   if PathDelim <> '/' then
   begin
-    I := Pos(PathDelim, FilenamePart);
+    I := Pos(PathDelim, FileNamePart);
     while I <> 0 do
     begin
-      FilenamePart[I] := '/';
-      I := Pos(PathDelim, FilenamePart);
+      FileNamePart[I] := '/';
+      I := Pos(PathDelim, FileNamePart);
     end;
   end;
   {$warnings on}
-  FilenamePart := Escape(FilenamePart, ValidPathChars);
+  FileNamePart := Escape(FileNamePart, ValidPathChars);
 
-  Result := Result + FilenamePart;
+  Result := Result + FileNamePart;
 end;
 
 var
@@ -639,111 +647,292 @@ function URIMimeType(const URI: string; out Gzipped: boolean): string;
       http://tools.ietf.org/html/rfc4288 }
 
     // 3D models (see also view3dscene MIME specification in view3dscene/desktop/view3dscene.xml)
-    if Ext    = '.wrl'    then Result := 'model/vrml' else
-    if Ext    = '.wrz'    then begin Result := 'model/vrml'; Gzipped := true; end else
-    if ExtExt = '.wrl.gz' then begin Result := 'model/vrml'; Gzipped := true; end else
-    if Ext    = '.x3dv'    then Result := 'model/x3d+vrml' else
-    if Ext    = '.x3dvz'   then begin Result := 'model/x3d+vrml'; Gzipped := true; end else
-    if ExtExt = '.x3dv.gz' then begin Result := 'model/x3d+vrml'; Gzipped := true; end else
-    if Ext    = '.x3d'    then Result := 'model/x3d+xml' else
-    if Ext    = '.x3dz'   then begin Result := 'model/x3d+xml'; Gzipped := true; end else
-    if ExtExt = '.x3d.gz' then begin Result := 'model/x3d+xml'; Gzipped := true; end else
-    if Ext    = '.x3db'    then Result := 'model/x3d+binary' else
-    if ExtExt = '.x3db.gz' then begin Result := 'model/x3d+binary'; Gzipped := true; end else
-    if Ext = '.dae' then Result := 'model/vnd.collada+xml' else
+    if Ext = '.wrl' then
+      Result := 'model/vrml'
+    else
+    if Ext = '.wrz' then
+    begin
+      Result := 'model/vrml';
+      Gzipped := true;
+    end else
+    if ExtExt = '.wrl.gz' then
+    begin
+      Result := 'model/vrml';
+      Gzipped := true;
+    end else
+    if Ext = '.x3dv' then
+      Result := 'model/x3d+vrml'
+    else
+    if Ext = '.x3dvz' then
+    begin
+      Result := 'model/x3d+vrml';
+      Gzipped := true;
+    end else
+    if ExtExt = '.x3dv.gz' then
+    begin
+      Result := 'model/x3d+vrml';
+      Gzipped := true;
+    end else
+    if Ext = '.x3d' then
+      Result := 'model/x3d+xml'
+    else
+    if Ext = '.x3dz' then
+    begin
+      Result := 'model/x3d+xml';
+      Gzipped := true;
+    end else
+    if ExtExt = '.x3d.gz' then
+    begin
+      Result := 'model/x3d+xml';
+      Gzipped := true;
+    end else
+    if Ext = '.x3db' then
+      Result := 'model/x3d+binary'
+    else
+    if ExtExt = '.x3db.gz' then
+    begin
+      Result := 'model/x3d+binary';
+      Gzipped := true;
+    end else
+    if Ext = '.dae' then
+      Result := 'model/vnd.collada+xml'
+    else
     { See http://en.wikipedia.org/wiki/.3ds about 3ds mime type.
       application/x-3ds is better (3DS is hardly an "image"),
       but Debian /usr/share/mime/packages/freedesktop.org.xml also uses
       image/x-3ds, so I guess image/x-3ds is more popular. }
-    if Ext = '.3ds' then Result := 'image/x-3ds' else
-    if Ext = '.max' then Result := 'image/x-3ds' else
-    if Ext = '.iv' then Result := 'application/x-inventor' else
-    if Ext = '.md3' then Result := 'application/x-md3' else
-    if Ext = '.obj' then Result := 'application/x-wavefront-obj' else
-    if Ext = '.geo' then Result := 'application/x-geo' else
-    if Ext = '.kanim' then Result := 'application/x-castle-anim-frames' else
-    if Ext = '.castle-anim-frames' then Result := 'application/x-castle-anim-frames' else
-    if Ext = '.json' then Result := 'application/json' else
+    if Ext = '.3ds' then
+      Result := 'image/x-3ds'
+    else
+    if Ext = '.max' then
+      Result := 'image/x-3ds'
+    else
+    if Ext = '.iv' then
+      Result := 'application/x-inventor'
+    else
+    if Ext = '.md3' then
+      Result := 'application/x-md3'
+    else
+    if Ext = '.obj' then
+      Result := 'application/x-wavefront-obj'
+    else
+    if Ext = '.geo' then
+      Result := 'application/x-geo'
+    else
+    if Ext = '.kanim' then
+      Result := 'application/x-castle-anim-frames'
+    else
+    if Ext = '.castle-anim-frames' then
+      Result := 'application/x-castle-anim-frames'
+    else
+    if Ext = '.json' then
+      Result := 'application/json'
+    else
     { Various sites propose various MIME types for STL:
       https://gist.github.com/allysonsouza/1bf9d4a0295a14373979cd23d15df0a9
       application/wavefront-stl
       application/vnd.ms-pki.stl }
-    if Ext = '.stl' then Result := 'application/x-stl' else
+    if Ext = '.stl' then
+      Result := 'application/x-stl'
+    else
     // Images.
     { Only images that we cannot handle in CastleImages unit are listed below.
       For handled images, their extensions and mime types are recorded
       by CastleImages inside the URIMimeExtensions. }
-    if Ext = '.svg' then Result := 'image/svg+xml' else
-    if Ext = '.ico' then Result := 'image/x-icon' else
-    if Ext = '.icns' then Result := 'image/icns' else
+    if Ext = '.svg' then
+      Result := 'image/svg+xml'
+    else
+    if Ext = '.ico' then
+      Result := 'image/x-icon'
+    else
+    if Ext = '.icns' then
+      Result := 'image/icns'
+    else
     // HTML
-    if Ext = '.htm' then Result := 'text/html' else
-    if Ext = '.html' then Result := 'text/html' else
-    if Ext = '.shtml' then Result := 'text/html' else
-    if Ext = '.css' then Result := 'text/css' else
-    if Ext = '.php' then Result := 'text/php' else
+    if Ext = '.htm' then
+      Result := 'text/html'
+    else
+    if Ext = '.html' then
+      Result := 'text/html'
+    else
+    if Ext = '.shtml' then
+      Result := 'text/html'
+    else
+    if Ext = '.css' then
+      Result := 'text/css'
+    else
+    if Ext = '.php' then
+      Result := 'text/php'
+    else
     // Plain text
-    if Ext = '.txt' then Result := 'text/plain' else
-    if Ext = '.pas' then Result := 'text/plain' else
-    if Ext = '.pp' then Result := 'text/plain' else
-    if Ext = '.inc' then Result := 'text/plain' else
-    if Ext = '.c' then Result := 'text/plain' else
-    if Ext = '.cpp' then Result := 'text/plain' else
-    if Ext = '.java' then Result := 'text/plain' else
-    if Ext = '.log' then Result := 'text/plain'  else
+    if Ext = '.txt' then
+      Result := 'text/plain'
+    else
+    if Ext = '.pas' then
+      Result := 'text/plain'
+    else
+    if Ext = '.pp' then
+      Result := 'text/plain'
+    else
+    if Ext = '.inc' then
+      Result := 'text/plain'
+    else
+    if Ext = '.c' then
+      Result := 'text/plain'
+    else
+    if Ext = '.cpp' then
+      Result := 'text/plain'
+    else
+    if Ext = '.java' then
+      Result := 'text/plain'
+    else
+    if Ext = '.log' then
+      Result := 'text/plain'
+    else
     // Videos
-    if Ext = '.mp4' then Result := 'video/mp4' else
-    if Ext = '.avi' then Result := 'video/x-msvideo' else
-    if Ext = '.mpeg' then Result := 'video/mpeg' else
-    if Ext = '.mpg'  then Result := 'video/mpeg' else
-    if Ext = '.mpe'  then Result := 'video/mpeg' else
-    if Ext = '.ogv'  then Result := 'video/ogg' else
-    if Ext = '.mov' then Result := 'video/quicktime' else
-    if Ext = '.flv' then Result := 'video/x-flv' else
-    if Ext = '.swf'  then Result := 'application/x-shockwave-flash' else
-    if Ext = '.swfl' then Result := 'application/x-shockwave-flash' else
+    if Ext = '.mp4' then
+      Result := 'video/mp4'
+    else
+    if Ext = '.avi' then
+      Result := 'video/x-msvideo'
+    else
+    if Ext = '.mpeg' then
+      Result := 'video/mpeg'
+    else
+    if Ext = '.mpg' then
+      Result := 'video/mpeg'
+    else
+    if Ext = '.mpe' then
+      Result := 'video/mpeg'
+    else
+    if Ext = '.ogv' then
+      Result := 'video/ogg'
+    else
+    if Ext = '.mov' then
+      Result := 'video/quicktime'
+    else
+    if Ext = '.flv' then
+      Result := 'video/x-flv'
+    else
+    if Ext = '.swf' then
+      Result := 'application/x-shockwave-flash'
+    else
+    if Ext = '.swfl' then
+      Result := 'application/x-shockwave-flash'
+    else
     // Sounds
-    if Ext = '.mp3' then Result := 'audio/mpeg' else
-    if Ext = '.ogg' then Result := 'audio/ogg' else
-    if Ext = '.oga' then Result := 'audio/ogg' else
-    if Ext = '.wav' then Result := 'audio/x-wav' else
-    if Ext = '.mid' then Result := 'audio/midi' else
-    if Ext = '.midi' then Result := 'audio/midi' else
-    if Ext = '.au' then Result := 'audio/basic' else
-    if Ext = '.snd' then Result := 'audio/basic' else
-    if Ext = '.mp2' then Result := 'audio/mpeg' else
+    if Ext = '.mp3' then
+      Result := 'audio/mpeg'
+    else
+    if Ext = '.ogg' then
+      Result := 'audio/ogg'
+    else
+    if Ext = '.oga' then
+      Result := 'audio/ogg'
+    else
+    if Ext = '.wav' then
+      Result := 'audio/x-wav'
+    else
+    if Ext = '.mid' then
+      Result := 'audio/midi'
+    else
+    if Ext = '.midi' then
+      Result := 'audio/midi'
+    else
+    if Ext = '.au' then
+      Result := 'audio/basic'
+    else
+    if Ext = '.snd' then
+      Result := 'audio/basic'
+    else
+    if Ext = '.mp2' then
+      Result := 'audio/mpeg'
+    else
     // Documents
-    if Ext = '.rtf' then Result := 'text/rtf' else
-    if Ext = '.eps' then Result := 'application/postscript' else
-    if Ext = '.ps' then Result := 'application/postscript' else
-    if Ext = '.pdf' then Result := 'application/pdf' else
-    if Ext = '.csv' then Result := 'application/csv' else
+    if Ext = '.rtf' then
+      Result := 'text/rtf'
+    else
+    if Ext = '.eps' then
+      Result := 'application/postscript'
+    else
+    if Ext = '.ps' then
+      Result := 'application/postscript'
+    else
+    if Ext = '.pdf' then
+      Result := 'application/pdf'
+    else
+    if Ext = '.csv' then
+      Result := 'application/csv'
+    else
     // Documents - old MS Office
-    if Ext = '.xls' then Result := 'application/vnd.ms-excel' else
-    if Ext = '.doc' then Result := 'application/msword' else
-    if Ext = '.ppt' then Result := 'application/vnd.ms-powerpoint' else
+    if Ext = '.xls' then
+      Result := 'application/vnd.ms-excel'
+    else
+    if Ext = '.doc' then
+      Result := 'application/msword'
+    else
+    if Ext = '.ppt' then
+      Result := 'application/vnd.ms-powerpoint'
+    else
     // Documents - open standards
-    if Ext = '.odt' then Result := 'application/vnd.oasis.opendocument.text' else
-    if Ext = '.ods' then Result := 'application/vnd.oasis.opendocument.spreadsheet' else
-    if Ext = '.odp' then Result := 'application/vnd.oasis.opendocument.presentation' else
-    if Ext = '.odg' then Result := 'application/vnd.oasis.opendocument.graphics' else
-    if Ext = '.odc' then Result := 'application/vnd.oasis.opendocument.chart' else
-    if Ext = '.odf' then Result := 'application/vnd.oasis.opendocument.formula' else
-    if Ext = '.odi' then Result := 'application/vnd.oasis.opendocument.image' else
+    if Ext = '.odt' then
+      Result := 'application/vnd.oasis.opendocument.text'
+    else
+    if Ext = '.ods' then
+      Result := 'application/vnd.oasis.opendocument.spreadsheet'
+    else
+    if Ext = '.odp' then
+      Result := 'application/vnd.oasis.opendocument.presentation'
+    else
+    if Ext = '.odg' then
+      Result := 'application/vnd.oasis.opendocument.graphics'
+    else
+    if Ext = '.odc' then
+      Result := 'application/vnd.oasis.opendocument.chart'
+    else
+    if Ext = '.odf' then
+      Result := 'application/vnd.oasis.opendocument.formula'
+    else
+    if Ext = '.odi' then
+      Result := 'application/vnd.oasis.opendocument.image'
+    else
     // Documents - new MS Office
-    if Ext = '.xlsx' then Result := 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' else
-    if Ext = '.pptx' then Result := 'application/vnd.openxmlformats-officedocument.presentationml.presentation' else
-    if Ext = '.docx' then Result := 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' else
+    if Ext = '.xlsx' then
+      Result := 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    else
+    if Ext = '.pptx' then
+      Result := 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    else
+    if Ext = '.docx' then
+      Result := 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    else
     // Compressed archives
-    if Ext = '.zip' then Result := 'application/zip' else
-    if Ext = '.tar' then Result := 'application/x-tar' else
-    if Ext = '.rar' then Result := 'application/x-rar-compressed' else
-    if Ext = '.gz' then begin Result := 'application/gzip'; Gzipped := true; end else
+    if Ext = '.zip' then
+      Result := 'application/zip'
+    else
+    if Ext = '.tar' then
+      Result := 'application/x-tar'
+    else
+    if Ext = '.rar' then
+      Result := 'application/x-rar-compressed'
+    else
+    if Ext = '.gz' then
+    begin
+      Result := 'application/gzip';
+      Gzipped := true;
+    end else
     // Various
-    if Ext = '.xml' then Result := 'application/xml' else
-    if Ext = '.castlescript' then Result := 'text/x-castlescript' else
-    if Ext = '.kscript'      then Result := 'text/x-castlescript' else
-    if Ext = '.js' then Result := 'application/javascript'
+    if Ext = '.xml' then
+      Result := 'application/xml'
+    else
+    if Ext = '.castlescript' then
+      Result := 'text/x-castlescript'
+    else
+    if Ext = '.kscript' then
+      Result := 'text/x-castlescript'
+    else
+    if Ext = '.js' then
+      Result := 'application/javascript'
     else
       { as a last resort, check URIMimeExtensions }
       URIMimeExtensions.TryGetValue(Ext, Result);
@@ -769,27 +958,33 @@ begin
       although they should be used for filenames.
       Note that this unit does not define public functions like ExtractURIExt
       or ExtractURIDoubleExt: *everything* should operate on MIME types instead. }
-    Result := ExtToMimeType(ExtractFileExt(URI), ExtractFileDoubleExt(URI)) else
+    Result := ExtToMimeType(ExtractFileExt(URI), ExtractFileDoubleExt(URI))
+  else
 
-  if P = 'data' then
-  begin
-    DataURI := TDataURI.Create;
-    try
-      DataURI.URI := URI;
-      if DataURI.Valid then Result := DataURI.MimeType;
-    finally FreeAndNil(DataURI) end;
-  end else
+    if P = 'data' then
+    begin
+      DataURI := TDataURI.Create;
+      try
+        DataURI.URI := URI;
+        if DataURI.Valid then
+          Result := DataURI.MimeType;
+      finally
+        FreeAndNil(DataURI);
+      end;
+    end else
 
-  { Special script protocols always imply a specific MIME type.
-    Note: add these to CombineURI as exceptions too. }
-  if (P = 'ecmascript') or
-     (P = 'javascript') then
-    Result := 'application/javascript' else
-  if (P = 'castlescript') or
-     (P = 'kambiscript') then
-    Result := 'text/x-castlescript' else
-  if P = 'compiled' then
-    Result := 'text/x-castle-compiled';
+      { Special script protocols always imply a specific MIME type.
+        Note: add these to CombineURI as exceptions too. }
+      if (P = 'ecmascript') or
+         (P = 'javascript') then
+        Result := 'application/javascript'
+      else
+        if (P = 'castlescript') or
+           (P = 'kambiscript') then
+          Result := 'text/x-castlescript'
+        else
+          if P = 'compiled' then
+            Result := 'text/x-castle-compiled';
 end;
 
 function URIMimeType(const URI: string): string;
@@ -812,8 +1007,11 @@ begin
     DataURI := TDataURI.Create;
     try
       DataURI.URI := URI;
-      if DataURI.Valid then Result := DataURI.URIPrefix + ',...';
-    finally FreeAndNil(DataURI) end;
+      if DataURI.Valid then
+        Result := DataURI.URIPrefix + ',...';
+    finally
+      FreeAndNil(DataURI);
+    end;
   end else
 
   begin
@@ -848,7 +1046,8 @@ end;
 function URICaption(const URI: string): string;
 begin
   if URI = '' then
-    Result := '' else
+    Result := ''
+  else
     Result := URIDisplay(AbsoluteURI(URI), true);
 end;
 
@@ -876,13 +1075,13 @@ function URIFileExists(const URL: string): boolean;
 var
   F: string;
 begin
-  F := URIToFilenameSafe(URL);
+  F := URIToFileNameSafe(URL);
   Result := (F = '') or FileExists(F);
 end;
 
 function URICurrentPath: string;
 begin
-  Result := FilenameToURISafe(InclPathDelim(GetCurrentDir));
+  Result := FileNameToURISafe(InclPathDelim(GetCurrentDir));
 end;
 
 finalization

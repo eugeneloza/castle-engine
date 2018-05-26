@@ -374,7 +374,9 @@ type
           begin
             // ... here goes your code to process I.Current ...
           end;
-        finally FreeAndNil(I) end;
+        finally
+          FreeAndNil(I);
+        end;
       end;
       #) }
     function ChildrenIterator: TXMLElementIterator; overload;
@@ -391,7 +393,9 @@ type
           begin
             // ... here goes your code to process I.Current ...
           end;
-        finally FreeAndNil(I) end;
+        finally
+          FreeAndNil(I);
+        end;
       end;
       #) }
     function ChildrenIterator(const ChildName: string): TXMLElementIterator; overload;
@@ -452,7 +456,9 @@ type
         begin
           ... here goes your code to process I.Current ...
         end;
-      finally FreeAndNil(I) end;
+      finally
+        FreeAndNil(I);
+      end;
     end;
     #) }
   TXMLElementIterator = class
@@ -491,7 +497,9 @@ type
         begin
           ... here goes your code to process I.Current ...
         end;
-      finally FreeAndNil(I) end;
+      finally
+        FreeAndNil(I);
+      end;
     end;
     #) }
   TXMLCDataIterator = class
@@ -726,10 +734,12 @@ begin
   if Result then
   begin
     if AnsiCompareText(ValueStr, 'TRUE') = 0 then
-      Value := true else
-    if AnsiCompareText(ValueStr, 'FALSE') = 0 then
-      Value := false else
-      Result := false;
+      Value := true
+    else
+      if AnsiCompareText(ValueStr, 'FALSE') = 0 then
+        Value := false
+      else
+        Result := false;
   end;
 end;
 
@@ -1014,11 +1024,13 @@ begin
        ((Node as TDOMElement).TagName = UTF8Decode(ChildName)) then
     begin
       if Result = nil then
-        Result := TDOMElement(Node) else
+        Result := TDOMElement(Node)
+      else
       begin
         if Required then
           raise EDOMChildElementError.CreateFmt(
-            'Child "%s" occurs more than once', [ChildName]) else
+            'Child "%s" occurs more than once', [ChildName])
+        else
           Exit(nil);
       end;
     end;
@@ -1244,7 +1256,8 @@ begin
     if Node.NodeType = ELEMENT_NODE then
     begin
       if Result = nil then
-        Result := Node as TDOMElement else
+        Result := Node as TDOMElement
+      else
       begin
         { More than one element in Children. }
         Result := nil;
@@ -1290,9 +1303,15 @@ begin
       DecryptedCorrectStream := TStringStream.Create(DecryptedContent);
       try
         ReadXMLFile(Doc, DecryptedCorrectStream);
-      finally FreeAndNil(DecryptedCorrectStream) end;
-    finally FreeAndNil(DecryptStream) end;
-  finally FreeAndNil(Stream) end;
+      finally
+        FreeAndNil(DecryptedCorrectStream);
+      end;
+    finally
+      FreeAndNil(DecryptStream);
+    end;
+  finally
+    FreeAndNil(Stream);
+  end;
 end;
 
 procedure URLReadXML(out Doc: TXMLDocument; const URL: String);
@@ -1312,7 +1331,9 @@ begin
   Stream := Download(URL, StreamOptions);
   try
     ReadXMLFile(Doc, Stream);
-  finally FreeAndNil(Stream) end;
+  finally
+    FreeAndNil(Stream);
+  end;
 end;
 
 function URLReadXML(const URL: String): TXMLDocument;
@@ -1320,7 +1341,10 @@ begin
   try
     // URLReadXML and ReadXMLFile nil the parameter when there's no need to free it
     URLReadXML(Result, URL);     //this one will automatically take care of gzipping
-  except FreeAndNil(Result); raise; end;
+  except
+    FreeAndNil(Result);
+    raise;
+  end;
 end;
 
 function URLReadXML(const URL: String; const BlowFishKeyPhrase: string): TXMLDocument;
@@ -1328,7 +1352,10 @@ begin
   try
     // URLReadXML and ReadXMLFile nil the parameter when there's no need to free it
     URLReadXML(Result, URL, BlowFishKeyPhrase);
-  except FreeAndNil(Result); raise; end;
+  except
+    FreeAndNil(Result);
+    raise;
+  end;
 end;
 
 procedure URLWriteXML(Doc: TXMLDocument; const URL: String; const BlowFishKeyPhrase: string);
@@ -1341,8 +1368,12 @@ begin
     EncryptStream := TBlowFishEncryptStream.Create(BlowFishKeyPhrase, Stream);
     try
       WriteXMLFile(Doc, EncryptStream);
-    finally FreeAndNil(EncryptStream) end;
-  finally FreeAndNil(Stream) end;
+    finally
+      FreeAndNil(EncryptStream);
+    end;
+  finally
+    FreeAndNil(Stream);
+  end;
 end;
 
 procedure URLWriteXML(Doc: TXMLDocument; const URL: String);
@@ -1360,7 +1391,9 @@ begin
   Stream := URLSaveStream(URL, StreamOptions);
   try
     WriteXMLFile(Doc, Stream);
-  finally FreeAndNil(Stream) end;
+  finally
+    FreeAndNil(Stream);
+  end;
 end;
 
 end.
