@@ -39,6 +39,13 @@ unit Generics.Collections;
 {$RANGECHECKS OFF}
 {$NOTES OFF}
 
+{$ifdef VER2}
+  {$fatal You need FPC version >= 3.0.2 to compile Generics.Collections (in Castle Game Engine). See https://castle-engine.io/supported_compilers.php}
+{$endif}
+{$ifdef VER3_0_0}
+  {$fatal You need FPC version >= 3.0.2 to compile Generics.Collections (in Castle Game Engine). See https://castle-engine.io/supported_compilers.php}
+{$endif}
+
 interface
 
 uses
@@ -2876,12 +2883,15 @@ begin
     Result := Compare(ANode.Key,AInsertNode.Key);
     if Result < 0 then
     begin
+      Result:=-1;
       if AInsertNode.Left = nil then
         Exit;
       AInsertNode := AInsertNode.Left;
     end
     else
     begin
+      if Result > 0 then
+        Result:=1;
       if AInsertNode.Right = nil then
         Exit;
       AInsertNode := AInsertNode.Right;

@@ -935,8 +935,14 @@ end;
   {$endif CPUX64}
 {$else}
   {$ifdef CPUX86}
-    {$define CPUINTEL}
-    {$ASMMODE INTEL}
+    {$ifndef FPC_PIC}
+      {$define CPUINTEL}
+      {$ASMMODE INTEL}
+    {$else}
+      { Assembler code uses references to static
+        variables with are not PIC ready }
+      {$define PUREPASCAL}
+    {$endif}
   {$else CPUX86}
   {$define PUREPASCAL}
   {$endif}
@@ -1057,7 +1063,7 @@ end;
 {$ifdef CPUX64}
 function xxHash32(crc: cardinal; P: Pointer; len: integer): cardinal;
 asm
-        {$ifdef LINUX} // crc=rdi P=rsi len=rdx
+        {$ifndef WIN64} // crc=rdi P=rsi len=rdx
         mov     r8, rdi
         mov     rcx, rsi
         {$else} // crc=r8 P=rcx len=rdx
@@ -1144,7 +1150,7 @@ asm
         shr     edx, 16
         xor     eax, edx
         pop     rbx
-        {$ifndef LINUX}
+        {$ifdef WIN64}
         pop     rdi
         pop     rsi
         {$endif}
@@ -1187,7 +1193,12 @@ begin
   end else
     result := crc + PRIME32_5;
   inc(result, len);
-  while P <= PEnd - 4 do begin
+  { Use "P + 4 <= PEnd" instead of "P <= PEnd - 4" to avoid crashes in case P = nil.
+    When P = nil,
+    then "PtrUInt(PEnd - 4)" is 4294967292,
+    so the condition "P <= PEnd - 4" would be satisfied,
+    and the code would try to access PCardinal(nil)^ causing a SEGFAULT. }
+  while P + 4 <= PEnd do begin
     inc(result, PCardinal(P)^ * PRIME32_3);
     result := RolDWord(result, 17) * PRIME32_4;
     inc(P, 4);

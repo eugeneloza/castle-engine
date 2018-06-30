@@ -27,6 +27,7 @@ uses SysUtils, Classes, Math, Generics.Collections, Kraft,
 type
   TSceneManagerWorld = class;
   TCastleTransform = class;
+  TRenderingCamera = class;
 
   TCastleTransformClass = class of TCastleTransform;
 
@@ -36,7 +37,7 @@ type
   ENotAddedToWorld = class(ETransformParentUndefined);
   EPhysicsError = class(Exception);
 
-  TRenderFromViewFunction = procedure of object;
+  TRenderFromViewFunction = procedure (const RenderingCamera: TRenderingCamera) of object;
 
   { Describe what visible thing changed for TCastleTransform.VisibleChangeHere. }
   TVisibleChange = (
@@ -186,41 +187,9 @@ type
     procedure Add(const Item: TCastleTransform); reintroduce;
   end;
 
-  { Statistics about what was rendered during last frame.
-    You will usually access this by scene manager property,
-    see @link(TCastleAbstractViewport.Statistics). }
-  TRenderStatistics = record
-    { How many shapes were rendered (send to OpenGL)
-      versus all shapes that were potentially visible.
-      Potentially visible shapes are the ones with
-      TShape.Visible inside a 3D object with TCastleTransform.GetExists.
-
-      When ShapesRendered is much smaller than ShapesVisible,
-      it means that the algorithm for removing invisible scene parts
-      works good. This includes frustum culling (automatically
-      used by TCastleScene), or occlusion culling (see
-      TSceneRenderingAttributes.UseOcclusionQuery),
-      or any custom algorithm you implement by using TTestShapeVisibility
-      callback with @link(TCastleScene.LocalRender). }
-    ShapesRendered, ShapesVisible: Cardinal;
-
-    { The number of shapes that were not rendered,
-      but their bounding box was rendered to check with occlusion query.
-      This is always zero when not using occlusion query (see
-      TSceneRenderingAttributes.UseOcclusionQuery).
-      Basically, this measures the "invisible overhead" of occlusion query. }
-    BoxesOcclusionQueriedCount: Cardinal;
-  end;
-
-  { List of lights. Always TLightInstancesList, but we cannot declare it here
-    as such. Internal. @exclude }
-  TAbstractLightInstancesList = TObject;
-
-  { Fog node. Always TFogNode, but we cannot declare it here as such.
-    Internal. @exclude }
-  TAbstractFogNode = TObject;
-
-  TRenderingPass = 0..1;
+  {$define read_interface}
+  {$I castletransform_renderparams.inc}
+  {$undef read_interface}
 
   { Information that a TCastleTransform object needs to prepare rendering.
 
@@ -248,68 +217,6 @@ type
     { World fog, in any, to prepare for.
       @exclude }
     InternalGlobalFog: TAbstractFogNode;
-  end;
-
-  { Information that a TCastleTransform object needs to render.
-    Read-only for @link(TCastleTransform.LocalRender)
-    (except Statistics, which should be updated during rendering).
-
-    This is @bold(mostly an internal class). You should not need to create it,
-    you should not need to read anything inside or deal with this class otherwise,
-    and actually you should not need to override
-    @link(TCastleTransform.LocalRender) during normal engine usage.
-    But it may be useful for special customized rendering. }
-  TRenderParams = class
-    { Which parts should be rendered: opaque (@false) or transparent (@true).
-      This should "filter" the rendered parts by @link(TCastleTransform.LocalRender). }
-    Transparent: boolean;
-
-    { Should we render parts that may receive shadow volumes, or ones that don't.
-      During rendering, simply check does it match TCastleScene.ReceiveShadowVolumes.
-      This should "filter" the rendered parts by @link(TCastleTransform.LocalRender). }
-    ShadowVolumesReceivers: boolean;
-
-    { If @true, means that we're using multi-pass
-      shadowing technique (like shadow volumes),
-      and currently doing the "shadowed" pass.
-
-      Which means that most lights (ones with shadowVolumes = TRUE)
-      should be turned off, see [https://castle-engine.io/x3d_extensions.php#section_ext_shadows].) }
-    InShadow: boolean;
-
-    { Value > 0 means we're inside some stencil test (like for
-      InShadow = @false pass of shadow volumes). }
-    StencilTest: Cardinal;
-
-    { Rendering pass number, for multi-pass rendering, like for shadow volumes. }
-    Pass: TRenderingPass;
-
-    { Transformation that should be applied to the rendered result.
-      If TransformIdentity, then Transform and InverseTransform is always identity.
-      @groupBegin }
-    Transform, InverseTransform: PMatrix4;
-    TransformIdentity: boolean;
-    { @groupEnd }
-
-    { Current rendering statistics, should be updated by each
-      @link(TCastleTransform.LocalRender) call. }
-    Statistics: TRenderStatistics;
-
-    { Fog that affects all scenes. }
-    GlobalFog: TAbstractFogNode;
-
-    { Camera frustum in local coordinates. Local for the TCastleTransform instance
-      receiving this TRenderParams as @link(TCastleTransform.LocalRender)
-      parameter. }
-    Frustum: PFrustum;
-
-    constructor Create;
-
-    { Lights that shine on given 3D object. }
-    function BaseLights(Scene: TCastleTransform): TAbstractLightInstancesList; virtual; abstract;
-
-    function RenderTransform: TMatrix4; deprecated 'use Transform';
-    function RenderTransformIdentity: boolean; deprecated 'use TransformIdentity';
   end;
 
   TRemoveType = (rtNone, rtRemove, rtRemoveAndFree);
@@ -934,7 +841,7 @@ type
 
       The rendering transformation, frustum, and filtering
       is specified inside TRenderParams class.
-      This method should only update @link(TRenderParams.Statistics). }
+      This method should only update @code(TRenderParams.Statistics). }
     procedure Render(const Params: TRenderParams); overload;
 
     procedure Render(const Frustum: TFrustum; const Params: TRenderParams); overload;
@@ -1959,6 +1866,7 @@ uses CastleLog, CastleQuaternions;
 {$define read_implementation}
 {$I castletransform_physics.inc}
 {$I castletransform_collisions.inc}
+{$I castletransform_renderparams.inc}
 {$undef read_implementation}
 
 { TransformMatricesMult ------------------------------------------------------ }
@@ -2056,29 +1964,6 @@ var
 begin
   NewItem := inherited Add();
   NewItem^.Item := Item;
-end;
-
-{ TRenderParams -------------------------------------------------------------- }
-
-var
-  GlobalIdentityMatrix: TMatrix4;
-
-constructor TRenderParams.Create;
-begin
-  inherited;
-  Transform := @GlobalIdentityMatrix;
-  InverseTransform := @GlobalIdentityMatrix;
-  TransformIdentity := true;
-end;
-
-function TRenderParams.RenderTransform: TMatrix4;
-begin
-  Result := Transform^;
-end;
-
-function TRenderParams.RenderTransformIdentity: boolean;
-begin
-  Result := TransformIdentity;
 end;
 
 { TCastleTransformList ------------------------------------------------------------ }

@@ -266,7 +266,7 @@ type
     function Size: TVector3;
 
     { Calculate eight corners of the box.}
-    procedure Corners(var AllPoints: TBoxCorners);
+    procedure Corners(out AllPoints: TBoxCorners);
     procedure GetAllPoints(AllPoints: PVector3Array); deprecated 'use Corners';
 
     { Transform the Box by given matrix.
@@ -382,7 +382,14 @@ type
     procedure BoundingSphere(
       var SphereCenter: TVector3; var SphereRadiusSqr: Single);
 
+    { Does it have any common part with another box.
+      Better use @link(Collides),
+      which has a name consistent with @link(TFloatRectangle.Collides),
+      this method will be deprecated some day and later removed. }
     function Collision(const Box2: TBox3D): boolean;
+
+    { Does it have any common part with another box. }
+    function Collides(const Box2: TBox3D): boolean;
 
     { Radius of the minimal sphere that contains this box.
       Sphere center is assumed to be in (0, 0, 0).
@@ -1037,7 +1044,7 @@ begin
   AllPoints^[7] := Vector3(Data[1].Data[0], Data[1].Data[1], Data[1].Data[2]);
 end;
 
-procedure TBox3D.Corners(var AllPoints: TBoxCorners);
+procedure TBox3D.Corners(out AllPoints: TBoxCorners);
 begin
   {$warnings off} // using deprecated knowingly
   GetAllPoints(@AllPoints);
@@ -1690,6 +1697,11 @@ begin
 end;
 
 function TBox3D.Collision(const Box2: TBox3D): boolean;
+begin
+  Result := Collides(Box2);
+end;
+
+function TBox3D.Collides(const Box2: TBox3D): boolean;
 begin
   Result :=
     (not IsEmpty) and

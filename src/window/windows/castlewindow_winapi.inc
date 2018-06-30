@@ -840,7 +840,7 @@ begin
   {$else}
   { optionally hide mouse in FullScreem,
     set dwStyle and dwExStyle for our window }
-  if FFullScreen then
+  if FullScreen then
   begin
     WindowRect := Bounds(0, 0, Application.ScreenWidth, Application.ScreenHeight);
     dwExStyle := WS_EX_APPWINDOW;
@@ -1361,9 +1361,9 @@ begin
   *)
 end;
 
-procedure TCastleWindowCustom.SetFullScreen(const Value: boolean);
+procedure TCastleWindowCustom.UpdateFullScreenBackend;
 begin
-  SimpleSetFullScreen(Value);
+  SimpleUpdateFullScreenBackend;
 end;
 
 { TWinApiClipboard ----------------------------------------------------------- }

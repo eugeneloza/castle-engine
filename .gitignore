@@ -66,6 +66,7 @@ examples/3d_rendering_processing/call_pascal_code_from_3d_model_script
 examples/3d_rendering_processing/cars_demo
 examples/3d_rendering_processing/combine_multiple_x3d_into_one
 examples/3d_rendering_processing/custom_3d_object
+examples/3d_rendering_processing/detect_scene_clicks
 examples/3d_rendering_processing/display_box_custom_shaders
 examples/3d_rendering_processing/fog_culling
 examples/3d_rendering_processing/gl_primitive_performance
@@ -82,6 +83,7 @@ examples/3d_rendering_processing/triangulate_demo.res
 examples/3d_rendering_processing/view_3d_model_advanced
 examples/3d_rendering_processing/view_3d_model_advanced.res
 examples/3d_rendering_processing/view_3d_model_basic
+examples/3d_rendering_processing/switch_projection
 examples/3d_sound_game/data/levels/base/devel/process_base_b
 examples/3d_sound_game/data/levels/base/devel/process_base_b.res
 examples/3d_sound_game/lets_take_a_walk

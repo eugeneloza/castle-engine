@@ -141,8 +141,10 @@ type
   end;
 
   TColorPerVertexCoordinateRenderer = class(TFogCoordinateRenderer)
+  {$ifndef OpenGLES}
   private
     MaterialFromColorEnabled: boolean;
+  {$endif}
   protected
     procedure RenderCoordinateBegin; override;
     procedure RenderCoordinateEnd; override;
@@ -184,8 +186,6 @@ var
       Attribs := TGLSLAttributeList.Create;
     for I := 0 to Arrays.Attribs.Count - 1 do
     begin
-      // TODO: would be faster to not query GLSLProgram.Attribute every frame,
-      // but save it in GLSLProgram.
       A := GLSLProgram.AttributeOptional(Arrays.Attribs[I].Name);
       if A.Location = -1 then
       begin
@@ -753,6 +753,11 @@ procedure TTextureCoordinateRenderer.RenderCoordinateBegin;
           Shader.EnableTexGen(TexUnit, tgObject, 0, TexCoord.GenerationBoundsVector[0]);
           Shader.EnableTexGen(TexUnit, tgObject, 1, TexCoord.GenerationBoundsVector[1]);
           Shader.EnableTexGen(TexUnit, tgObject, 2, TexCoord.GenerationBoundsVector[2]);
+        end;
+      tgMirrorPlane:
+        begin
+          Shader.EnableTexGen(TexUnit, tgcMirrorPlane, false);
+          Shader.MirrorPlaneUniforms := Shape.MirrorPlaneUniforms;
         end;
       else raise EInternalError.Create('EnableTextureGen - Gen?');
     end;

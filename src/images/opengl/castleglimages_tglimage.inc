@@ -87,17 +87,45 @@ type
           const ColorTreatment: TColorTreatment);
       end;
 
+      TVboStorage = record
+        PointsVbo, IndexesVbo: TGLuint;
+        PointsVboSize, IndexesVboSize: Cardinal;
+      end;
+      PVboStorage = ^TVboStorage;
+
     var
-    { Static OpenGL resources, used by all TGLImageCore instances. }
-    PointsVbo, IndexesVbo: TGLuint; static;
+    { Static OpenGL resources, used by all TGLImageCore instances.
+      Instead of using the same TVboStorage for all TGLImage.Draw calls,
+      we rotate between a number of TVboStorage, each with it's own VBOs.
+
+      This way we minimize the overhead caused by updating VBO that is currently
+      drawn in parallel:
+      https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBufferSubData.xhtml
+      :
+
+      """
+      Consider using multiple buffer objects to avoid stalling
+      the rendering pipeline during data store updates.
+      If any rendering in the pipeline makes reference to data in
+      the buffer object being updated by glBufferSubData,
+      especially from the specific region being updated,
+      that rendering must drain from the pipeline before
+      the data store can be updated.
+      """
+
+      This makes a huge speedup for drawing UI on Raspberry Pi OpenGLES
+      without X.
+    }
+    VboStorage: array [0..9] of TVboStorage; static;
+    VboStorageNext: Cardinal; static;
     { Point VBO contents, reused in every Draw. }
     Points: array of TPoint; static;
     Indexes: array of {$ifdef GLIndexesShort} Word {$else} LongWord {$endif}; static;
-    TextureHasOnlyAlpha: boolean;
 
     { Used only in shader pipeline }
     Programs: array [boolean { alpha test? }, boolean { clip? }, TColorTreatment] of TImageProgram; static;
 
+    TextureHasOnlyAlpha: boolean;
     FWidth: Cardinal;
     FHeight: Cardinal;
     FAlpha: TAutoAlphaChannel;
@@ -122,8 +150,6 @@ type
     FBlendingConstantColor: TVector4;
     FCustomShader: TGLSLProgram;
     function FinalAlpha: TAlphaChannel;
-    procedure AlphaBegin;
-    procedure AlphaEnd;
     procedure SetSmoothScaling(const Value: boolean);
     function CurrentFilter: TTextureFilter;
   private
@@ -962,14 +988,18 @@ var
   ColorTreatment: TColorTreatment;
   NewProgram: TImageProgram;
   VS, FS: string;
+  I: Integer;
 begin
   // Some Intel GPUs may not support VBO
   if GLFeatures.VertexBufferObject then
   begin
-    if (PointsVbo = 0) then
-      glGenBuffers(1, @PointsVbo);
-    if (IndexesVbo = 0) then
-      glGenBuffers(1, @IndexesVbo);
+    for I := Low(VboStorage) to High(VboStorage) do
+    begin
+      if (VboStorage[I].PointsVbo = 0) then
+        glGenBuffers(1, @VboStorage[I].PointsVbo);
+      if (VboStorage[I].IndexesVbo = 0) then
+        glGenBuffers(1, @VboStorage[I].IndexesVbo);
+    end;
   end;
 
   if not GLFeatures.EnableFixedFunction then
@@ -1010,9 +1040,15 @@ class procedure TGLImageCore.StaticGLContextClose;
 var
   AlphaTestShader, ClipLineShader: boolean;
   ColorTreatment: TGLImageCore.TColorTreatment;
+  I: Integer;
 begin
-  glFreeBuffer(PointsVbo);
-  glFreeBuffer(IndexesVbo);
+  for I := Low(VboStorage) to High(VboStorage) do
+  begin
+    glFreeBuffer(VboStorage[I].PointsVbo);
+    glFreeBuffer(VboStorage[I].IndexesVbo);
+    VboStorage[I].PointsVboSize := 0;
+    VboStorage[I].IndexesVboSize := 0;
+  end;
 
   { free below regardless of EnableFixedFunction state,
     to avoid memory leaks in case we toggle EnableFixedFunction at runtime }
@@ -1034,50 +1070,6 @@ begin
       Result := acBlending;
   end else
     Result := FAlpha;
-end;
-
-procedure TGLImageCore.AlphaBegin;
-begin
-  case FinalAlpha of
-    {$ifndef OpenGLES}
-    acTest:
-      if GLFeatures.EnableFixedFunction then
-      begin
-        glAlphaFunc(GL_GEQUAL, 0.5);
-        glEnable(GL_ALPHA_TEST);
-      end;
-    {$endif not OpenGLES}
-    acBlending:
-      begin
-        if GLFeatures.BlendConstant and
-          ( (BlendingSourceFactor in
-             [bsConstantColor, bsOneMinusConstantColor,
-              bsConstantAlpha, bsOneMinusConstantAlpha]) or
-            (BlendingDestinationFactor in
-             [bdConstantColor, bdOneMinusConstantColor,
-              bdConstantAlpha, bdOneMinusConstantAlpha]) ) then
-        begin
-          glBlendColor(
-            BlendingConstantColor[0],
-            BlendingConstantColor[1],
-            BlendingConstantColor[2],
-            BlendingConstantColor[3]);
-        end;
-
-        GLBlendFunction(BlendingSourceFactor, BlendingDestinationFactor);
-        glEnable(GL_BLEND);
-      end;
-  end;
-end;
-
-procedure TGLImageCore.AlphaEnd;
-begin
-  case FinalAlpha of
-    {$ifndef OpenGLES}
-    acTest: if GLFeatures.EnableFixedFunction then glDisable(GL_ALPHA_TEST);
-    {$endif not OpenGLES}
-    acBlending: glDisable(GL_BLEND);
-  end;
 end;
 
 procedure TGLImageCore.Draw;
@@ -1119,7 +1111,6 @@ begin
     FloatRectangle(ImageX, ImageY, ImageWidth, ImageHeight));
 end;
 
-
 procedure TGLImageCore.Draw(const ScreenRect: TRectangle);
 begin
   Draw(
@@ -1156,6 +1147,51 @@ end;
 
 procedure TGLImageCore.Draw(
   ScreenRects, ImageRects: PFloatRectangleArray; const Count: Integer);
+
+  procedure AlphaBegin;
+  begin
+    case FinalAlpha of
+      {$ifndef OpenGLES}
+      acTest:
+        if GLFeatures.EnableFixedFunction then
+        begin
+          glAlphaFunc(GL_GEQUAL, 0.5);
+          glEnable(GL_ALPHA_TEST);
+        end;
+      {$endif not OpenGLES}
+      acBlending:
+        begin
+          if GLFeatures.BlendConstant and
+            ( (BlendingSourceFactor in
+               [bsConstantColor, bsOneMinusConstantColor,
+                bsConstantAlpha, bsOneMinusConstantAlpha]) or
+              (BlendingDestinationFactor in
+               [bdConstantColor, bdOneMinusConstantColor,
+                bdConstantAlpha, bdOneMinusConstantAlpha]) ) then
+          begin
+            glBlendColor(
+              BlendingConstantColor[0],
+              BlendingConstantColor[1],
+              BlendingConstantColor[2],
+              BlendingConstantColor[3]);
+          end;
+
+          GLBlendFunction(BlendingSourceFactor, BlendingDestinationFactor);
+          glEnable(GL_BLEND);
+        end;
+    end;
+  end;
+
+  procedure AlphaEnd;
+  begin
+    case FinalAlpha of
+      {$ifndef OpenGLES}
+      acTest: if GLFeatures.EnableFixedFunction then glDisable(GL_ALPHA_TEST);
+      {$endif not OpenGLES}
+      acBlending: glDisable(GL_BLEND);
+    end;
+  end;
+
 var
   ShiftX, ShiftY: Single;
 
@@ -1226,10 +1262,28 @@ var
     end;
   end;
 
+  procedure LoadBuffer(const Target: TGLenum;
+    const Vbo: TGLuint; var VboCurrentSize: Cardinal;
+    const ContentsPtr: Pointer; const ContentsSize: Cardinal);
+  begin
+    glBindBuffer(Target, Vbo);
+    { Try using glBufferSubData if possible, manual suggests it's better
+      than repeatedly calling glBufferData.
+      The VBO size will only increase this way, but this is probably OK,
+      it's a single VBO for all our UI stuff. }
+    if VboCurrentSize < ContentsSize then
+    begin
+      glBufferData(Target, ContentsSize, ContentsPtr, GL_DYNAMIC_DRAW);
+      VboCurrentSize := ContentsSize;
+    end else
+      glBufferSubData(Target, 0, ContentsSize, ContentsPtr);
+  end;
+
 var
   ColorTreatment: TColorTreatment;
   Prog: TImageProgram;
   I: Integer;
+  Vbo: PVboStorage;
 begin
   if (Count = 0) or
      ((Count = 1) and
@@ -1274,16 +1328,17 @@ begin
 
   if GLFeatures.VertexBufferObject then
   begin
-    glBindBuffer(GL_ARRAY_BUFFER, PointsVbo);
-    glBufferData(GL_ARRAY_BUFFER, Length(Points) * SizeOf(TPoint),
-      @Points[0], GL_STREAM_DRAW);
+    Vbo := @VboStorage[VboStorageNext];
+    Inc(VboStorageNext);
+    if VboStorageNext = High(VboStorage) + 1 then
+      VboStorageNext := 0;
+
+    LoadBuffer(GL_ARRAY_BUFFER, Vbo^.PointsVbo, Vbo^.PointsVboSize,
+      @Points[0], Length(Points) * SizeOf(TPoint));
 
     if Count <> 1 then
-    begin
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexesVbo);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, Length(Indexes) * SizeOf(Indexes[0]),
-        @Indexes[0], GL_STREAM_DRAW);
-    end;
+      LoadBuffer(GL_ELEMENT_ARRAY_BUFFER, Vbo^.IndexesVbo, Vbo^.IndexesVboSize,
+        @Indexes[0], Length(Indexes) * SizeOf(Indexes[0]));
   end;
 
   AlphaBegin;
@@ -1299,9 +1354,6 @@ begin
     if CustomShader <> nil then
     begin
       Prog.Prog := CustomShader;
-      { TODO: This will be speed up some day, by either caching
-        of TGLSLProgram.Attribute or TGLSLProgram.Uniform,
-        or by doing this at each property change (SetCustomShader, SetClip etc.). }
       Prog.InitializeUniformsAttributes(Clip, ColorTreatment);
     end else
       Prog := Programs[FinalAlpha = acTest, Clip, ColorTreatment];
@@ -1356,7 +1408,9 @@ begin
   begin
     if GLFeatures.VertexBufferObject then
     begin
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexesVbo);
+      { No need to call glBindBuffer below, it is already bound by
+        LoadBuffer(GL_ELEMENT_ARRAY_BUFFER, ...) above. }
+      //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Vbo^.IndexesVbo);
       glDrawElements(GL_TRIANGLES, Length(Indexes),
         {$ifdef GLIndexesShort} GL_UNSIGNED_SHORT {$else} GL_UNSIGNED_INT {$endif}, nil);
     end else
@@ -1427,12 +1481,25 @@ end;
 procedure TGLImageCore.Draw3x3(const X, Y, DrawWidth, DrawHeight: Single;
   const CornerTop, CornerRight, CornerBottom, CornerLeft: Integer);
 var
+  ScreenRects, ImageRects: packed array [0..8] of TFloatRectangle;
+  DrawAddCount: Cardinal;
+
+  { Add the quad to draw to ScreenRects, ImageRects.
+    This looks and behaves like TGLImageCore.Draw,
+    but the actual drawing is delayed to later. }
+  procedure DrawAdd(const X, Y, DrawWidth, DrawHeight: Single;
+    const ImageX, ImageY, ImageWidth, ImageHeight: Single);
+  begin
+    ScreenRects[DrawAddCount] := FloatRectangle(X, Y, DrawWidth, DrawHeight);
+    ImageRects[DrawAddCount] := FloatRectangle(ImageX, ImageY, ImageWidth, ImageHeight);
+    Inc(DrawAddCount);
+  end;
+
+var
   XScreenLeft, XScreenRight, YScreenBottom, YScreenTop,
     HorizontalScreenSize, VerticalScreenSize: Single;
   XImageLeft, XImageRight, YImageBottom, YImageTop,
     HorizontalImageSize, VerticalImageSize: Single;
-  OldAlpha: TAutoAlphaChannel;
-  OptimizeAlpha: boolean;
   EpsilonT, EpsilonR, EpsilonB, EpsilonL: Single;
   DrawCornerTop, DrawCornerRight, DrawCornerBottom, DrawCornerLeft: Single;
 const
@@ -1469,18 +1536,6 @@ begin
   YScreenTop := Y + DrawHeight - DrawCornerTop;
   YImageTop  :=         Height -     CornerTop;
 
-  { For speed, we only apply AlphaBegin/End once.
-    In case of GLFeatures.EnableFixedFunction=false,
-    this optimization is only useful for acBlending,
-    and it would actually break the acTest case. }
-  OptimizeAlpha := GLFeatures.EnableFixedFunction or (FinalAlpha = acBlending);
-  if OptimizeAlpha then
-  begin
-    AlphaBegin;
-    OldAlpha := Alpha;
-    Alpha := acNone;
-  end;
-
   { setup rotations }
   if Rotation <> 0 then
   begin
@@ -1489,15 +1544,17 @@ begin
     ScreenCenterY := Y + FCenterY * DrawHeight;
   end;
 
+  DrawAddCount := 0;
+
   { 4 corners }
-  Draw(XScreenLeft, YScreenBottom, DrawCornerLeft, DrawCornerBottom,
-        XImageLeft,  YImageBottom,     CornerLeft,     CornerBottom);
-  Draw(XScreenRight, YScreenBottom, DrawCornerRight, DrawCornerBottom,
-        XImageRight,  YImageBottom,     CornerRight,     CornerBottom);
-  Draw(XScreenRight, YScreenTop, DrawCornerRight, DrawCornerTop,
-        XImageRight,  YImageTop,     CornerRight,     CornerTop);
-  Draw(XScreenLeft, YScreenTop, DrawCornerLeft, DrawCornerTop,
-        XImageLeft,  YImageTop,     CornerLeft,     CornerTop);
+  DrawAdd(XScreenLeft, YScreenBottom, DrawCornerLeft, DrawCornerBottom,
+           XImageLeft,  YImageBottom,     CornerLeft,     CornerBottom);
+  DrawAdd(XScreenRight, YScreenBottom, DrawCornerRight, DrawCornerBottom,
+           XImageRight,  YImageBottom,     CornerRight,     CornerBottom);
+  DrawAdd(XScreenRight, YScreenTop, DrawCornerRight, DrawCornerTop,
+           XImageRight,  YImageTop,     CornerRight,     CornerTop);
+  DrawAdd(XScreenLeft, YScreenTop, DrawCornerLeft, DrawCornerTop,
+           XImageLeft,  YImageTop,     CornerLeft,     CornerTop);
 
   { 4 sides }
   HorizontalScreenSize := DrawWidth - DrawCornerLeft - DrawCornerRight;
@@ -1505,15 +1562,15 @@ begin
   VerticalScreenSize := DrawHeight - DrawCornerTop - DrawCornerBottom;
   VerticalImageSize  :=     Height -     CornerTop -     CornerBottom;
 
-  Draw(XScreenLeft + DrawCornerLeft, YScreenBottom, HorizontalScreenSize, DrawCornerBottom,
-        XImageLeft +     CornerLeft,  YImageBottom,  HorizontalImageSize,     CornerBottom);
-  Draw(XScreenLeft + DrawCornerLeft, YScreenTop, HorizontalScreenSize, DrawCornerTop,
-        XImageLeft +     CornerLeft,  YImageTop,  HorizontalImageSize,     CornerTop);
+  DrawAdd(XScreenLeft + DrawCornerLeft, YScreenBottom, HorizontalScreenSize, DrawCornerBottom,
+           XImageLeft +     CornerLeft,  YImageBottom,  HorizontalImageSize,     CornerBottom);
+  DrawAdd(XScreenLeft + DrawCornerLeft, YScreenTop, HorizontalScreenSize, DrawCornerTop,
+           XImageLeft +     CornerLeft,  YImageTop,  HorizontalImageSize,     CornerTop);
 
-  Draw(XScreenLeft, YScreenBottom + DrawCornerBottom, DrawCornerLeft, VerticalScreenSize,
-        XImageLeft,  YImageBottom +     CornerBottom,     CornerLeft,  VerticalImageSize);
-  Draw(XScreenRight, YScreenBottom + DrawCornerBottom, DrawCornerRight, VerticalScreenSize,
-        XImageRight,  YImageBottom +     CornerBottom,     CornerRight,  VerticalImageSize);
+  DrawAdd(XScreenLeft, YScreenBottom + DrawCornerBottom, DrawCornerLeft, VerticalScreenSize,
+           XImageLeft,  YImageBottom +     CornerBottom,     CornerLeft,  VerticalImageSize);
+  DrawAdd(XScreenRight, YScreenBottom + DrawCornerBottom, DrawCornerRight, VerticalScreenSize,
+           XImageRight,  YImageBottom +     CornerBottom,     CornerRight,  VerticalImageSize);
 
   { inside }
   if CornerLeft > 0   then EpsilonL := Epsilon else EpsilonL := 0;
@@ -1521,14 +1578,12 @@ begin
   if CornerRight > 0  then EpsilonR := Epsilon else EpsilonR := 0;
   if CornerBottom > 0 then EpsilonB := Epsilon else EpsilonB := 0;
 
-  Draw(X + DrawCornerLeft           , Y + DrawCornerBottom           , HorizontalScreenSize, VerticalScreenSize,
-               CornerLeft + EpsilonL,         CornerBottom + EpsilonB, HorizontalImageSize - (EpsilonL+EpsilonR), VerticalImageSize - (EpsilonT+EpsilonB));
+  DrawAdd(X + DrawCornerLeft           , Y + DrawCornerBottom           , HorizontalScreenSize, VerticalScreenSize,
+                  CornerLeft + EpsilonL,         CornerBottom + EpsilonB, HorizontalImageSize - (EpsilonL+EpsilonR), VerticalImageSize - (EpsilonT+EpsilonB));
 
-  if OptimizeAlpha then
-  begin
-    Alpha := OldAlpha;
-    AlphaEnd;
-  end;
+  Assert(DrawAddCount = 9);
+  Draw(@ScreenRects, @ImageRects, 9);
+
   UseScreenCenter := false;
 end;
 
@@ -1554,104 +1609,6 @@ begin
     ScreenRect.Width, ScreenRect.Height,
     Corner[0], Corner[1], Corner[2], Corner[3]);
 end;
-
-(* Commented out for now: using Draw3x3 with
-   CornerTop = CornerBottom = 0 should have the same effect?
-
-procedure TGLImageCore.Draw3x1(const X, Y, DrawWidth, DrawHeight: Single;
-  const SideRight, SideLeft: Integer);
-var
-  XScreenLeft, XScreenRight,
-    HorizontalScreenSize: Single;
-  XImageLeft, XImageRight,
-    HorizontalImageSize: Single;
-  OldAlpha: TAutoAlphaChannel;
-  OptimizeAlpha: boolean;
-  EpsilonR, EpsilonL: Single;
-  DrawSideLeft, DrawSideRight: Single;
-const
-  { We tweak texture coordinates a little, to avoid bilinear filtering
-    that would cause border colors to "bleed" over the texture inside.
-    Something minimally > 0.5 is necessary. }
-  Epsilon = 0.51;
-begin
-  DrawSideLeft   := SideLeft  * ScaleCorners;
-  DrawSideRight  := SideRight * ScaleCorners;
-
-  if not ( (    SideLeft +     SideRight <     Width) and
-           (DrawSideLeft + DrawSideRight < DrawWidth) ) then
-  begin
-    if Log and not IgnoreTooLargeCorners then
-      WritelnLog('Draw3x1', 'Image sides are too large to draw it: sides are %d %d, image width is %d, draw area width is %d',
-        [SideRight, SideLeft,
-         Width,
-         DrawWidth]);
-    Exit;
-  end;
-
-  XScreenLeft := X;
-  XImageLeft  := 0;
-  XScreenRight := X + DrawWidth - DrawSideRight;
-  XImageRight  :=         Width -     SideRight;
-
-  { For speed, we only apply AlphaBegin/End once.
-    In case of GLFeatures.EnableFixedFunction=false, this optimization is only useful
-    for acBlending, and it would actually break the acTest case. }
-  OptimizeAlpha := GLFeatures.EnableFixedFunction or (FinalAlpha = acBlending);
-  if OptimizeAlpha then
-  begin
-    AlphaBegin;
-    OldAlpha := Alpha;
-    Alpha := acNone;
-  end;
-
-  { setup rotations }
-  if Rotation <> 0 then
-  begin
-    UseScreenCenter := true; // only temporary for this Draw3x3 call
-    ScreenCenterX := X + FCenterX * DrawWidth;
-    ScreenCenterY := Y + FCenterY * DrawHeight;
-  end;
-
-  { 2 sides }
-  HorizontalScreenSize := DrawWidth - DrawSideLeft - DrawSideRight;
-  HorizontalImageSize  :=     Width -     SideLeft -     SideRight;
-
-  Draw(XScreenLeft, Y, DrawSideLeft, DrawHeight,
-        XImageLeft, 0,     SideLeft,     Height);
-  Draw(XScreenRight, Y, DrawSideRight, DrawHeight,
-        XImageRight, 0,     SideRight,     Height);
-
-  { inside }
-  if SideLeft > 0   then EpsilonL := Epsilon else EpsilonL := 0;
-  if SideRight > 0  then EpsilonR := Epsilon else EpsilonR := 0;
-
-  Draw(X + SideLeft           , Y, HorizontalScreenSize, DrawHeight,
-           SideLeft + EpsilonL, 0, HorizontalImageSize - (EpsilonL+EpsilonR), Height);
-
-  if OptimizeAlpha then
-  begin
-    Alpha := OldAlpha;
-    AlphaEnd;
-  end;
-  UseScreenCenter := false;
-end;
-
-procedure TGLImageCore.Draw3x1(const X, Y, DrawWidth, DrawHeight: Single;
-  const Side: TVector2Integer);
-begin
-  Draw3x1(X, Y, DrawWidth, DrawHeight, Side[0], Side[1]);
-end;
-
-procedure TGLImageCore.Draw3x1(const ScreenRect: TRectangle;
-  const Side: TVector2Integer);
-begin
-  Draw3x1(ScreenRect.Left, ScreenRect.Bottom,
-    ScreenRect.Width, ScreenRect.Height,
-    Side[0], Side[1]);
-end;
-
-*)
 
 function TGLImageCore.CurrentFilter: TTextureFilter;
 begin

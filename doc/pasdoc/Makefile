@@ -15,9 +15,15 @@ default: html
 
 html:
 	./mk_docs.sh html
-	rm -Rf ../reference/html
+# For quick testing of docs look (CSS etc.), you can run this instead
+#	./mk_docs.sh html base/castleutils.pas
+	rm -Rf ../reference/
 	mv html ../reference/
-	cp logo/castle_game_engine_icon.png ../reference/
+	cp -R logo/castle_game_engine_icon.png \
+	      html-parts/images/ \
+	      html-parts/castle-engine-website-base/ \
+	      html-parts/cge-pasdoc.js \
+	      ../reference/
 
 # Just some shortcuts to "Helpful targets" below
 pdf: latex/docs.pdf
@@ -71,6 +77,8 @@ clean: clean-cache
 SSH_USERNAME=michalis
 SSH_HOST=castle-engine.io
 SSH_PATH=/home/michalis/cge-html/apidoc/
+# Use this for unstable docs:
+#SSH_PATH=/home/michalis/cge-html/apidoc-unstable/
 
 # Prepare and upload all the stuff referenced under
 # https://castle-engine.io/apidoc/html/ .
@@ -82,4 +90,5 @@ upload: clean html
 	mv ../reference/ html
 	tar czf html.tar.gz html
 	scp -r html.tar.gz $(SSH_USERNAME)@$(SSH_HOST):$(SSH_PATH)
+	rm -f html.tar.gz
 	./ssh_upload_finalize.sh $(SSH_USERNAME) $(SSH_HOST) $(SSH_PATH)

@@ -392,27 +392,6 @@ type
     fcBoth
   );
 
-  { Basic non-abstact implementation of render params for calling
-    TCastleTransform.LocalRender.
-
-    @exclude
-    @bold(This is exposed here only to support some experiments with non-standard
-    rendering in engine example programs. Do not use this in your own code.)
-    This can be used when you have to call TCastleTransform.LocalRender,
-    but you don't use scene manager.
-    Usually this should not be needed.
-    This class may be removed at some point!
-    You should always try to use TCastleSceneManager to manage and render
-    3D stuff in new programs, and then TCastleSceneManager will take care of creating
-    proper render params instance for you. }
-  TBasicRenderParams = class(TRenderParams)
-  public
-    FBaseLights: TLightInstancesList;
-    constructor Create;
-    destructor Destroy; override;
-    function BaseLights(Scene: TCastleTransform): TLightInstancesList; override;
-  end;
-
   { Complete loading, processing and rendering of a scene.
     This is a descendant of @link(TCastleSceneCore) that adds efficient rendering. }
   TCastleScene = class(TCastleSceneCore)
@@ -784,8 +763,30 @@ type
     procedure ViewChangedSuddenly;
   end;
 
-type
   TTriangle4List = specialize TStructList<TTriangle4>;
+
+  { @exclude Internal.
+
+    Basic non-abstact implementation of render params for calling
+    TCastleTransform.LocalRender.
+
+    @bold(This is exposed here only to support some experiments with non-standard
+    rendering in engine example programs. Do not use this in your own code.)
+
+    This can be used when you have to call TCastleTransform.LocalRender,
+    but you don't use scene manager.
+    Usually this should not be needed.
+    This class may be removed at some point!
+    You should always try to use TCastleSceneManager to manage and render
+    3D stuff in new programs, and then TCastleSceneManager will take care of creating
+    proper render params instance for you. }
+  TBasicRenderParams = class(TRenderParams)
+  public
+    FBaseLights: TLightInstancesList;
+    constructor Create;
+    destructor Destroy; override;
+    function BaseLights(Scene: TCastleTransform): TLightInstancesList; override;
+  end;
 
 procedure Register;
 
@@ -814,9 +815,13 @@ const
 
 implementation
 
+{$warnings off}
+// TODO: This unit temporarily uses RenderingCamera singleton,
+// to keep TBasicRenderParams working for backward compatibility.
 uses CastleGLVersion, CastleImages, CastleLog,
-  CastleStringUtils, CastleRenderingCamera, CastleApplicationProperties,
-  CastleShapeInternalRenderShadowVolumes;
+  CastleStringUtils, CastleApplicationProperties,
+  CastleRenderingCamera, CastleShapeInternalRenderShadowVolumes;
+{$warnings on}
 
 var
   TemporaryAttributeChange: Cardinal = 0;
@@ -844,33 +849,6 @@ end;
 procedure TGLSceneShape.SchedulePrepareResources;
 begin
   TCastleScene(ParentScene).PreparedShapesResources := false;
-end;
-
-{ TBasicRenderParams --------------------------------------------------------- }
-
-constructor TBasicRenderParams.Create;
-begin
-  inherited;
-  FBaseLights := TLightInstancesList.Create;
-  InShadow := false;
-  { Transparent and ShadowVolumesReceivers do not have good default values.
-    User of TBasicRenderParams should call Render method with
-    all 4 combinations of them, to really render everything correctly.
-    We just set them here to capture most 3D objects
-    (as using TBasicRenderParams for anything is a discouraged hack anyway). }
-  ShadowVolumesReceivers := true;
-  Transparent := false;
-end;
-
-destructor TBasicRenderParams.Destroy;
-begin
-  FreeAndNil(FBaseLights);
-  inherited;
-end;
-
-function TBasicRenderParams.BaseLights(Scene: TCastleTransform): TLightInstancesList;
-begin
-  Result := FBaseLights;
 end;
 
 { TCastleScene.TCustomShaders ------------------------------------------------ }
@@ -1141,10 +1119,10 @@ var
   var
     CameraMatrix: PMatrix4;
   begin
-    if RenderingCamera.RotationOnly then
-      CameraMatrix := @RenderingCamera.RotationMatrix
+    if Params.RenderingCamera.RotationOnly then
+      CameraMatrix := @Params.RenderingCamera.RotationMatrix
     else
-      CameraMatrix := @RenderingCamera.Matrix;
+      CameraMatrix := @Params.RenderingCamera.Matrix;
 
     if Params.TransformIdentity then
       Result := CameraMatrix^
@@ -1194,7 +1172,7 @@ var
         should have a map "target->oq state" for various rendering targets. }
 
       if Attributes.ReallyUseOcclusionQuery and
-         (RenderingCamera.Target = rtScreen) then
+         (Params.RenderingCamera.Target = rtScreen) then
       begin
         SimpleOcclusionQueryRenderer.Render(Shape, @RenderShape_NoTests, Params);
       end else
@@ -1333,7 +1311,7 @@ begin
     end else
     if Attributes.ReallyUseHierarchicalOcclusionQuery and
        (not Attributes.DebugHierOcclusionQueryResults) and
-       (RenderingCamera.Target = rtScreen) and
+       (Params.RenderingCamera.Target = rtScreen) and
        (InternalOctreeRendering <> nil) then
     begin
       HierarchicalOcclusionQueryRenderer.Render(@RenderShape_SomeTests,
@@ -1657,12 +1635,12 @@ procedure TCastleScene.LocalRenderOutside(
   begin
     { For shadow maps, speed up rendering by using only features that affect
       depth output. Also set up specialized shaders. }
-    if RenderingCamera.Target in [rtVarianceShadowMap, rtShadowMap] then
+    if Params.RenderingCamera.Target in [rtVarianceShadowMap, rtShadowMap] then
     begin
       SavedMode := Attributes.Mode;
       Attributes.Mode := rmDepth;
 
-      if RenderingCamera.Target = rtVarianceShadowMap then
+      if Params.RenderingCamera.Target = rtVarianceShadowMap then
       begin
         VarianceShadowMapsProgram.Initialize(
           '#define VARIANCE_SHADOW_MAPS' + NL + {$I shadow_map_generate.vs.inc},
@@ -1684,7 +1662,7 @@ procedure TCastleScene.LocalRenderOutside(
 
     RenderWithWireframeEffect;
 
-    if RenderingCamera.Target in [rtVarianceShadowMap, rtShadowMap] then
+    if Params.RenderingCamera.Target in [rtVarianceShadowMap, rtShadowMap] then
     begin
       Attributes.Mode := SavedMode;
       Attributes.CustomShader          := SavedShaders.Shader;
@@ -2373,6 +2351,35 @@ begin
   for I := 0 to Count - 1 do
     if Items[I] <> nil then
       Items[I].ViewChangedSuddenly;
+end;
+
+{ TBasicRenderParams --------------------------------------------------------- }
+
+constructor TBasicRenderParams.Create;
+begin
+  inherited;
+  FBaseLights := TLightInstancesList.Create;
+  InShadow := false;
+  { Transparent and ShadowVolumesReceivers do not have good default values.
+    User of TBasicRenderParams should call Render method with
+    all 4 combinations of them, to really render everything correctly.
+    We just set them here to capture most 3D objects
+    (as using TBasicRenderParams for anything is a discouraged hack anyway). }
+  ShadowVolumesReceivers := true;
+  Transparent := false;
+  RenderingCamera := CastleRenderingCamera.RenderingCamera;
+  Frustum := @RenderingCamera.Frustum;
+end;
+
+destructor TBasicRenderParams.Destroy;
+begin
+  FreeAndNil(FBaseLights);
+  inherited;
+end;
+
+function TBasicRenderParams.BaseLights(Scene: TCastleTransform): TLightInstancesList;
+begin
+  Result := FBaseLights;
 end;
 
 initialization

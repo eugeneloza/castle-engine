@@ -1487,16 +1487,25 @@ var
   D: Single;
   PlaneDir: TVector3 absolute Plane;
 begin
-  (*licz punkt Pr - punkt na plaszczyznie plane bedacy rzutem prostopadlym
-    punktu pos na ta plaszczyzne. Pr = Pos + D * PlaneDir.
-    Plane.Data[0] * Pr.Data[0] + Plane.Data[1] * Pr.Data[1] + Plane.Data[2] * Pr.Data[2] + Plane.Data[3] = 0,
-    mamy wiec
-    Plane.Data[0] * (Pos.Data[0] + D * Plane.Data[0]) +
-    Plane.Data[1] * (Pos.Data[1] + D * Plane.Data[1]) +
-    Plane.Data[2] * (Pos.Data[2] + D * Plane.Data[2]) + Plane.Data[3] = 0
-    Przeksztalcajac otrzymujemy rownanie na d.*)
-  d := -(Plane.Data[0] * Point.Data[0] + Plane.Data[1] * Point.Data[1] + Plane.Data[2] * Point.Data[2] + Plane.Data[3])/
-      PlaneDir.LengthSqr;
+  { We know that
+
+      Result = Point + D * PlaneDir
+      dot(PlaneDir, Result) + Plane.W = 0
+
+    So
+
+      dot(PlaneDir, Point + D * PlaneDir) + Plane.W = 0
+
+    We can expand the dot definition for 3D now, and get an equation
+    to calculate D.
+  }
+
+  D := -(
+    Plane.Data[0] * Point.Data[0] +
+    Plane.Data[1] * Point.Data[1] +
+    Plane.Data[2] * Point.Data[2] +
+    Plane.Data[3] ) /
+    PlaneDir.LengthSqr;
   Result := Point + PlaneDir * D;
 end;
 

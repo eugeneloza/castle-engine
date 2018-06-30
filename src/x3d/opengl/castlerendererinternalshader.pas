@@ -24,7 +24,7 @@ uses Generics.Collections,
   CastleVectors, CastleGLShaders,
   X3DTime, X3DFields, X3DNodes, CastleUtils, CastleBoxes,
   CastleRendererInternalTextureEnv, CastleStringUtils, CastleRendererBaseTypes,
-  CastleShapes;
+  CastleShapes, CastleRectangles;
 
 type
   TSurfaceTexture = (stAmbient, stSpecular, stShininess);
@@ -32,7 +32,7 @@ type
   TTextureType = (tt2D, tt2DShadow, ttCubeMap, tt3D, ttShader);
 
   TTexGenerationComponent = (tgEye, tgObject);
-  TTexGenerationComplete = (tgSphere, tgNormal, tgReflection);
+  TTexGenerationComplete = (tgSphere, tgNormal, tgReflection, tgcMirrorPlane);
   TTexComponent = 0..3;
 
   TFogCoordinateSource = (
@@ -82,6 +82,41 @@ type
     procedure Link; override;
   end;
 
+  TLightUniforms = class
+    Number: Cardinal;
+    ShaderProgram: TGLSLProgram;
+
+    { Current values provided to OpenGL(ES) for these uniforms.
+
+      Note that they are initially filled with zero.
+
+      This is correct, as OpenGL and OpenGLES docs say:
+      """
+      All active uniform variables defined in a program object
+      are initialized to 0 when the program object is linked successfully.
+      """
+
+      https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glUniform.xhtml
+      https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glUniform.xhtml
+    }
+    Position: TVector3;
+    SpotCosCutoff: Single;
+    SpotDirection: TVector3;
+    SpotExponent: Single;
+    SpotCutoff: Single;
+    Attenuation: TVector3;
+    Ambient, Specular, Diffuse, DiffuseProduct: TVector4;
+
+    procedure SetUniform(const NamePattern: string;
+      var CurrentValue: Single; const NewValue: Single);
+    procedure SetUniform(const NamePattern: string;
+      var CurrentValue: TVector3; const NewValue: TVector3);
+    procedure SetUniform(const NamePattern: string;
+      var CurrentValue: TVector4; const NewValue: TVector4);
+  end;
+
+  TLightUniformsList = {$ifdef CASTLE_OBJFPC}specialize{$endif} TObjectList<TLightUniforms>;
+
   { GLSL program integrated with VRML/X3D and TShader.
     Allows to bind uniform values from VRML/X3D fields,
     and to observe VRML/X3D events and automatically update uniform values.
@@ -91,6 +126,9 @@ type
   private
     { Events where we registered our EventReceive method. }
     EventsObserved: TX3DEventList;
+
+    { Current state of lights uniforms for this shader. }
+    FLightUniformsList: TLightUniformsList;
 
     { Set uniform variable from VRML/X3D field value.
       Uniform name is contained in UniformName. UniformValue indicates
@@ -245,6 +283,8 @@ type
     UniformName: string;
     UniformValue: LongInt;
 
+    class var TextureEnvWarningDone: Boolean;
+
     { Mix texture colors into fragment color, based on TTextureEnv specification. }
     class function TextureEnvMix(const AEnv: TTextureEnv;
       const FragmentColor, CurrentTexture: string;
@@ -304,6 +344,15 @@ type
     class function UniformTextureName(const SurfaceTexture: TSurfaceTexture): string; static;
   end;
 
+  { Shader uniforms calculated by rendering using ViewpointMirror,
+    used by GLSL code calculating texture coordinates in case of
+    TextureCoordinateGenerator.mode = "MIRROR-PLANE". }
+  TMirrorPlaneUniforms = class
+    NormalizedPlane: TVector4;
+    CameraPositionOnPlane, CameraSide, CameraUp: TVector3;
+    FrustumDimensions: TFloatRectangle;
+  end;
+
   { Create appropriate shader and at the same time set OpenGL parameters
     for fixed-function rendering. Once everything is set up,
     you can create TX3DShaderProgram instance
@@ -344,6 +393,7 @@ type
     DynamicUniforms: TDynamicUniformList;
     TextureMatrix: TCardinalList;
     NeedsCameraInverseMatrix: boolean;
+    NeedsMirrorPlaneTexCoords: Boolean;
     FPhongShading: boolean;
 
     { We have to optimize the most often case of TShader usage,
@@ -406,6 +456,10 @@ type
     SceneModelView: TMatrix4;
 
     SeparateDiffuseTexture: boolean;
+
+    { Assign this if you used EnableTexGen with tgMirrorPlane
+      to setup correct uniforms. }
+    MirrorPlaneUniforms: TMirrorPlaneUniforms;
 
     constructor Create;
     destructor Destroy; override;
@@ -540,10 +594,13 @@ type
 
 implementation
 
+{$warnings off}
+// TODO: This unit temporarily still uses RenderingCamera singleton
 uses SysUtils, StrUtils,
   {$ifdef CASTLE_OBJFPC} CastleGL, {$else} GL, GLExt, {$endif}
-  CastleGLUtils, CastleLog, Castle3D, CastleGLVersion, CastleRenderingCamera,
-  CastleScreenEffects, CastleInternalX3DLexer;
+  CastleGLUtils, CastleLog, Castle3D, CastleGLVersion,
+  CastleRenderingCamera, CastleScreenEffects, CastleInternalX3DLexer;
+{$warnings on}
 
 { String helpers ------------------------------------------------------------- }
 
@@ -880,6 +937,7 @@ end;
 
 procedure TLightShader.SetDynamicUniforms(AProgram: TX3DShaderProgram);
 var
+  Uniforms: TLightUniforms;
   Color3, AmbientColor3: TVector3;
   Color4, AmbientColor4: TVector4;
   Position: TVector4;
@@ -888,6 +946,15 @@ var
   LiSpot: TSpotLightNode;
   LightToEyeSpace: PMatrix4;
 begin
+  while Number >= AProgram.FLightUniformsList.Count do
+  begin
+    Uniforms := TLightUniforms.Create;
+    Uniforms.Number := AProgram.FLightUniformsList.Count;
+    Uniforms.ShaderProgram := AProgram;
+    AProgram.FLightUniformsList.Add(Uniforms);
+  end;
+  Uniforms := AProgram.FLightUniformsList[Number];
+
   { calculate Color4 = light color * light intensity }
   Color3 := Node.FdColor.Value * Node.FdIntensity.Value;
   Color4 := Vector4(Color3, 1);
@@ -919,7 +986,7 @@ begin
   { Note that we cut off last component of Node.Position,
     we don't need it. #defines tell the shader whether we deal with direcional
     or positional light. }
-  AProgram.SetUniform(Format('castle_LightSource%dPosition', [Number]),
+  Uniforms.SetUniform('castle_LightSource%dPosition', Uniforms.Position,
     Position.XYZ);
 
   if Node is TAbstractPositionalLightNode then
@@ -928,51 +995,51 @@ begin
     if LiPos is TSpotLightNode_1 then
     begin
       LiSpot1 := TSpotLightNode_1(Node);
-      AProgram.SetUniform(Format('castle_LightSource%dSpotCosCutoff', [Number]),
+      Uniforms.SetUniform('castle_LightSource%dSpotCosCutoff', Uniforms.SpotCosCutoff,
         LiSpot1.SpotCosCutoff);
-      AProgram.SetUniform(Format('castle_LightSource%dSpotDirection', [Number]),
+      Uniforms.SetUniform('castle_LightSource%dSpotDirection', Uniforms.SpotDirection,
         LightToEyeSpace^.MultDirection(Light^.Direction));
       if LiSpot1.SpotExponent <> 0 then
       begin
-        AProgram.SetUniform(Format('castle_LightSource%dSpotExponent', [Number]),
+        Uniforms.SetUniform('castle_LightSource%dSpotExponent', Uniforms.SpotExponent,
           LiSpot1.SpotExponent);
       end;
     end else
     if LiPos is TSpotLightNode then
     begin
       LiSpot := TSpotLightNode(Node);
-      AProgram.SetUniform(Format('castle_LightSource%dSpotCosCutoff', [Number]),
+      Uniforms.SetUniform('castle_LightSource%dSpotCosCutoff', Uniforms.SpotCosCutoff,
         LiSpot.SpotCosCutoff);
-      AProgram.SetUniform(Format('castle_LightSource%dSpotDirection', [Number]),
+      Uniforms.SetUniform('castle_LightSource%dSpotDirection', Uniforms.SpotDirection,
         LightToEyeSpace^.MultDirection(Light^.Direction));
       if LiSpot.FdBeamWidth.Value < LiSpot.FdCutOffAngle.Value then
       begin
-        AProgram.SetUniform(Format('castle_LightSource%dSpotCutoff', [Number]),
+        Uniforms.SetUniform('castle_LightSource%dSpotCutoff', Uniforms.SpotCutoff,
           LiSpot.FdCutOffAngle.Value);
       end;
     end;
 
     if LiPos.HasAttenuation then
-      AProgram.SetUniform(Format('castle_LightSource%dAttenuation', [Number]),
+      Uniforms.SetUniform('castle_LightSource%dAttenuation', Uniforms.Attenuation,
         LiPos.FdAttenuation.Value);
   end;
 
   if Node.FdAmbientIntensity.Value <> 0 then
-    AProgram.SetUniform(Format('castle_SideLightProduct%dAmbient', [Number]),
+    Uniforms.SetUniform('castle_SideLightProduct%dAmbient', Uniforms.Ambient,
       Shader.MaterialAmbient * AmbientColor4);
 
   if not ( (Shader.MaterialSpecular[0] = 0) and
            (Shader.MaterialSpecular[1] = 0) and
            (Shader.MaterialSpecular[2] = 0)) then
-    AProgram.SetUniform(Format('castle_SideLightProduct%dSpecular', [Number]),
+    Uniforms.SetUniform('castle_SideLightProduct%dSpecular', Uniforms.Specular,
       Shader.MaterialSpecular * Color4);
 
   { depending on COLOR_PER_VERTEX define, only one of these uniforms
     will be actually used. }
   if Shader.ColorPerVertex then
-    AProgram.SetUniform(Format('castle_LightSource%dDiffuse', [Number]),
+    Uniforms.SetUniform('castle_LightSource%dDiffuse', Uniforms.Diffuse,
       Color4) else
-    AProgram.SetUniform(Format('castle_SideLightProduct%dDiffuse', [Number]),
+    Uniforms.SetUniform('castle_SideLightProduct%dDiffuse', Uniforms.DiffuseProduct,
       Shader.MaterialDiffuse * Color4);
 end;
 
@@ -1012,6 +1079,38 @@ begin
   AttributeCastle_FogCoord       := AttributeOptional('castle_FogCoord');
 end;
 
+{ TLightUniforms ------------------------------------------------------- }
+
+procedure TLightUniforms.SetUniform(const NamePattern: string;
+  var CurrentValue: Single; const NewValue: Single);
+begin
+  if CurrentValue <> NewValue then
+  begin
+    ShaderProgram.SetUniform(Format(NamePattern, [Number]), NewValue);
+    CurrentValue := NewValue;
+  end;
+end;
+
+procedure TLightUniforms.SetUniform(const NamePattern: string;
+  var CurrentValue: TVector3; const NewValue: TVector3);
+begin
+  if not TVector3.PerfectlyEquals(CurrentValue, NewValue) then
+  begin
+    ShaderProgram.SetUniform(Format(NamePattern, [Number]), NewValue);
+    CurrentValue := NewValue;
+  end;
+end;
+
+procedure TLightUniforms.SetUniform(const NamePattern: string;
+  var CurrentValue: TVector4; const NewValue: TVector4);
+begin
+  if not TVector4.PerfectlyEquals(CurrentValue, NewValue) then
+  begin
+    ShaderProgram.SetUniform(Format(NamePattern, [Number]), NewValue);
+    CurrentValue := NewValue;
+  end;
+end;
+
 { TX3DShaderProgram ------------------------------------------------------- }
 
 constructor TX3DShaderProgram.Create;
@@ -1019,6 +1118,7 @@ begin
   inherited;
   EventsObserved := TX3DEventList.Create(false);
   UniformsTextures := TX3DFieldList.Create(false);
+  FLightUniformsList := TLightUniformsList.Create(true);
 end;
 
 destructor TX3DShaderProgram.Destroy;
@@ -1032,6 +1132,7 @@ begin
     FreeAndNil(EventsObserved);
   end;
   FreeAndNil(UniformsTextures);
+  FreeAndNil(FLightUniformsList);
   inherited;
 end;
 
@@ -1388,6 +1489,16 @@ end;
 class function TTextureShader.TextureEnvMix(const AEnv: TTextureEnv;
   const FragmentColor, CurrentTexture: string;
   const ATextureUnit: Cardinal): string;
+
+  procedure Warn(const S: string; const Args: array of const);
+  begin
+    if not TextureEnvWarningDone then
+    begin
+      TextureEnvWarningDone := true;
+      WritelnWarning('MultiTexture mixing', Format(S, Args));
+    end;
+  end;
+
 var
   { GLSL code to get Arg2 (what is coming from MultiTexture.source) }
   Arg2: string;
@@ -1406,7 +1517,24 @@ begin
   { assume AEnv.Source[cRGB] = csPreviousTexture }
   Arg2 := FragmentColor;
 
+  if AEnv.Combine[cRGB] <> AEnv.Combine[cAlpha] then
+    Warn('Not supported in GLSL pipeline: Combine for RGB and alpha different', []);
+  if AEnv.Source[cRGB] <> AEnv.Source[cAlpha] then
+    Warn('Not supported in GLSL pipeline: Source for RGB and alpha different', []);
+
+  { By default, set up simplest modulate operation.
+    The "case AEnv.Combine[cRGB]" below may override this Result to something
+    better. }
+  Result := FragmentColor + ' *= ' + CurrentTexture + ';';
+
   case AEnv.Combine[cRGB] of
+    coModulate:
+      begin
+        if FragmentColor = Arg2 then
+          Result := FragmentColor + ' *= ' + CurrentTexture + ';'
+        else
+          Result := FragmentColor + ' = ' + CurrentTexture + ' * ' + Arg2 + ';';
+      end;
     coReplace:
       begin
         if AEnv.SourceArgument[cRGB] = ta0 then
@@ -1423,13 +1551,17 @@ begin
       end;
     coSubtract:
       Result := FragmentColor + ' = ' + CurrentTexture + ' - ' + Arg2 + ';';
-    else
-      begin
-        { assume coModulate }
-        if FragmentColor = Arg2 then
-          Result := FragmentColor + ' *= ' + CurrentTexture + ';' else
-          Result := FragmentColor + ' = ' + CurrentTexture + ' * ' + Arg2 + ';';
+    coBlend:
+      case AEnv.BlendAlphaSource of
+        csCurrentTexture:
+          Result := FragmentColor + ' = mix(' + FragmentColor + ', ' + CurrentTexture + ', ' + CurrentTexture + '.a);';
+        csPreviousTexture:
+          Result := FragmentColor + ' = mix(' + FragmentColor + ', ' + CurrentTexture + ', ' + FragmentColor + '.a);';
+        else
+          Warn('Not supported in GLSL pipeline: coBlend with BlendAlphaSource = %d', [Ord(AEnv.BlendAlphaSource)]);
       end;
+    else
+      Warn('Not supported in GLSL pipeline: combine value %d', [Ord(AEnv.Combine[cRGB])]);
   end;
 
   case AEnv.TextureFunction of
@@ -1437,15 +1569,15 @@ begin
     tfAlphaReplicate: Result += FragmentColor + '.rgb = vec3(' + FragmentColor + '.a);';
   end;
 
-  { TODO: this handles only a subset of possible values:
-    - different combine values on RGB/alpha not handled yet.
-      We just check Env.Combine[cRGB], and assume it's equal Env.Combine[cAlpha].
-      Same for Env.Source: we assume Env.Source[cRGB] equal to Env.Source[cAlpha].
-    - Scale is ignored (assumed 1)
+  if AEnv.Scale[cRGB] <> 1 then
+    Warn('Not supported in GLSL pipeline: Scale RGB = %f', [AEnv.Scale[cRGB]]);
+  if AEnv.Scale[cAlpha] <> 1 then
+    Warn('Not supported in GLSL pipeline: Scale Alpha = %f', [AEnv.Scale[cAlpha]]);
+
+  { TODO:
     - CurrentTextureArgument, SourceArgument ignored (assumed ta0, ta1),
       except for GL_REPLACE case
-    - many Combine values ignored (treated like modulate),
-      and so also NeedsConstantColor and InterpolateAlphaSource are ignored.
+    - NeedsConstantColor ignored
   }
 end;
 
@@ -1715,6 +1847,7 @@ begin
   DynamicUniforms.Clear;
   TextureMatrix.Clear;
   NeedsCameraInverseMatrix := false;
+  NeedsMirrorPlaneTexCoords := false;
   SeparateDiffuseTexture := false;
 end;
 
@@ -2467,6 +2600,22 @@ var
     WritelnLogMultiline('Generated Shader', LogStr);
   end;
 
+  procedure EnableMirrorPlaneTexCoords;
+  begin
+    if NeedsMirrorPlaneTexCoords then
+      Define('CASTLE_NEEDS_MIRROR_PLANE_TEX_COORDS', stVertex);
+  end;
+
+  procedure PrepareCommonCode;
+  begin
+    if Source[stVertex].Count > 0 then
+      Source[stVertex][0] := StringReplace(Source[stVertex][0],
+        '/* CASTLE-COMMON-CODE */', {$I common.vs.inc}, [rfReplaceAll]);
+    if Source[stFragment].Count > 0 then
+      Source[stFragment][0] := StringReplace(Source[stFragment][0],
+        '/* CASTLE-COMMON-CODE */', {$I common.fs.inc}, [rfReplaceAll]);
+  end;
+
 var
   ShaderType: TShaderType;
   GeometryInputSize: string;
@@ -2484,6 +2633,8 @@ begin
     EnableEffects(AppearanceEffects);
   if GroupEffects <> nil then
     EnableEffects(GroupEffects);
+  EnableMirrorPlaneTexCoords;
+  PrepareCommonCode;
 
   if HasGeometryMain then
   begin
@@ -2545,7 +2696,6 @@ begin
       TGLSLUniform.SetValue call, very very slow). We carefully code to
       always specify correct types for our uniform variables. }
   AProgram.UniformNotFoundAction := uaIgnore;
-  AProgram.UniformTypeMismatchAction := utGLError;
 
   { set uniforms that will not need to be updated at each SetupUniforms call }
   SetupUniformsOnce;
@@ -2565,7 +2715,6 @@ begin
   AProgram.Link;
 
   AProgram.UniformNotFoundAction := uaIgnore;
-  AProgram.UniformTypeMismatchAction := utGLError;
 end;
 
 function TShader.CodeHash: TShaderCodeHash;
@@ -2647,6 +2796,10 @@ begin
 
   TexCoordName := TTextureShader.CoordName(TextureUnit);
 
+  FCodeHash.AddInteger(
+    1303 * (Ord(Generation) + 1) +
+    1307 * (TextureUnit + 1));
+
   { Enable for fixed-function and shader pipeline }
   case Generation of
     tgSphere:
@@ -2669,7 +2822,6 @@ begin
           '/* Using 1.0 / 2.0 instead of 0.5 to workaround fglrx bugs */' + NL +
           '%s.st = r.xy / m + vec2(1.0, 1.0) / 2.0;',
           [TexCoordName]);
-        FCodeHash.AddInteger(1301 * (TextureUnit + 1));
       end;
     tgNormal:
       begin
@@ -2686,7 +2838,6 @@ begin
         end;
         TextureCoordGen += Format('%s.xyz = castle_normal_eye;' + NL,
           [TexCoordName]);
-        FCodeHash.AddInteger(1303 * (TextureUnit + 1));
       end;
     tgReflection:
       begin
@@ -2704,7 +2855,13 @@ begin
         { Negate reflect result --- just like for demo_models/water/water_reflections_normalmap.fs }
         TextureCoordGen += Format('%s.xyz = -reflect(-vec3(castle_vertex_eye), castle_normal_eye);' + NL,
           [TexCoordName]);
-        FCodeHash.AddInteger(1307 * (TextureUnit + 1));
+      end;
+    tgcMirrorPlane:
+      begin
+        NeedsMirrorPlaneTexCoords := true;
+        NeedsCameraInverseMatrix := true;
+        TextureCoordGen += Format('%s.xyz = castle_mirror_plane_tex_coords(castle_CameraInverseMatrix * castle_vertex_eye);' + NL,
+          [TexCoordName]);
       end;
     else raise EInternalError.Create('TShader.EnableTexGen:Generation?');
   end;
@@ -3073,10 +3230,25 @@ begin
     LightShaders[I].SetDynamicUniforms(AProgram);
   for I := 0 to DynamicUniforms.Count - 1 do
     DynamicUniforms[I].SetUniform(AProgram);
+
   if NeedsCameraInverseMatrix then
   begin
     RenderingCamera.InverseMatrixNeeded;
     AProgram.SetUniform('castle_CameraInverseMatrix', RenderingCamera.InverseMatrix);
+  end;
+
+  if NeedsMirrorPlaneTexCoords and (MirrorPlaneUniforms <> nil) then
+  begin
+    AProgram.SetUniform('castle_NormalizedPlane', MirrorPlaneUniforms.NormalizedPlane);
+    AProgram.SetUniform('castle_CameraPositionOnPlane', MirrorPlaneUniforms.CameraPositionOnPlane);
+    AProgram.SetUniform('castle_CameraSide', MirrorPlaneUniforms.CameraSide);
+    AProgram.SetUniform('castle_CameraUp', MirrorPlaneUniforms.CameraUp);
+    AProgram.SetUniform('castle_FrustumDimensions',
+      Vector4(
+        MirrorPlaneUniforms.FrustumDimensions.Left,
+        MirrorPlaneUniforms.FrustumDimensions.Bottom,
+        MirrorPlaneUniforms.FrustumDimensions.Width,
+        MirrorPlaneUniforms.FrustumDimensions.Height));
   end;
 end;
 

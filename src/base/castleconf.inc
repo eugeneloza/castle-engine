@@ -46,7 +46,10 @@
 {$endif}
 
 {$ifdef VER2}
-  {$fatal FPC 2.x is not supported anymore, see https://castle-engine.io/fpc_and_lazarus.php}
+  {$fatal You need FPC version >= 3.0.2 to compile Castle Game Engine. See https://castle-engine.io/supported_compilers.php}
+{$endif}
+{$ifdef VER3_0_0}
+  {$fatal You need FPC version >= 3.0.2 to compile Castle Game Engine. See https://castle-engine.io/supported_compilers.php}
 {$endif}
 
 { Configure syntax ----------------------------------------------------------- }
@@ -67,11 +70,6 @@
 {$ifdef FPC} {$modeswitch advancedrecords} {$endif}
 
 { Define various necessary things -------------------------------------------- }
-
-{ Configurable: define CASTLE_ENGINE_LGPL to compile only
-  components available on permissive LGPL (see
-  https://castle-engine.io/engine.php#section_license) }
-{ $define CASTLE_ENGINE_LGPL}
 
 (*EXTENDED_EQUALS_DOUBLE should be defined when Extended type is
   the same thing as Double type on this platform.
@@ -275,7 +273,7 @@
     warnings, see
     https://sourceforge.net/p/castle-engine/discussion/general/thread/2fd412b1/ .
 
-  - IF CASTLE_PNG_DYNAMIC is defined,
+  - If CASTLE_PNG_DYNAMIC is defined,
     we use libpng from a dynamic library (.so or .dll).
     This is a bit harder to set up for developer, but may result in drastically
     faster PNG loading (even 4x times).

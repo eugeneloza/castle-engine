@@ -197,11 +197,15 @@
     {$I auto_generated_node_helpers/x3dnodes_kambioctreeproperties.inc}
   end;
 
+  TShadowMapCompareMode = (smCompareRLEqual, smCompareRGEqual, smNone);
+
   { Generate texture by rendering a depth (shadow) map.
     See https://castle-engine.io/x3d_extensions_shadow_maps.php }
   TGeneratedShadowMapNode = class(TAbstractTextureNode)
   strict private
     FGeneratedTextureHandler: TGeneratedTextureHandler;
+    function GetCompareMode: TShadowMapCompareMode;
+    procedure SetCompareMode(const Value: TShadowMapCompareMode);
   public
     const
       DefaultSize = 128;
@@ -232,8 +236,9 @@
     strict private FFdBias: TSFFloat;
     public property FdBias: TSFFloat read FFdBias;
 
-    strict private FFdCompareMode: TSFstring;
-    public property FdCompareMode: TSFString read FFdCompareMode;
+    strict private FFdCompareMode: TSFStringEnum;
+    public property FdCompareMode: TSFStringEnum read FFdCompareMode;
+    property CompareMode: TShadowMapCompareMode read GetCompareMode write SetCompareMode;
 
     {$I auto_generated_node_helpers/x3dnodes_generatedshadowmap.inc}
   end;
@@ -395,6 +400,16 @@
     public property FdDefaultTexCoord: TSFString read FFdDefaultTexCoord;
 
     {$I auto_generated_node_helpers/x3dnodes_shadertexture.inc}
+  end;
+
+  { Viewpoint for making planar reflections.
+    See TODO. }
+  TViewpointMirrorNode = class(TX3DNode)
+  public
+    class function ClassX3DType: string; override;
+    class function URNMatching(const URN: string): boolean; override;
+
+    {$I auto_generated_node_helpers/x3dnodes_viewpointmirror.inc}
   end;
 
 {$endif read_interface}
@@ -683,6 +698,9 @@ begin
 end;
 
 procedure TGeneratedShadowMapNode.CreateNode;
+const
+  CompareModeNames: array [TShadowMapCompareMode] of string =
+  ('COMPARE_R_LEQUAL', 'COMPARE_R_GEQUAL', 'NONE');
 begin
   inherited;
 
@@ -713,7 +731,7 @@ begin
    FdBias.ChangesAlways := [chGeneratedTextureUpdateNeeded];
   AddField(FFdBias);
 
-  FFdCompareMode := TSFString.Create(Self, true, 'compareMode', 'COMPARE_R_LEQUAL');
+  FFdCompareMode := TSFStringEnum.Create(Self, true, 'compareMode', CompareModeNames, Ord(smCompareRLEqual));
    FdCompareMode.ChangesAlways := [chTextureRendererProperties];
   AddField(FFdCompareMode);
 
@@ -735,6 +753,16 @@ end;
 class function TGeneratedShadowMapNode.URNMatching(const URN: string): boolean;
 begin
   Result := URNMatchingCastle(URN, ClassX3DType);
+end;
+
+function TGeneratedShadowMapNode.GetCompareMode: TShadowMapCompareMode;
+begin
+  Result := TShadowMapCompareMode(FdCompareMode.EnumValue);
+end;
+
+procedure TGeneratedShadowMapNode.SetCompareMode(const Value: TShadowMapCompareMode);
+begin
+  FdCompareMode.SendEnumValue(Ord(Value));
 end;
 
 procedure TProjectedTextureCoordinateNode.CreateNode;
@@ -940,6 +968,18 @@ begin
   Result := URNMatchingCastle(URN, ClassX3DType);
 end;
 
+{ TViewpointMirrorNode ----------------------------------------------------- }
+
+class function TViewpointMirrorNode.ClassX3DType: string;
+begin
+  Result := 'ViewpointMirror';
+end;
+
+class function TViewpointMirrorNode.URNMatching(const URN: string): boolean;
+begin
+  Result := URNMatchingCastle(URN, ClassX3DType);
+end;
+
 procedure RegisterKambiNodes;
 begin
   NodesManager.RegisterNodeClasses([
@@ -956,7 +996,8 @@ begin
     TMultiGeneratedTextureCoordinateNode,
     TEffectNode,
     TEffectPartNode,
-    TShaderTextureNode
+    TShaderTextureNode,
+    TViewpointMirrorNode
   ]);
 end;
 

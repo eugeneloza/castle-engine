@@ -52,11 +52,14 @@ type
     function BaseLights(Scene: TCastleTransform): TAbstractLightInstancesList; override;
   end;
 
-  { Event for TCastleSceneManager.OnMoveAllowed. }
+  { Event for @link(TCastleSceneManager.OnMoveAllowed). }
   TWorldMoveAllowedEvent = procedure (Sender: TCastleSceneManager;
     var Allowed: boolean;
     const OldPosition, NewPosition: TVector3;
     const BecauseOfGravity: boolean) of object;
+
+  { Event for @link(TCastleAbstractViewport.OnProjection). }
+  TProjectionEvent = procedure (var Parameters: TProjection) of object;
 
   { Common abstract class for things that may act as a viewport:
     TCastleSceneManager and TCastleViewport. }
@@ -85,6 +88,7 @@ type
     FInternalWalkCamera: TWalkCamera;
     FWithinSetNavigationType: boolean;
     LastPressEvent: TInputPressRelease;
+    FOnProjection: TProjectionEvent;
 
     FShadowVolumes: boolean;
     FShadowVolumesRender: boolean;
@@ -136,7 +140,7 @@ type
     procedure RenderOnScreen(ACamera: TCamera);
 
     procedure RenderWithScreenEffectsCore;
-    function RenderWithScreenEffects: boolean;
+    function RenderWithScreenEffects(const RenderingCamera: TRenderingCamera): boolean;
 
     { Set the projection parameters and matrix.
       Used by our Render method.
@@ -159,27 +163,31 @@ type
       or orthogonal and exact field of view parameters.
       Used by our Render method.
 
-      The default implementation is TCastleAbstractViewport
-      calculates projection based on MainScene currently bound Viewpoint,
-      NavigationInfo and used @link(Camera).
-      If scene manager's MainScene is not assigned, we use some default
-      sensible perspective projection. }
+      The default implementation of this method in TCastleAbstractViewport
+      calculates projection based on the @link(Camera) parameters,
+      and based on the currently bound Viewpoint/OrthoViewpoint, NavigationInfo
+      nodes in @link(TCastleSceneManager.MainScene).
+      If the scene manager's MainScene is not assigned, or it doesn't have
+      a Viewpoint/OrthoViewpoint node, we use a default perspective projection.
+
+      Note that the TCastle2DSceneManager overrides this method
+      to calculate always orthographic projection, using it's own properties
+      like @link(TCastle2DSceneManager.ProjectionAutoSize),
+      @link(TCastle2DSceneManager.ProjectionWidth),
+      @link(TCastle2DSceneManager.ProjectionHeight).
+      It doesn't look at MainScene settings or Viewpoint/OrthoViewpoint nodes.
+
+      You can override this method, or assign the @link(OnProjection) event
+      to adjust the projection settings. }
     function CalculateProjection: TProjection; virtual;
 
     { Render one pass, with current camera and parameters.
-      All current camera settings are saved in RenderingCamera,
-      and the camera matrix is already loaded to OpenGL.
-
-      If you want to display something 3D during rendering,
+      All current camera settings are saved in RenderParams.RenderingCamera.
+      If you want to write custom OpenGL rendering code,
       this is the simplest method to override. (Or you can use OnRender3D
       event, which is called at the end of this method.)
-      Alternatively, you can create new TCastleTransform descendant and add it
-      to the @link(GetItems) list.
 
-      @param(Params Parameters specify what lights should be used
-        (Params.BaseLights, Params.InShadow), and which parts of the 3D scene
-        should be rendered (Params.Transparent, Params.ShadowVolumesReceivers
-        --- only matching 3D objects should be rendered by this method).) }
+      @param(Params Rendering parameters, see @link(TRenderParams).) }
     procedure Render3D(const Params: TRenderParams); virtual;
 
     { Render shadow quads for all the things rendered by @link(Render3D).
@@ -188,11 +196,11 @@ type
       so you can do shadow volumes culling. }
     procedure RenderShadowVolume; virtual;
 
-    { Render everything from current (in RenderingCamera) camera view.
-      Current RenderingCamera.Target says to where we generate the image.
+    { Render everything from given camera view (as TRenderingCamera).
+      Given RenderingCamera.Target says to where we generate the image.
       Takes method must take care of making many rendering passes
       for shadow volumes, but doesn't take care of updating generated textures. }
-    procedure RenderFromViewEverything; virtual;
+    procedure RenderFromViewEverything(const RenderingCamera: TRenderingCamera); virtual;
 
     { Prepare lights shining on everything.
       BaseLights contents should be initialized here.
@@ -318,8 +326,10 @@ type
       var HandleInput: boolean); override;
 
     { Current projection parameters,
-      calculated by last @link(CalculateProjection) call.
-      @bold(Read only), change these parameters only by overriding CalculateProjection. }
+      calculated by last @link(CalculateProjection) call,
+      adjusted by @link(OnProjection).
+      @bold(This is read only). To change the projection parameters,
+      override @link(CalculateProjection) or handle event @link(OnProjection). }
     property Projection: TProjection read FProjection;
 
     { Return current camera. Automatically creates it if missing. }
@@ -783,6 +793,11 @@ type
 
     { Viewports are by default full size (fill the parent control completely). }
     property FullSize default true;
+
+    { Adjust the projection parameters. This event is called before every render.
+      See the @link(CalculateProjection) for a description how to default
+      projection parameters are calculated. }
+    property OnProjection: TProjectionEvent read FOnProjection write FOnProjection;
   end;
 
   TCastleAbstractViewportList = class({$ifdef CASTLE_OBJFPC}specialize{$endif} TObjectList<TCastleAbstractViewport>)
@@ -1305,10 +1320,14 @@ var
 
 implementation
 
+{$warnings off}
+// TODO: This unit temporarily uses RenderingCamera singleton,
+// to keep it working for backward compatibility.
 uses Math,
-  CastleRenderingCamera, CastleGLUtils, CastleProgress, CastleLog,
-  CastleStringUtils, CastleSoundEngine, CastleGLVersion, CastleShapes,
-  CastleTextureImages;
+  CastleRenderingCamera,
+  CastleGLUtils, CastleProgress, CastleLog, CastleStringUtils,
+  CastleSoundEngine, CastleGLVersion, CastleShapes, CastleTextureImages;
+{$warnings on}
 
 procedure Register;
 begin
@@ -1772,6 +1791,8 @@ begin
   RenderContext.Viewport := Viewport;
 
   FProjection := CalculateProjection;
+  if Assigned(OnProjection) then
+    OnProjection(FProjection);
 
   { take into account Distort* properties }
   AspectRatio := DistortViewAspect * Viewport.Width / Viewport.Height;
@@ -1798,18 +1819,7 @@ var
   Viewport: TRectangle;
   ViewpointNode: TAbstractViewpointNode;
 
-  procedure DoPerspective;
-  begin
-    { Only perspective projection supports z far in infinity. }
-    if GLFeatures.ShadowVolumesPossible and ShadowVolumes then
-      Result.ProjectionFar := ZFarInfinity;
-
-    { Note that Result.PerspectiveAngles is already calculated here,
-      because we calculate correct PerspectiveAngles regardless
-      of whether we actually apply perspective or orthogonal projection. }
-  end;
-
-  procedure DoOrthographic;
+  procedure CalculateDimensions;
   var
     FieldOfView: TSingleList;
     MaxSize: Single;
@@ -1855,7 +1865,6 @@ var
   PerspectiveFieldOfView: Single;
   PerspectiveFieldOfViewForceVertical: boolean;
   PerspectiveAnglesRad: TVector2;
-  ProjectionType: TProjectionType;
 begin
   Box := GetItems.BoundingBox;
   Viewport := ScreenRect;
@@ -1903,7 +1912,8 @@ begin
     Result.ProjectionFar := DefaultVisibilityLimit;
   if Result.ProjectionFar <= 0 then
     Result.ProjectionFar := Box.AverageSize(false,
-      { When box is empty (or has 0 sizes), ProjectionFar is not simply "any dummy value".
+      { When box is empty (or has 0 sizes), ProjectionFar is not simply
+        "any dummy value".
         It must be appropriately larger than ProjectionNear
         to provide sufficient space for rendering Background node. }
       Result.ProjectionNear) * 20.0;
@@ -1916,22 +1926,24 @@ begin
     in Examine mode will be some day implemented (VRML/X3D spec require this). }
 
   if ViewpointNode <> nil then
-    ProjectionType := ViewpointNode.ProjectionType
+    Result.ProjectionType := ViewpointNode.ProjectionType
   else
-    ProjectionType := ptPerspective;
+    Result.ProjectionType := ptPerspective;
 
   { update ProjectionFarFinite.
     ProjectionFar may be later changed to ZFarInfinity. }
   Result.ProjectionFarFinite := Result.ProjectionFar;
 
-  Result.ProjectionType := ProjectionType;
+ { We need infinite ZFar in case of shadow volumes.
+   But only perspective projection supports ZFar in infinity. }
+  if (Result.ProjectionType = ptPerspective) and
+     GLFeatures.ShadowVolumesPossible and
+     ShadowVolumes then
+    Result.ProjectionFar := ZFarInfinity;
 
-  case ProjectionType of
-    ptPerspective: DoPerspective;
-    ptOrthographic: DoOrthographic;
-    ptFrustum: raise EInternalError.Create('TCastleAbstractViewport.CalculateProjection: X3D Viewpoint node should not be able to specify ptFrustum projection');
-    else raise EInternalError.Create('TCastleAbstractViewport.Projection-ProjectionType?');
-  end;
+  { Calculate Result.Dimensions regardless of Result.ProjectionType,
+    this way OnProjection can easily change projectio type to orthographic. }
+  CalculateDimensions;
 end;
 
 function TCastleAbstractViewport.Background: TBackground;
@@ -1951,7 +1963,7 @@ end;
 
 procedure TCastleAbstractViewport.Render3D(const Params: TRenderParams);
 begin
-  Params.Frustum := @RenderingCamera.Frustum;
+  Params.Frustum := @Params.RenderingCamera.Frustum;
   GetItems.Render(Params);
   if Assigned(OnRender3D) then
     OnRender3D(Self, Params);
@@ -2091,7 +2103,7 @@ procedure TCastleAbstractViewport.RenderFromView3D(const Params: TRenderParams);
 
   procedure RenderWithShadows(const MainLightPosition: TVector4);
   begin
-    GetShadowVolumeRenderer.InitFrustumAndLight(RenderingCamera.Frustum, MainLightPosition);
+    GetShadowVolumeRenderer.InitFrustumAndLight(Params.RenderingCamera.Frustum, MainLightPosition);
     GetShadowVolumeRenderer.Render(Params, @Render3D, @RenderShadowVolume, ShadowVolumesRender);
   end;
 
@@ -2105,7 +2117,7 @@ begin
     RenderNoShadows;
 end;
 
-procedure TCastleAbstractViewport.RenderFromViewEverything;
+procedure TCastleAbstractViewport.RenderFromViewEverything(const RenderingCamera: TRenderingCamera);
 var
   ClearBuffers: TClearBuffers;
   ClearColor: TCastleColor;
@@ -2113,6 +2125,13 @@ var
   MainLightPosition: TVector4; { ignored }
   SavedProjectionMatrix: TMatrix4;
 begin
+  { TODO: Temporary compatibiliy cludge:
+    Because some rendering code still depends on
+    the CastleRenderingCamera.RenderingCamera singleton being initialized,
+    so initialize it from current parameter. }
+  if RenderingCamera <> CastleRenderingCamera.RenderingCamera then
+    CastleRenderingCamera.RenderingCamera.Assign(RenderingCamera);
+
   ClearBuffers := [];
   if ClearDepth then
     Include(ClearBuffers, cbDepth);
@@ -2148,7 +2167,7 @@ begin
           FProjection.ProjectionFar);
       end;
 
-      UsedBackground.Render(BackgroundWireframe);
+      UsedBackground.Render(RenderingCamera, BackgroundWireframe);
 
       if FProjection.ProjectionType = ptOrthographic then
         RenderContext.ProjectionMatrix := SavedProjectionMatrix;
@@ -2178,6 +2197,7 @@ begin
   { clear FRenderParams instance }
 
   FRenderParams.Pass := 0;
+  FRenderParams.RenderingCamera := RenderingCamera;
   FillChar(FRenderParams.Statistics, SizeOf(FRenderParams.Statistics), #0);
 
   FRenderParams.FBaseLights[false].Clear;
@@ -2313,7 +2333,7 @@ begin
   RenderOneEffect(ScreenEffects[CurrentScreenEffectsCount - 1]);
 end;
 
-function TCastleAbstractViewport.RenderWithScreenEffects: boolean;
+function TCastleAbstractViewport.RenderWithScreenEffects(const RenderingCamera: TRenderingCamera): boolean;
 
   { Create and setup new OpenGL texture for screen effects.
     Depends on ScreenEffectTextureWidth, ScreenEffectTextureHeight being set. }
@@ -2491,7 +2511,7 @@ begin
 
     ScreenEffectRTT.RenderBegin;
     ScreenEffectRTT.SetTexture(ScreenEffectTextureDest, ScreenEffectTextureTarget);
-    RenderFromViewEverything;
+    RenderFromViewEverything(RenderingCamera);
     ScreenEffectRTT.RenderEnd;
 
     SwapValues(ScreenEffectTextureDest, ScreenEffectTextureSrc);
@@ -2546,16 +2566,16 @@ end;
 procedure TCastleAbstractViewport.RenderOnScreen(ACamera: TCamera);
 begin
   RenderingCamera.Target := rtScreen;
-  RenderingCamera.FromCameraObject(ACamera, nil);
+  RenderingCamera.FromCameraObject(ACamera);
 
-  if not RenderWithScreenEffects then
+  if not RenderWithScreenEffects(RenderingCamera) then
   begin
     { Rendering directly to the screen, when no screen effects are used. }
     if not FillsWholeContainer then
       { Use Scissor to limit what RenderContext.Clear clears. }
       RenderContext.ScissorEnable(ScreenRect);
 
-    RenderFromViewEverything;
+    RenderFromViewEverything(RenderingCamera);
 
     if not FillsWholeContainer then
       RenderContext.ScissorDisable;
@@ -3283,7 +3303,7 @@ begin
     { RenderingCamera properties must be already set,
       since PrepareResources may do some operations on texture gen modes
       in WORLDSPACE*. }
-    RenderingCamera.FromCameraObject(ChosenViewport.Camera, nil);
+    RenderingCamera.FromCameraObject(ChosenViewport.Camera);
 
     if DisplayProgressTitle <> '' then
     begin

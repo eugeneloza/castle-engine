@@ -83,7 +83,7 @@ private
   procedure MenuItemClick(Sender: TObject);
   procedure MenuUpdateShortcut(Entry: TMenuItem);
   procedure AggressiveUpdate;
-  procedure UpdateFullScreen;
+  procedure UpdateFullScreenForm;
 
   procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   procedure FormDeactivate(Sender: TObject);
@@ -433,7 +433,7 @@ begin
   Form.Caption := GetWholeCaption; // SetCaption may also change it later
   Form.Cursor := CursorCastleToLCL[InternalCursor]; // SetCursor may also change it later
 
-  UpdateFullScreen;
+  UpdateFullScreenForm;
 
   Form.OnCloseQuery := @FormCloseQuery;
   { Note: I tried also using OpenGLControl.OnExit for this, seems to be quivalent
@@ -443,7 +443,19 @@ begin
     entering MessageOK *must* make ReleaseAllKeysAndMouse, otherwise it hangs.) }
   Form.OnDeactivate := @FormDeactivate;
 
-  OpenGLControl := TGoodOpenGLControl.Create(Form);
+  { Do not make it owned by Form, instead we will free it explicitly.
+    This avoids problems in Invalidate, where we access OpenGLControl instance,
+    but we may be already in csDestroying state of Form (so it's owned components
+    are already freed).
+
+    Affects macOS with Carbon widgetset behavior when making view3dscene
+    screenshot from command-line, like
+    ".../view3dscene .../dynamic_world.x3dv --screenshot 0 output_2d_screenshot.png".
+
+    Alternatively we could check "not (csDestroying in Form.ComponentState)"
+    in Invalidate, but this feels cleaner. }
+
+  OpenGLControl := TGoodOpenGLControl.Create(nil);
   OpenGLControl.Window := Self;
   OpenGLControl.Parent := Form;
   OpenGLControl.Align := alClient;
@@ -510,7 +522,7 @@ end;
 const
   BorderNone = Controls.bsNone;
 
-procedure TCastleWindowCustom.UpdateFullScreen;
+procedure TCastleWindowCustom.UpdateFullScreenForm;
 begin
   if FullScreen then
   begin
@@ -525,21 +537,27 @@ begin
   end;
 end;
 
-procedure TCastleWindowCustom.SetFullScreen(const Value: boolean);
+procedure TCastleWindowCustom.UpdateFullScreenBackend;
 begin
-  if FFullScreen <> Value then
+  if FFullScreenBackend <> FFullScreenWanted then
   begin
-    FFullScreen := Value;
+    FFullScreenBackend := FFullScreenWanted;
     if not Closed then
-      UpdateFullScreen;
+      UpdateFullScreenForm;
   end;
 end;
 
 procedure TCastleWindowCustom.CloseBackend;
 begin
-  FreeAndNil(Form);
+  try
+    FreeAndNil(Form);
+  except
+    // TODO: hack to silence LCL problem
+    on EAccessViolation do
+      WritelnWarning('Freeing LCL form failed with EAccessViolation, this is unfortunately possible on macOS with Carbon widgetset. Silencing the exception and continuing.');
+  end;
+  FreeAndNil(OpenGLControl);
   { freeing the Form will automatically free other owned components }
-  OpenGLControl := nil;
   Menu := nil;
 
   { although Menu was already freed, but make sure we also change state,
