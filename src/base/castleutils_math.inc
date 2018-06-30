@@ -19,18 +19,18 @@
 
 { Swap variables values.
   @groupBegin }
-procedure SwapValues(var A, B: Byte    ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure SwapValues(var A, B: Int64   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure SwapValues(var A, B: QWord   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure SwapValues(var A, B: Integer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure SwapValues(var A, B: Cardinal); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure SwapValues(var A, B: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure SwapValues(var A, B: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: Byte    ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: Int64   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: QWord   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: Integer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: Cardinal); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure SwapValues(var A, B: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$endif}
-procedure SwapValues(var A, B: char    ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure SwapValues(var A, B: Pointer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: char    ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure SwapValues(var a, b: Pointer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 { @groupEnd }
 
 { Make sure the Smaller value is <= than the Larger value,
@@ -49,12 +49,12 @@ procedure OrderUp(var Smaller, Larger: Extended); overload; {$ifdef SUPPORTS_INL
 { Assign the smaller value from X, Y to Smaller variable, the other one
   to Larger variable.
   @groupBegin }
-procedure OrderUp(X, Y: Integer;  var Smaller, Larger: Integer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure OrderUp(X, Y: Cardinal; var Smaller, Larger: Cardinal); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure OrderUp(X, Y: Single;   var Smaller, Larger: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure OrderUp(X, Y: Double;   var Smaller, Larger: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure OrderUp(x, y: Integer;  var Smaller, Larger: Integer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure OrderUp(x, y: Cardinal; var Smaller, Larger: Cardinal); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure OrderUp(x, y: Single;   var Smaller, Larger: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure OrderUp(x, y: Double;   var Smaller, Larger: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure OrderUp(X, Y: Extended; var Smaller, Larger: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure OrderUp(x, y: Extended; var Smaller, Larger: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$endif}
 { @groupEnd }
 
@@ -62,15 +62,15 @@ procedure OrderUp(X, Y: Extended; var Smaller, Larger: Extended); overload; {$if
   Works like @code(A := Min(A, B)), but is marginally faster,
   since you don't have to do anything when A is already smaller.
   @groupBegin }
-procedure MinVar(var A: Word    ; const B: Word    ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-//procedure MinVar(var A: LongWord; const B: LongWord); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} // same as Cardinal
-procedure MinVar(var A: Int64   ; const B: Int64   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure MinVar(var A: Integer ; const B: Integer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure MinVar(var A: Cardinal; const B: Cardinal); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure MinVar(var A: Single  ; const B: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure MinVar(var A: Double  ; const B: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MinVar(var a: Word    ; const b: Word    ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+//procedure MinVar(var a: LongWord; const b: LongWord); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} // same as Cardinal
+procedure MinVar(var a: Int64   ; const b: Int64   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MinVar(var a: Integer ; const b: Integer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MinVar(var a: Cardinal; const b: Cardinal); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MinVar(var a: Single  ; const b: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MinVar(var a: Double  ; const b: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure MinVar(var A: Extended; const B: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MinVar(var a: Extended; const b: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$endif}
 { @groupEnd }
 
@@ -78,15 +78,15 @@ procedure MinVar(var A: Extended; const B: Extended); overload; {$ifdef SUPPORTS
   Works like @code(A := Max(A, B)), but is marginally faster,
   since you don't have to do anything when A is already larger.
   @groupBegin }
-procedure MaxVar(var A: Word    ; const B: Word    ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-//procedure MaxVar(var A: LongWord; const B: LongWord); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} // same as Cardinal
-procedure MaxVar(var A: Int64   ; const B: Int64   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure MaxVar(var A: Integer ; const B: Integer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure MaxVar(var a: Cardinal; const B: Cardinal); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure MaxVar(var A: Single  ; const B: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
-procedure MaxVar(var A: Double  ; const B: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MaxVar(var a: Word    ; const b: Word    ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+//procedure MaxVar(var a: LongWord; const b: LongWord); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} // same as Cardinal
+procedure MaxVar(var a: Int64   ; const b: Int64   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MaxVar(var a: Integer ; const b: Integer ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MaxVar(var a: Cardinal; const b: Cardinal); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MaxVar(var a: Single  ; const b: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MaxVar(var a: Double  ; const b: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure MaxVar(var A: Extended; const B: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure MaxVar(var a: Extended; const b: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$endif}
 { @groupEnd }
 
@@ -111,7 +111,7 @@ function Clamped(const a, vBegin, vEnd: cardinal): cardinal; overload; {$ifdef S
 function Clamped(const a, vBegin, vEnd: Single  ): Single  ; overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 function Clamped(const a, vBegin, vEnd: Double  ): Double  ; overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-function Clamped(const A, vBegin, vEnd: Extended): Extended; overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+function Clamped(const a, vBegin, vEnd: Extended): Extended; overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$endif}
 
 procedure ClampVar(var a: Int64   ; const vBegin, vEnd: Int64   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
@@ -121,7 +121,7 @@ procedure ClampVar(var a: cardinal; const vBegin, vEnd: cardinal); overload; {$i
 procedure ClampVar(var a: Single  ; const vBegin, vEnd: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 procedure ClampVar(var a: Double  ; const vBegin, vEnd: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure ClampVar(var A: Extended; const vBegin, vEnd: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
+procedure ClampVar(var a: Extended; const vBegin, vEnd: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif}
 {$endif}
 
 procedure Clamp(var a: Int64   ; const vBegin, vEnd: Int64   ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} deprecated 'Use ClampVar';
@@ -130,19 +130,19 @@ procedure Clamp(var a: cardinal; const vBegin, vEnd: cardinal); overload; {$ifde
 procedure Clamp(var a: Single  ; const vBegin, vEnd: Single  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} deprecated 'Use ClampVar';
 procedure Clamp(var a: Double  ; const vBegin, vEnd: Double  ); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} deprecated 'Use ClampVar';
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure Clamp(var A: Extended; const vBegin, vEnd: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} deprecated 'Use ClampVar';
+procedure Clamp(var a: Extended; const vBegin, vEnd: Extended); overload; {$ifdef SUPPORTS_INLINE} inline; {$endif} deprecated 'Use ClampVar';
 {$endif}
 
 { 3D coordinates (0, 1 or 2) except the given coordinate.
   If Coord = 0, then it sets First = 1 and Second = 2.
   And so on --- for each Coord value, we set First and Second to the remaining
   indexes. }
-procedure RestOf3dCoords(Coord: integer; out First, Second: Integer);
+procedure RestOf3dCoords(coord: Integer; out first, second: Integer);
 
 { Increase Value by Change, nicely wrapping in [0..MaxValue], accepting
   also negative Change. The final value is always in the [0..MaxValue] range,
   even when initial Value was outside. }
-function ChangeIntCycle(Value, Change, MaxValue: Integer): integer;
+function ChangeIntCycle(value, change, maxValue: Integer): Integer;
 
 { Linear interpolation between two values. Returns @code((1-A)*L + A*H).
   @groupBegin }
@@ -156,7 +156,7 @@ function Lerp(const a, l, h: Double): Double;                 overload; {$ifdef 
 
 const
   enatural = 2.71828182845905;
-  Sqrt2 = 1.4142135623730950488016887242097;
+  sqrt2 = 1.4142135623730950488016887242097;
   Sqrt3 = 1.7320508075688773;
   { Half of Pi. Taken from FPC sources, file rtl/inc/genmath.inc }
   HalfPi = 1.57079632679489661923;
@@ -259,12 +259,12 @@ function NatNatPower(Base, Exponent: Cardinal): Cardinal;
 
 {$ifdef FPC}
 { }
-function ArcCot(X: Float): Float;
+function ArcCot(x: Float): Float;
 {$endif FPC}
 
 { Trivial factorial with Int64 result. Beware, the results very quickly
   stop to fit inside Int64 range. }
-function SmallFactorial(N: Integer): Int64;
+function SmallFactorial(n: Integer): Int64;
 
 { Better DivMod version, in case Dividend may be < 0.
 
@@ -360,353 +360,85 @@ type
 
 {$ifdef read_implementation}
 
-procedure SwapValues(var A, B: Byte);
-var
-  Tmp: Byte;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
-procedure SwapValues(var A, B: Int64);
-var
-  Tmp: Int64;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
-procedure SwapValues(var A, B: QWord);
-var
-  Tmp: QWord;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
-procedure SwapValues(var A, B: Integer);
-var
-  Tmp: integer;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
-procedure SwapValues(var A, B: Cardinal);
-var
-  Tmp: Cardinal;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
-procedure SwapValues(var A, B: Single);
-var
-  Tmp: Single;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
-procedure SwapValues(var A, B: Double);
-var
-  Tmp: Double;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
+procedure SwapValues(var a, b: Byte);     var Tmp: Byte;     begin Tmp := A; A := B; B := Tmp; end;
+procedure SwapValues(var a, b: Int64);    var Tmp: Int64;    begin Tmp := A; A := B; B := Tmp; end;
+procedure SwapValues(var a, b: QWord);    var Tmp: QWord;    begin Tmp := A; A := B; B := Tmp; end;
+procedure SwapValues(var a, b: Integer);  var Tmp: Integer;  begin Tmp := A; A := B; B := Tmp; end;
+procedure SwapValues(var a, b: Cardinal); var Tmp: Cardinal; begin Tmp := A; A := B; B := Tmp; end;
+procedure SwapValues(var a, b: Single);   var Tmp: Single;   begin Tmp := A; A := B; B := Tmp; end;
+procedure SwapValues(var a, b: Double);   var Tmp: Double;   begin Tmp := A; A := B; B := Tmp; end;
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure SwapValues(var A, B: Extended);
-var
-  Tmp: Extended;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
+procedure SwapValues(var a, b: Extended); var Tmp: Extended; begin Tmp := A; A := B; B := Tmp; end;
+{$endif}
+procedure SwapValues(var a, b: char);     var Tmp: char;     begin Tmp := A; A := B; B := Tmp; end;
+procedure SwapValues(var a, b: Pointer);  var Tmp: Pointer;  begin Tmp := A; A := B; B := Tmp; end;
+
+procedure OrderUp(var Smaller, Larger: Int64);    begin if Smaller > Larger then SwapValues(Smaller, Larger); end;
+procedure OrderUp(var Smaller, Larger: Integer);  begin if Smaller > Larger then SwapValues(Smaller, Larger); end;
+procedure OrderUp(var Smaller, Larger: Cardinal); begin if Smaller > Larger then SwapValues(Smaller, Larger); end;
+procedure OrderUp(var Smaller, Larger: Single);   begin if Smaller > Larger then SwapValues(Smaller, Larger); end;
+procedure OrderUp(var Smaller, Larger: Double);   begin if Smaller > Larger then SwapValues(Smaller, Larger); end;
+{$ifndef EXTENDED_EQUALS_DOUBLE}
+procedure OrderUp(var Smaller, Larger: Extended); begin if Smaller > Larger then SwapValues(Smaller, Larger); end;
 {$endif}
 
-procedure SwapValues(var A, B: char);
-var
-  Tmp: char;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
-procedure SwapValues(var A, B: Pointer);
-var
-  Tmp: Pointer;
-begin
-  Tmp := A;
-  A := B;
-  B := Tmp;
-end;
-
-procedure OrderUp(var Smaller, Larger: Int64);
-begin
-  if Smaller > Larger then
-    SwapValues(Smaller, Larger);
-end;
-
-procedure OrderUp(var Smaller, Larger: Integer);
-begin
-  if Smaller > Larger then
-    SwapValues(Smaller, Larger);
-end;
-
-procedure OrderUp(var Smaller, Larger: Cardinal);
-begin
-  if Smaller > Larger then
-    SwapValues(Smaller, Larger);
-end;
-
-procedure OrderUp(var Smaller, Larger: Single);
-begin
-  if Smaller > Larger then
-    SwapValues(Smaller, Larger);
-end;
-
-procedure OrderUp(var Smaller, Larger: Double);
-begin
-  if Smaller > Larger then
-    SwapValues(Smaller, Larger);
-end;
-
+procedure OrderUp(x, y: Integer;  var Smaller, Larger: Integer);  begin if X <= Y then begin Smaller := X; Larger := Y end else begin Smaller := Y; Larger := X end; end;
+procedure OrderUp(x, y: Cardinal; var Smaller, Larger: Cardinal); begin if X <= Y then begin Smaller := X; Larger := Y end else begin Smaller := Y; Larger := X end; end;
+procedure OrderUp(x, y: Single;   var Smaller, Larger: Single);   begin if X <= Y then begin Smaller := X; Larger := Y end else begin Smaller := Y; Larger := X end; end;
+procedure OrderUp(x, y: Double;   var Smaller, Larger: Double);   begin if X <= Y then begin Smaller := X; Larger := Y end else begin Smaller := Y; Larger := X end; end;
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure OrderUp(var Smaller, Larger: Extended);
-begin
-  if Smaller > Larger then
-    SwapValues(Smaller, Larger);
-end;
+procedure OrderUp(x, y: Extended; var Smaller, Larger: Extended); begin if X <= Y then begin Smaller := X; Larger := Y end else begin Smaller := Y; Larger := X end; end;
 {$endif}
 
-procedure OrderUp(X, Y: Integer;  var Smaller, Larger: Integer);
-begin
-  if X <= Y then
-  begin
-    Smaller := X;
-    Larger := Y;
-  end else
-  begin
-    Smaller := Y;
-    Larger := X;
-  end;
-end;
-
-procedure OrderUp(X, Y: Cardinal; var Smaller, Larger: Cardinal);
-begin
-  if X <= Y then
-  begin
-    Smaller := X;
-    Larger := Y;
-  end else
-  begin
-    Smaller := Y;
-    Larger := X;
-  end;
-end;
-
-procedure OrderUp(X, Y: Single;   var Smaller, Larger: Single);
-begin
-  if X <= Y then
-  begin
-    Smaller := X;
-    Larger := Y;
-  end else
-  begin
-    Smaller := Y;
-    Larger := X;
-  end;
-end;
-
-procedure OrderUp(X, Y: Double;   var Smaller, Larger: Double);
-begin
-  if X <= Y then
-  begin
-    Smaller := X;
-    Larger := Y;
-  end else
-  begin
-    Smaller := Y;
-    Larger := X;
-  end;
-end;
-
+procedure MinVar(var a: Word    ; const b: Word    ); begin if B < A then A := B end;
+//procedure MinVar(var a: LongWord; const b: LongWord); begin if B < A then A := B end; // same as Cardinal
+procedure MinVar(var a: Int64   ; const b: Int64   ); begin if B < A then A := B end;
+procedure MinVar(var a: Integer ; const b: Integer ); begin if B < A then A := B end;
+procedure MinVar(var a: Cardinal; const b: Cardinal); begin if B < A then A := B end;
+procedure MinVar(var a: Single  ; const b: Single  ); begin if B < A then A := B end;
+procedure MinVar(var a: Double  ; const b: Double  ); begin if B < A then A := B end;
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure OrderUp(X, Y: Extended; var Smaller, Larger: Extended);
-begin
-  if X <= Y then
-  begin
-    Smaller := X;
-    Larger := Y;
-  end else
-  begin
-    Smaller := Y;
-    Larger := X;
-  end;
-end;
+procedure MinVar(var a: Extended; const b: Extended); begin if B < A then A := B end;
 {$endif}
 
-procedure MinVar(var A: Word    ; const B: Word    );
-begin
-  if B < A then
-    A := B;
-end;
-
-//procedure MinVar(var A: LongWord; const B: LongWord); begin if B < A then A := B end; // same as Cardinal
-
-procedure MinVar(var A: Int64   ; const B: Int64   );
-begin
-  if B < A then
-    A := B;
-end;
-
-procedure MinVar(var A: Integer ; const B: Integer );
-begin
-  if B < A then
-    A := B;
-end;
-
-procedure MinVar(var A: Cardinal; const B: Cardinal);
-begin
-  if B < A then
-    A := B;
-end;
-
-procedure MinVar(var A: Single  ; const B: Single  );
-begin
-  if B < A then
-    A := B;
-end;
-
-procedure MinVar(var A: Double  ; const B: Double  );
-begin
-  if B < A then
-    A := B;
-end;
-
+procedure MaxVar(var a: Word    ; const b: Word    ); begin if B > A then A := B end;
+//procedure MaxVar(var a: LongWord; const b: LongWord); begin if B > A then A := B end; // same as Cardinal
+procedure MaxVar(var a: Int64   ; const b: Int64   ); begin if B > A then A := B end;
+procedure MaxVar(var a: Integer ; const b: Integer ); begin if B > A then A := B end;
+procedure MaxVar(var a: Cardinal; const b: Cardinal); begin if B > A then A := B end;
+procedure MaxVar(var a: Single  ; const b: Single  ); begin if B > A then A := B end;
+procedure MaxVar(var a: Double  ; const b: Double  ); begin if B > A then A := B end;
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure MinVar(var A: Extended; const B: Extended);
-begin
-  if B < A then
-    A := B;
-end;
-{$endif}
-
-procedure MaxVar(var A: Word    ; const B: Word    );
-begin
-  if B > A then
-    A := B;
-end;
-
-//procedure MaxVar(var A: LongWord; const B: LongWord); begin if B > A then A := B end; // same as Cardinal
-
-procedure MaxVar(var A: Int64   ; const B: Int64   );
-begin
-  if B > A then
-    A := B;
-end;
-
-procedure MaxVar(var A: Integer ; const B: Integer );
-begin
-  if B > A then
-    A := B;
-end;
-
-procedure MaxVar(var A: Cardinal; const B: Cardinal);
-begin
-  if B > A then
-    A := B;
-end;
-
-procedure MaxVar(var A: Single  ; const B: Single  );
-begin
-  if B > A then
-    A := B;
-end;
-
-procedure MaxVar(var A: Double  ; const B: Double  );
-begin
-  if B > A then
-    A := B;
-end;
-
-{$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure MaxVar(var A: Extended; const B: Extended);
-begin
-  if B > A then
-    A := B;
-end;
+procedure MaxVar(var a: Extended; const b: Extended); begin if B > A then A := B end;
 {$endif}
 
 function IndexMax(const a0, a1, a2: Double): Integer;
 begin
-  if a0 > a1 then
-  begin
-    if a2 > a0 then
-      Result := 2
-    else
-      Result := 0;
-  end else
-  begin
-    if a2 > a1 then
-      Result := 2
-    else
-      Result := 1;
-  end;
+ if a0 > a1 then
+ begin
+  if a2 > a0 then result := 2 else result := 0
+ end else
+ begin
+  if a2 > a1 then result := 2 else result := 1
+ end;
 end;
 
 function IndexMin(const a0, a1, a2: Double): Integer;
 begin
-  if a0 < a1 then
-  begin
-    if a2 < a0 then
-      Result := 2
-    else
-      Result := 0;
-  end else
-  begin
-    if a2 < a1 then
-      Result := 2
-    else
-      Result := 1;
-  end;
+ if a0 < a1 then
+ begin
+  if a2 < a0 then result := 2 else result := 0
+ end else
+ begin
+  if a2 < a1 then result := 2 else result := 1
+ end;
 end;
 
-function Between(const A, vBegin, vEnd: Int64): boolean;
-begin
-  Result := (vBegin <= A) and (A <= vEnd);
-end;
-
-function Between(const A, vBegin, vEnd: integer): boolean;
-begin
-  Result := (vBegin <= A) and (A <= vEnd);
-end;
-
-function Between(const A, vBegin, vEnd: cardinal): boolean;
-begin
-  Result := (vBegin <= A) and (A <= vEnd);
-end;
-
-function Between(const A, vBegin, vEnd: Float): boolean;
-begin
-  Result := (vBegin <= A) and (A <= vend);
-end;
-
-function Between(const A, vBegin, vEnd: Char): boolean;
-begin
-  Result := (vBegin <= A) and (A <= vend);
-end;
+function Between(const a, vBegin, vEnd: Int64): boolean;    begin Result := (vBegin <= a) and (a <= vend) end;
+function Between(const a, vBegin, vEnd: Integer): boolean;  begin Result := (vBegin <= a) and (a <= vend) end;
+function Between(const a, vBegin, vEnd: cardinal): boolean; begin Result := (vBegin <= a) and (a <= vend) end;
+function Between(const a, vBegin, vEnd: Float): boolean;    begin Result := (vBegin <= a) and (a <= vend) end;
+function Between(const a, vBegin, vEnd: Char): boolean;     begin Result := (vBegin <= a) and (a <= vend) end;
 
 function RoundClamp255(const A: Single): Byte;
 var
@@ -714,314 +446,204 @@ var
 begin
   I := Round(A);
   if I < Low(Byte) then
-    Exit(Low(Byte))
-  else
-    if I > High(Byte) then
-      Exit(High(Byte))
-    else
-      Exit(I);
+    Exit(Low(Byte)) else
+  if I > High(Byte) then
+    Exit(High(Byte)) else
+    Exit(I);
 end;
 
-function Clamped(const A, vBegin, vEnd: Int64): Int64;
+function Clamped(const a, vBegin, vEnd: Int64): Int64;
 begin
-  if A < vBegin then
-    Result := vBegin
-  else
-    if A > vEnd then
-      Result := vEnd
-    else
-      Result := A;
+  if a < vBegin then result := vBegin else
+  if a > vEnd then result := vEnd else
+    result := a;
 end;
 
-function Clamped(const A, vBegin, vEnd: QWord): QWord;
+function Clamped(const a, vBegin, vEnd: QWord): QWord;
 begin
-  if A < vBegin then
-    Result := vBegin
-  else
-    if A > vEnd then
-      Result := vEnd
-    else
-      Result := A;
+  if a < vBegin then result := vBegin else
+  if a > vEnd then result := vEnd else
+    result := a;
 end;
 
-function Clamped(const A, vBegin, vEnd: Integer): Integer;
+function Clamped(const a, vBegin, vEnd: Integer): Integer;
 begin
-  if A < vBegin then
-    Result := vBegin
-  else
-    if A > vEnd then
-      Result := vEnd
-    else
-      Result := A;
+  if a < vBegin then result := vBegin else
+  if a > vEnd then result := vEnd else
+    result := a;
 end;
 
-function Clamped(const A, vBegin, vEnd: cardinal): cardinal;
+function Clamped(const a, vBegin, vEnd: cardinal): cardinal;
 begin
-  if A < vBegin then
-    Result := vBegin
-  else
-    if A > vEnd then
-      Result := vEnd
-    else
-      Result := A;
+  if a < vBegin then result := vBegin else
+  if a > vEnd then result := vEnd else
+    result := a;
 end;
 
-function Clamped(const A, vBegin, vEnd: Single): Single;
+function Clamped(const a, vBegin, vEnd: Single): Single;
 begin
-  if A < vBegin then
-    Result := vBegin
-  else
-    if A > vEnd then
-      Result := vEnd
-    else
-      Result := A;
+  if a < vBegin then result := vBegin else
+  if a > vEnd then result := vEnd else
+    result := a;
 end;
 
-function Clamped(const A, vBegin, vEnd: Double): Double;
+function Clamped(const a, vBegin, vEnd: Double): Double;
 begin
-  if A < vBegin then
-    Result := vBegin
-  else
-    if A > vEnd then
-      Result := vEnd
-    else
-      Result := A;
+  if a < vBegin then result := vBegin else
+  if a > vEnd then result := vEnd else
+    result := a;
 end;
 
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-function Clamped(const A, vBegin, vEnd: Extended): Extended;
+function Clamped(const a, vBegin, vEnd: Extended): Extended;
 begin
-  if A < vBegin then
-    Result := vBegin
-  else
-    if A > vEnd then
-      Result := vEnd
-    else
-      Result := A;
+  if a < vBegin then result := vBegin else
+  if a > vEnd then result := vEnd else
+    result := a;
 end;
 {$endif}
 
-procedure ClampVar(var A: Int64;    const vBegin, vEnd: Int64);
+procedure ClampVar(var a: Int64;    const vBegin, vEnd: Int64);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-procedure ClampVar(var A: QWord;    const vBegin, vEnd: QWord);
+procedure ClampVar(var a: QWord;    const vBegin, vEnd: QWord);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-procedure ClampVar(var A: integer;  const vBegin, vEnd: Integer);
+procedure ClampVar(var a: Integer;  const vBegin, vEnd: Integer);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-procedure ClampVar(var A: cardinal; const vBegin, vEnd: cardinal);
+procedure ClampVar(var a: cardinal; const vBegin, vEnd: cardinal);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-procedure ClampVar(var A: Single;   const vBegin, vEnd: Single);
+procedure ClampVar(var a: Single;   const vBegin, vEnd: Single);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-procedure ClampVar(var A: Double;   const vBegin, vEnd: Double);
+procedure ClampVar(var a: Double;   const vBegin, vEnd: Double);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure ClampVar(var A: Extended; const vBegin, vEnd: Extended);
+procedure ClampVar(var a: Extended; const vBegin, vEnd: Extended);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 {$endif}
 
-procedure Clamp(var A: Int64;    const vBegin, vEnd: Int64);
+procedure Clamp(var a: Int64;    const vBegin, vEnd: Int64);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-
-procedure Clamp(var A: integer;  const vBegin, vEnd: Integer);
+procedure Clamp(var a: Integer;  const vBegin, vEnd: Integer);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-procedure Clamp(var A: cardinal; const vBegin, vEnd: cardinal);
+procedure Clamp(var a: cardinal; const vBegin, vEnd: cardinal);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-procedure Clamp(var A: Single;   const vBegin, vEnd: Single);
+procedure Clamp(var a: Single;   const vBegin, vEnd: Single);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
-procedure Clamp(var A: Double;   const vBegin, vEnd: Double);
+procedure Clamp(var a: Double;   const vBegin, vEnd: Double);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 
 {$ifndef EXTENDED_EQUALS_DOUBLE}
-procedure Clamp(var A: Extended; const vBegin, vEnd: Extended);
+procedure Clamp(var a: Extended; const vBegin, vEnd: Extended);
 begin
-  if A < vBegin then
-    A := vBegin
-  else
-    if A > vEnd then
-      A := vEnd;
+  if a < vBegin then a := vBegin else
+  if a > vEnd then a := vEnd;
 end;
 {$endif}
 
-procedure RestOf3dCoords(Coord: integer; out First, Second: Integer);
+procedure RestOf3dCoords(coord: Integer; out first, second: Integer);
 begin
-  if Coord = 0 then
-    First := 1
-  else
-    First := 0;
-  if Coord = 2 then
-    Second := 1
-  else
-    Second := 2;
+ if coord = 0 then first := 1 else first := 0;
+ if coord = 2 then second := 1 else second := 2;
 end;
 
-function ChangeIntCycle(Value, Change, MaxValue: Integer): Integer;
+function ChangeIntCycle(value, change, maxValue: Integer): Integer;
 begin
-  Inc(MaxValue);
-  Result := (Value + Change) mod MaxValue;
-  { We know Result is now in [-MaxValue .. MaxValue]
-    (where MaxValue is the original maxValue passed to this function). }
-  if Result < 0 then
-    Result := Result + MaxValue;
+  Inc(maxValue);
+  Result := (value + change) mod maxValue;
+  { We know Result is now in [-maxValue .. maxValue]
+    (where maxValue is the original maxValue passed to this function). }
+  if result < 0 then result := result+maxValue;
 end;
 
 { Lerp : l + (h-l) * a = l + a*h - a*l = (1-a) *l + a*h }
-function Lerp(const a: Single; const l, h: Integer): Single;
-begin
-  Result := l + (h-l) * a;
-end;
+function Lerp(const a: Single; const l, h: Integer): Single;  begin result := l + (h-l) * a; end;
+function Lerp(const a: Single; const l, h: Cardinal): Single; begin result := l + (h-l) * a; end;
+function Lerp(const a, l, h: Single): Single;                 begin result := l + (h-l) * a; end;
+function Lerp(const a: Double; const l, h: Integer): Double;  begin result := l + (h-l) * a; end;
+function Lerp(const a: Double; const l, h: Cardinal): Double; begin result := l + (h-l) * a; end;
+function Lerp(const a, l, h: Double): Double;                 begin result := l + (h-l) * a; end;
 
-function Lerp(const a: Single; const l, h: Cardinal): Single;
+function RoundUpToMultiply(value, multiplicator: Integer): Integer;
 begin
-  Result := l + (h-l) * a;
-end;
-
-function Lerp(const a, l, h: Single): Single;
-begin
-  Result := l + (h-l) * a;
-end;
-
-function Lerp(const a: Double; const l, h: Integer): Double;
-begin
-  Result := l + (h-l) * a;
-end;
-
-function Lerp(const a: Double; const l, h: Cardinal): Double;
-begin
-  Result := l + (h-l) * a;
-end;
-
-function Lerp(const a, l, h: Double): Double;
-begin
-  Result := l + (h-l) * a;
-end;
-
-function RoundUpToMultiply(Value, Multiplicator: Integer): Integer;
-begin
-  if Value mod Multiplicator = 0 then
-    Result := Value
+  if value mod multiplicator = 0 then
+    result := value
   else
-    Result := ((Value div Multiplicator) + 1) * Multiplicator;
+    result := ((value div multiplicator)+1)*multiplicator;
 end;
 
 function BiggestPowerOf2(Value: Cardinal): Cardinal;
 begin
   { Find the first from the left ("oldest") bit = 1.
     Set the rest of the bits (all the "younger" bits) to zero. }
-  Result := Cardinal(1 shl (SizeOf(Cardinal) * 8 - 1));
-  while (Result <> 0) and ((Result and Value) = 0) do
-    Result := Result shr 1;
+  result := Cardinal(1 shl (SizeOf(Cardinal)*8-1));
+  while (result <> 0) and ((result and Value) = 0) do result := result shr 1;
 end;
 
 function Biggest2Exponent(Value: Cardinal): Integer;
 begin
-  Result := -1;
+  result := -1;
   while Value <> 0 do
-  begin
-    Inc(Result);
-    Value := Value shr 1;
-  end;
+    begin Inc(result); Value := Value shr 1 end;
 end;
 
 function Smallest2Exponent(Value: Cardinal): Integer;
 begin
-  if Value = 0 then
-  begin
-    Result := -1;
-    Exit;
-  end;
+  if Value = 0 then begin result := -1; Exit end;
 
-  for Result := SizeOf(Value) * 8 - 1 downto 0 do
-   if ((LongWord(1) shl Result) and Value) <> 0 then
-     Break;
+  for result := SizeOf(Value)*8-1 downto 0 do
+   if ((LongWord(1) shl result) and Value) <> 0 then Break;
 
   { since Value <> 0, so the above "for" is always finished by a Break.
     Now Result is the position of the "oldest" bit = 1 in Value.
     If all other bits are = 0 (IOW, "Value = 1 shl Result")
     then Result is already OK. Otherwise increase Result
     to make "2 ^ Result >= Value".}
-  if Value <> Cardinal(1) shl Result then
-    Inc(Result);
+  if Value <> Cardinal(1) shl result then Inc(result);
 end;
 
 function Smallest2Power(Value: Cardinal): Cardinal;
@@ -1030,26 +652,22 @@ var
 begin
   Exp := Smallest2Exponent(Value);
   if Exp = -1 then
-    Result := 0
+    result := 0
   else
-    Result := 1 shl Exp;
+    result := 1 shl Exp;
 end;
 
 function IsPowerOf2(Value: Cardinal): boolean;
 var
-  I: Cardinal;
+  i: Cardinal;
 begin
-  I := Cardinal(1 shl (SizeOf(Cardinal) * 8 - 1));
-  while (I <> 0) do
+  i := Cardinal(1 shl (SizeOf(Cardinal)*8-1));
+  while (i <> 0) do
   begin
-    if I = Value then
-    begin
-      Result := true;
-      Exit;
-    end;
-    I := I shr 1;
+    if i = Value then begin result := true; exit end;
+    i := i shr 1;
   end;
-  Result := false;
+  result := false;
 end;
 
 function DivRoundUp(const Value, Divider: Cardinal): Cardinal;
@@ -1062,7 +680,7 @@ begin
   Result := (Value + Divider - 1) div Divider;
 end;
 
-function MapRange(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Integer): Float;
+function MapRange(const SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Integer): Float;
 begin
   { Map range SourceBegin .. SourceEnd to 0..1, and express SourceVal there. }
   Result := (SourceVal - SourceBegin) / (SourceEnd - SourceBegin);
@@ -1070,7 +688,7 @@ begin
   Result := Result * (DestEnd - DestBegin) + DestBegin;
 end;
 
-function MapRange(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Int64): Float;
+function MapRange(const SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Int64  ): Float;
 begin
   { Map range SourceBegin .. SourceEnd to 0..1, and express SourceVal there. }
   Result := (SourceVal - SourceBegin) / (SourceEnd - SourceBegin);
@@ -1078,7 +696,7 @@ begin
   Result := Result * (DestEnd - DestBegin) + DestBegin;
 end;
 
-function MapRange(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: QWord): Float;
+function MapRange(const SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: QWord  ): Float;
 {$I norqcheckbegin.inc}
 begin
   { Map range SourceBegin .. SourceEnd to 0..1, and express SourceVal there. }
@@ -1088,7 +706,7 @@ begin
 end;
 {$I norqcheckend.inc}
 
-function MapRange(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Float): Float;
+function MapRange(const SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Float  ): Float;
 begin
   { Map range SourceBegin .. SourceEnd to 0..1, and express SourceVal there. }
   Result := (SourceVal - SourceBegin) / (SourceEnd - SourceBegin);
@@ -1096,36 +714,40 @@ begin
   Result := Result * (DestEnd - DestBegin) + DestBegin;
 end;
 
-function MapRangeClamped(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Integer): Float;
+function MapRangeClamped(const SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Integer): Float;
 begin
   Result := MapRange(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd);
   if DestEnd < DestBegin then
-    SwapValues(DestBegin, DestEnd);
-  Result := Clamped(Result, DestBegin, DestEnd);
+    Result := Clamped(Result, DestEnd, DestBegin)
+  else
+    Result := Clamped(Result, DestBegin, DestEnd);
 end;
 
-function MapRangeClamped(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Int64): Float;
+function MapRangeClamped(const SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Int64  ): Float;
 begin
   Result := MapRange(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd);
   if DestEnd < DestBegin then
-    SwapValues(DestBegin, DestEnd);
-  Result := Clamped(Result, DestBegin, DestEnd);
+    Result := Clamped(Result, DestEnd, DestBegin)
+  else
+    Result := Clamped(Result, DestBegin, DestEnd);
 end;
 
-function MapRangeClamped(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: QWord): Float;
+function MapRangeClamped(const SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: QWord  ): Float;
 begin
   Result := MapRange(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd);
   if DestEnd < DestBegin then
-    SwapValues(DestBegin, DestEnd);
-  Result := Clamped(Result, DestBegin, DestEnd);
+    Result := Clamped(Result, DestEnd, DestBegin)
+  else
+    Result := Clamped(Result, DestBegin, DestEnd);
 end;
 
-function MapRangeClamped(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Float): Float;
+function MapRangeClamped(const SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd: Float  ): Float;
 begin
   Result := MapRange(SourceVal, SourceBegin, SourceEnd, DestBegin, DestEnd);
   if DestEnd < DestBegin then
-    SwapValues(DestBegin, DestEnd);
-  Result := Clamped(Result, DestBegin, DestEnd);
+    Result := Clamped(Result, DestEnd, DestBegin)
+  else
+    Result := Clamped(Result, DestBegin, DestEnd);
 end;
 
 function RandomFloatRange(const RangeBegin, RangeEnd: Single): Single;
@@ -1162,68 +784,56 @@ end;
 
 function AngleRadPointToPoint(x1, y1, x2, y2: Single): Single;
 begin
-  if y2 > y1 then
+ if y2 > y1 then
+ begin
+  if SameValue(x1, x2) then
+   result := Pi/2 else
   begin
-    if SameValue(x1, x2) then
-      Result := Pi / 2
-    else
-    begin
-      Result := ArcTan( (y2 - y1) / (x2 - x1) );
-      if Result < 0 then
-        Result := Result + Pi;
-    end;
-  end else
-    if y1 > y2 then
-    begin
-      if SameValue(x1, x2) then
-        Result := Pi * 3 / 2
-      else
-        begin
-          Result := ArcTan( (y2 - y1) / (x2 - x1) );
-          if Result < 0 then
-            Result := Result + Pi;
-          Result := Result + Pi;
-        end;
-    end else
-      if x2 > x1 then
-        Result := 0
-      else
-        Result := Pi;
+   result := ArcTan( (y2-y1) / (x2-x1) );
+   if result < 0 then result := result +Pi;
+  end;
+ end else
+ if y1 > y2 then
+ begin
+  if SameValue(x1, x2) then
+   result := Pi*3/2 else
+  begin
+   result := ArcTan( (y2-y1) / (x2-x1) );
+   if result < 0 then result := result +Pi;
+   result := result +Pi;
+  end;
+ end else
+ if x2 > x1 then result := 0 else result := Pi;
 end;
 
 function NatNatPower(Base, Exponent: Cardinal): Cardinal;
-var
-  I : Cardinal;
+var i : Cardinal;
 begin
-  Result := 1;
-  I := Exponent;
-  while I > 0 do
+ result := 1;
+ i := Exponent;
+ while i > 0 do
+ begin
+  while not Odd(i) do
   begin
-    while not Odd(i) do
-    begin
-      I := I shr 1;
-      Base := sqr(Base);
-    end;
-    I := I-1;
-    Result := Result * Base;
+   i := i shr 1;
+   base := sqr(base);
   end;
+  i := i-1;
+  result := result*base;
+ end;
 end;
 
 {$ifdef FPC}
-function ArcCot(X: Float): Float;
+function ArcCot(x: Float): Float;
 begin
-  Result := ArcTan(1 / X);
+ result := ArcTan(1/x);
 end;
 {$endif FPC}
 
-function SmallFactorial(N: Integer): Int64;
+function SmallFactorial(n: Integer): Int64;
 begin
-  Result := 1;
-  while N > 1 do
-  begin
-    Result := Result * N;
-    Dec(N);
-  end;
+ Result := 1;
+ while n > 1 do begin Result := Result * n; Dec(n) end;
 end;
 
 procedure CastleDivMod(Dividend: Integer; Divisor: Word;
@@ -1279,8 +889,7 @@ begin
   DivResult := A div B;
   ModResult := A mod B;
   if ModResult = 0 then
-    Result := DivResult
-  else
+    Result := DivResult else
     Result := DivResult + 1;
 end;
 
@@ -1293,21 +902,20 @@ begin
     i.e. resistant to tricky cases without unprecise floating-point
     calculation. }
   if Remainder < 0 then
-    Remainder := 0
-  else
-    if Remainder >= B then
-    begin
-      Remainder := Remainder - B;
-      Inc(DivResult);
+    Remainder := 0 else
+  if Remainder >= B then
+  begin
+    Remainder := Remainder - B;
+    Inc(DivResult);
 
-      { Mathematically, we could do above two lines in a loop
-        "while Remainder >= A", but this could loop (practically)
-        forever for very small (or zero) B.
+    { Mathematically, we could do above two lines in a loop
+      "while Remainder >= A", but this could loop (practically)
+      forever for very small (or zero) B.
 
-        Instead we just clamp Remainder to [0, B] once again, the hard way. }
+      Instead we just clamp Remainder to [0, B] once again, the hard way. }
 
-      ClampVar(Remainder, 0, B);
-    end;
+    ClampVar(Remainder, 0, B);
+  end;
 end;
 
 function FloatModulo(const A, B: Double): Double;
@@ -1323,36 +931,24 @@ begin
     FloatDivMod(A, B, DivResult, Result);
 end;
 
-procedure MinMax(const x0, x1, x2: Double; out Min, Max: Double);
+procedure MinMax(const x0, x1, x2: Double; out min, max: Double);
 begin
-  Min := x0;
-  Max := x0;
-  if   x1 < Min then
-    Min := x1
-  else
-    if x1 > Max then
-      Max := x1;
-  if   x2 < Min then
-    Min := x2
-  else
-    if x2 > Max then
-      Max := x2;
+  min := x0;
+  max := x0;
+  if   x1 < min then min := x1 else
+    if x1 > max then max := x1;
+  if   x2 < min then min := x2 else
+    if x2 > max then max := x2;
 end;
 
-procedure MinMax(const x0, x1, x2: Single; out Min, Max: Single);
+procedure MinMax(const x0, x1, x2: Single; out min, max: Single);
 begin
-  Min := x0;
-  Max := x0;
-  if   x1 < Min then
-    Min := x1
-  else
-    if x1 > Max then
-      Max := x1;
-  if   x2 < Min then
-    Min := x2
-  else
-    if x2 > Max then
-      Max := x2;
+  min := x0;
+  max := x0;
+  if   x1 < min then min := x1 else
+    if x1 > max then max := x1;
+  if   x2 < min then min := x2 else
+    if x2 > max then max := x2;
 end;
 
 function CastleCoTan(const Value: Float): Float;
@@ -1380,8 +976,7 @@ function IntSqrt(const Value: Cardinal): Cardinal;
 var
   Old, New: Float;
 begin
-  if Value = 0 then
-    Exit(0); { to not fail by division by zero }
+  if Value = 0 then Exit(0); { to not fail by division by zero }
 
   New := Value;
   repeat
