@@ -554,9 +554,9 @@ const
     P: PChar;
   begin
     L := Length(S);
-    for I := 1 to Length(A) do
+    for I := 1 to Length(S) do
       if not (S[I] in Allowed) then
-        Inc(L,2);
+        Inc(L, 2);
     if L = Length(S) then
     begin
       Result := S;
